@@ -9,7 +9,6 @@ import { SeverityBadge } from '@/components/ui/SeverityBadge';
 import { CategoryBadge } from '@/components/ui/CategoryBadge';
 import { ComplaintTimeline } from '@/components/complaints/ComplaintTimeline';
 import { AssignmentPanel } from '@/components/admin/AssignmentPanel';
-import { MapView } from '@/components/map/MapView';
 import { Modal } from '@/components/ui/Modal';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ErrorState } from '@/components/ui/ErrorState';
@@ -107,47 +106,47 @@ export default function AdminComplaintDetailPage({
   }
 
   return (
-    <Box sx={{ py: 6, backgroundColor: '#09090b', flex: 1, pb: 12 }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
       <Container maxWidth="lg">
         {/* Navigation */}
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #27272a' }}>
-          <Link href="/admin/complaints" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-zinc-100">
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8' }}>
+          <Link href="/admin/complaints" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-700 hover:text-black">
             <ArrowLeft className="w-4 h-4" />
             <span>Return to Resolution Queue</span>
           </Link>
 
-          <Box sx={{ display: 'flex', itemsCenter: 'center', gap: 1, px: 2, py: 0.75, borderRadius: '2px', backgroundColor: '#18181b', border: '1px solid #3f3f46', fontSize: '0.75rem', fontFamily: 'monospace', color: '#f8fafc' }}>
-            <ShieldCheck className="w-4 h-4 text-zinc-100" />
+          <Box sx={{ display: 'flex', itemsCenter: 'center', gap: 1, px: 2, py: 0.75, borderRadius: '2px', backgroundColor: '#09090b', color: '#ffffff', fontSize: '0.75rem', fontFamily: 'monospace' }}>
+            <ShieldCheck className="w-4 h-4 text-white" />
             <span>ADMIN SESSION (VIKRAMADITYA SINGH)</span>
           </Box>
         </Box>
 
         {/* Dossier Overview */}
-        <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', mb: 4 }}>
+        <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 2, mb: 2 }}>
             <Box sx={{ display: 'flex', gap: 1 }}>
               <CategoryBadge category={complaint.category} size="medium" />
               <SeverityBadge severity={complaint.severity} size="medium" />
-              <Typography variant="caption" sx={{ color: '#71717a', fontFamily: 'monospace', px: 1, py: 0.25, backgroundColor: '#09090b', border: '1px solid #27272a' }}>
+              <Typography variant="caption" sx={{ color: '#09090b', fontFamily: 'monospace', px: 1, py: 0.25, backgroundColor: '#f5f3ee', border: '1px solid #e2e0d8', fontWeight: 800 }}>
                 {complaint.id}
               </Typography>
             </Box>
             <StatusBadge status={complaint.status} size="medium" />
           </Box>
 
-          <Typography variant="h4" sx={{ fontWeight: 900, color: '#f8fafc', mb: 1 }}>
+          <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b', mb: 1 }}>
             {complaint.title}
           </Typography>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#a1a1aa', fontSize: '0.875rem' }}>
-            <MapPin className="w-4 h-4 text-zinc-100" />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#52525b', fontSize: '0.875rem', fontWeight: 600 }}>
+            <MapPin className="w-4 h-4 text-zinc-950" />
             <span>{complaint.address}</span>
           </Box>
         </Paper>
 
         {/* Action Controls Bar */}
-        <Paper elevation={0} sx={{ p: 3, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', mb: 4 }}>
-          <Typography variant="overline" sx={{ color: '#a1a1aa', fontWeight: 800, mb: 2, display: 'block' }}>
+        <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
+          <Typography variant="overline" sx={{ color: '#09090b', fontWeight: 900, mb: 2, display: 'block' }}>
             Status Lifecycle Dispatch Actions
           </Typography>
 
@@ -178,7 +177,7 @@ export default function AdminComplaintDetailPage({
               disabled={actionLoading}
               onClick={() => setIsResolveModalOpen(true)}
               startIcon={<CheckCircle2 className="w-4 h-4" />}
-              sx={{ backgroundColor: '#f8fafc', color: '#09090b', fontWeight: 900 }}
+              sx={{ backgroundColor: '#09090b', color: '#ffffff', fontWeight: 900 }}
             >
               Resolve Complaint
             </Button>
@@ -217,8 +216,8 @@ export default function AdminComplaintDetailPage({
           </Grid>
 
           <Grid item xs={12} md={7}>
-            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
-              <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc', mb: 3 }}>
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', mb: 3 }}>
                 Activity & Dispatch Log
               </Typography>
               <ComplaintTimeline timeline={complaint.timeline} />
@@ -233,7 +232,7 @@ export default function AdminComplaintDetailPage({
           title="Resolve Civic Complaint"
         >
           <Box sx={{ spaceY: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+            <Typography variant="body2" sx={{ color: '#52525b' }}>
               Enter resolution verification notes for citizen timeline.
             </Typography>
 
@@ -273,7 +272,7 @@ export default function AdminComplaintDetailPage({
           title="Reject Civic Complaint"
         >
           <Box sx={{ spaceY: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+            <Typography variant="body2" sx={{ color: '#52525b' }}>
               Specify the reason for closing or rejecting this entry.
             </Typography>
 

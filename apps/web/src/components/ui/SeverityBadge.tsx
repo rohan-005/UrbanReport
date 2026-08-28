@@ -11,10 +11,10 @@ const severityConfig: Record<
   Severity,
   { label: string; bg: string; text: string; border: string }
 > = {
-  LOW: { label: 'Low', bg: '#18181b', text: '#a1a1aa', border: '#27272a' },
-  MEDIUM: { label: 'Medium', bg: '#27272a', text: '#e4e4e7', border: '#3f3f46' },
-  HIGH: { label: 'High', bg: '#3f3f46', text: '#ffffff', border: '#71717a' },
-  CRITICAL: { label: 'Critical', bg: '#450a0a', text: '#fca5a5', border: '#991b1b' },
+  LOW: { label: 'Low', bg: '#f5f3ee', text: '#52525b', border: '#d1d5db' },
+  MEDIUM: { label: 'Medium', bg: '#e2e0d8', text: '#18181b', border: '#9ca3af' },
+  HIGH: { label: 'High', bg: '#18181b', text: '#ffffff', border: '#18181b' },
+  CRITICAL: { label: 'Critical', bg: '#dc2626', text: '#ffffff', border: '#b91c1c' },
 };
 
 export const SeverityBadge: React.FC<SeverityBadgeProps> = ({

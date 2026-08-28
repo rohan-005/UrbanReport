@@ -68,10 +68,10 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <Container maxWidth="xs" sx={{ py: 12, textAlign: 'center' }}>
-        <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc', mb: 1 }}>
+        <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', mb: 1 }}>
           No Session Active
         </Typography>
-        <Typography variant="body2" sx={{ color: '#a1a1aa', mb: 3 }}>
+        <Typography variant="body2" sx={{ color: '#52525b', mb: 3 }}>
           Sign in to view your citizen identity profile.
         </Typography>
         <Link href="/login">
@@ -87,7 +87,7 @@ export default function ProfilePage() {
   const resolvedReportsCount = complaints.filter((c) => c.status === 'RESOLVED').length;
 
   return (
-    <Box sx={{ py: 6, backgroundColor: '#09090b', flex: 1, pb: 12 }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
       <Container maxWidth="lg">
         {/* Profile Identity Card */}
         <Box sx={{ mb: 4 }}>
@@ -100,24 +100,24 @@ export default function ProfilePage() {
         </Box>
 
         {/* Action Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 4, pb: 2, borderBottom: '1px solid #27272a' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 4, pb: 2, borderBottom: '1px solid #e2e0d8' }}>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <button
               onClick={() => setActiveTab('complaints')}
-              className={`text-xs font-bold uppercase tracking-wider pb-2 border-b-2 transition-colors ${
+              className={`text-xs font-black uppercase tracking-wider pb-2 border-b-2 transition-colors ${
                 activeTab === 'complaints'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                  ? 'border-black text-black'
+                  : 'border-transparent text-zinc-500 hover:text-black'
               }`}
             >
               My Reported Dossiers ({complaints.length})
             </button>
             <button
               onClick={() => setActiveTab('notifications')}
-              className={`text-xs font-bold uppercase tracking-wider pb-2 border-b-2 transition-colors ${
+              className={`text-xs font-black uppercase tracking-wider pb-2 border-b-2 transition-colors ${
                 activeTab === 'notifications'
-                  ? 'border-white text-white'
-                  : 'border-transparent text-zinc-400 hover:text-zinc-200'
+                  ? 'border-black text-black'
+                  : 'border-transparent text-zinc-500 hover:text-black'
               }`}
             >
               Notifications
@@ -145,8 +145,8 @@ export default function ProfilePage() {
                 elevation={0}
                 sx={{
                   p: 2.5,
-                  backgroundColor: '#121215',
-                  borderColor: '#27272a',
+                  backgroundColor: '#ffffff',
+                  borderColor: '#e2e0d8',
                   borderRadius: '2px',
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' },
@@ -159,17 +159,17 @@ export default function ProfilePage() {
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     <CategoryBadge category={item.category} size="small" />
                     <SeverityBadge severity={item.severity} size="small" />
-                    <Typography variant="caption" sx={{ color: '#71717a', fontFamily: 'monospace' }}>
+                    <Typography variant="caption" sx={{ color: '#52525b', fontFamily: 'monospace', fontWeight: 700 }}>
                       {item.id}
                     </Typography>
                   </Box>
 
-                  <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#09090b' }}>
                     {item.title}
                   </Typography>
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#a1a1aa', fontSize: '0.75rem' }}>
-                    <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#52525b', fontSize: '0.75rem', fontWeight: 600 }}>
+                    <MapPin className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
                     <span>{item.address}</span>
                   </Box>
                 </Box>
@@ -188,10 +188,10 @@ export default function ProfilePage() {
         )}
 
         {activeTab === 'notifications' && (
-          <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', maxWidth: 600 }}>
+          <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', maxWidth: 600 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-              <Bell className="w-5 h-5 text-zinc-100" />
-              <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+              <Bell className="w-5 h-5 text-zinc-950" />
+              <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b' }}>
                 Notification Preferences
               </Typography>
             </Box>
@@ -199,11 +199,11 @@ export default function ProfilePage() {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <FormControlLabel
                 control={<Switch checked={emailAlerts} onChange={(e) => setEmailAlerts(e.target.checked)} color="default" />}
-                label={<Typography variant="body2" sx={{ color: '#f8fafc', fontWeight: 600 }}>Email Resolution Alerts</Typography>}
+                label={<Typography variant="body2" sx={{ color: '#09090b', fontWeight: 600 }}>Email Resolution Alerts</Typography>}
               />
               <FormControlLabel
                 control={<Switch checked={smsAlerts} onChange={(e) => setSmsAlerts(e.target.checked)} color="default" />}
-                label={<Typography variant="body2" sx={{ color: '#f8fafc', fontWeight: 600 }}>SMS Field Dispatch Updates</Typography>}
+                label={<Typography variant="body2" sx={{ color: '#09090b', fontWeight: 600 }}>SMS Field Dispatch Updates</Typography>}
               />
             </Box>
           </Paper>

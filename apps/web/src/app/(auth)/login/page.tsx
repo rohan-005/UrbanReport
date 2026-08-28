@@ -34,21 +34,21 @@ export default function LoginPage() {
   };
 
   return (
-    <Box sx={{ minHeight: 'calc(100vh - 4rem)', display: 'flex', alignItems: 'center', justifyCenter: 'center', backgroundColor: '#09090b', py: 8 }}>
+    <Box sx={{ minHeight: 'calc(100vh - 4rem)', display: 'flex', alignItems: 'center', justifyCenter: 'center', backgroundColor: '#f5f3ee', py: 8 }}>
       <Container maxWidth="xs">
         <Box sx={{ textCenter: 'center', mb: 4 }}>
-          <Box sx={{ w: 10, h: 10, borderRadius: '2px', backgroundColor: '#18181b', border: '1px solid #3f3f46', display: 'flex', alignItems: 'center', justifyCenter: 'center', mx: 'auto', mb: 2, color: '#f8fafc', fontWeight: 900 }}>
+          <Box sx={{ w: 10, h: 10, borderRadius: '2px', backgroundColor: '#09090b', border: '1px solid #09090b', display: 'flex', alignItems: 'center', justifyCenter: 'center', mx: 'auto', mb: 2, color: '#ffffff', fontWeight: 900 }}>
             UR
           </Box>
-          <Typography variant="h4" sx={{ fontWeight: 900, color: '#f8fafc', mb: 0.5 }}>
+          <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
             Portal Sign In
           </Typography>
-          <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+          <Typography variant="body2" sx={{ color: '#52525b' }}>
             Access citizen identity or municipal dispatch
           </Typography>
         </Box>
 
-        <Paper elevation={0} component="form" onSubmit={handleLogin} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Paper elevation={0} component="form" onSubmit={handleLogin} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <TextField
             label="Email Address"
             type="email"
@@ -70,8 +70,8 @@ export default function LoginPage() {
           />
 
           <FormControlLabel
-            control={<Checkbox defaultChecked sx={{ color: '#52525b', '&.Mui-checked': { color: '#f8fafc' } }} />}
-            label={<Typography variant="caption" sx={{ color: '#a1a1aa' }}>Remember session</Typography>}
+            control={<Checkbox defaultChecked sx={{ color: '#52525b', '&.Mui-checked': { color: '#09090b' } }} />}
+            label={<Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>Remember session</Typography>}
           />
 
           <Button
@@ -82,20 +82,20 @@ export default function LoginPage() {
             disabled={loading}
             startIcon={<LogIn className="w-4 h-4" />}
             sx={{
-              backgroundColor: '#f8fafc',
-              color: '#09090b',
+              backgroundColor: '#09090b',
+              color: '#ffffff',
               fontWeight: 900,
               py: 1.25,
-              '&:hover': { backgroundColor: '#e2e8f0' },
+              '&:hover': { backgroundColor: '#18181b' },
             }}
           >
             Sign In
           </Button>
 
-          <Box sx={{ pt: 2, borderTop: '1px solid #27272a', textCenter: 'center' }}>
-            <Typography variant="caption" sx={{ color: '#a1a1aa' }}>
+          <Box sx={{ pt: 2, borderTop: '1px solid #e2e0d8', textCenter: 'center' }}>
+            <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>
               Need an account?{' '}
-              <Link href="/register" className="font-bold text-white underline">
+              <Link href="/register" className="font-bold text-black underline">
                 Register Citizen Profile
               </Link>
             </Typography>

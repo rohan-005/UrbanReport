@@ -78,8 +78,8 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
               elevation={0}
               sx={{
                 p: 2,
-                backgroundColor: card.highlight ? '#450a0a' : '#121215',
-                borderColor: card.highlight ? '#991b1b' : '#27272a',
+                backgroundColor: card.highlight ? '#fee2e2' : '#ffffff',
+                borderColor: card.highlight ? '#fca5a5' : '#e2e0d8',
                 borderRadius: '2px',
                 height: '100%',
                 display: 'flex',
@@ -91,7 +91,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
                 <Typography
                   variant="overline"
                   sx={{
-                    color: card.highlight ? '#fca5a5' : '#a1a1aa',
+                    color: card.highlight ? '#991b1b' : '#52525b',
                     fontWeight: 800,
                     fontSize: '0.625rem',
                     lineHeight: 1.2,
@@ -99,18 +99,18 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
                 >
                   {card.title}
                 </Typography>
-                <Icon className={`w-4 h-4 ${card.highlight ? 'text-red-400 animate-pulse' : 'text-zinc-400'}`} />
+                <Icon className={`w-4 h-4 ${card.highlight ? 'text-red-700 animate-pulse' : 'text-zinc-700'}`} />
               </Box>
               <Typography
                 variant="h4"
                 sx={{
                   fontWeight: 900,
-                  color: card.highlight ? '#fca5a5' : '#f8fafc',
+                  color: card.highlight ? '#991b1b' : '#09090b',
                 }}
               >
                 {card.value}
               </Typography>
-              <Typography variant="caption" sx={{ color: card.highlight ? '#fca5a5' : '#71717a', fontSize: '0.6875rem' }}>
+              <Typography variant="caption" sx={{ color: card.highlight ? '#b91c1c' : '#71717a', fontSize: '0.6875rem', fontWeight: 600 }}>
                 {card.label}
               </Typography>
             </Paper>

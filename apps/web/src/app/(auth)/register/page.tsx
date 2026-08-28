@@ -71,21 +71,21 @@ export default function RegisterPage() {
   };
 
   return (
-    <Box sx={{ minHeight: 'calc(100vh - 4rem)', display: 'flex', alignItems: 'center', justifyCenter: 'center', backgroundColor: '#09090b', py: 8 }}>
+    <Box sx={{ minHeight: 'calc(100vh - 4rem)', display: 'flex', alignItems: 'center', justifyCenter: 'center', backgroundColor: '#f5f3ee', py: 8 }}>
       <Container maxWidth="sm">
         <Box sx={{ textCenter: 'center', mb: 4 }}>
-          <Typography variant="h4" sx={{ fontWeight: 900, color: '#f8fafc', mb: 0.5 }}>
+          <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
             Citizen Identity Registration
           </Typography>
-          <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+          <Typography variant="body2" sx={{ color: '#52525b' }}>
             Register profile for issue reporting and ward status updates
           </Typography>
         </Box>
 
-        <Paper elevation={0} component="form" onSubmit={handleRegister} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Paper elevation={0} component="form" onSubmit={handleRegister} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           {errors.form && (
-            <Box sx={{ p: 2, borderRadius: '2px', backgroundColor: '#450a0a', border: '1px solid #991b1b', color: '#fca5a5', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <AlertCircle className="w-4 h-4 text-red-400" />
+            <Box sx={{ p: 2, borderRadius: '2px', backgroundColor: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <AlertCircle className="w-4 h-4 text-red-600" />
               <span>{errors.form}</span>
             </Box>
           )}
@@ -171,8 +171,8 @@ export default function RegisterPage() {
               helperText={errors.aadhaarNumber}
             />
 
-            <Box sx={{ p: 1.5, mt: 1, borderRadius: '2px', backgroundColor: '#09090b', border: '1px solid #27272a', fontSize: '0.75rem', color: '#a1a1aa', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <ShieldCheck className="w-4 h-4 text-zinc-100 shrink-0" />
+            <Box sx={{ p: 1.5, mt: 1, borderRadius: '2px', backgroundColor: '#f5f3ee', border: '1px solid #e2e0d8', fontSize: '0.75rem', color: '#52525b', display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600 }}>
+              <ShieldCheck className="w-4 h-4 text-zinc-950 shrink-0" />
               <span>Format is checked locally (12 digits, non-repeating). No UIDAI integration occurs.</span>
             </Box>
           </Box>
@@ -184,21 +184,21 @@ export default function RegisterPage() {
             size="large"
             disabled={loading}
             sx={{
-              backgroundColor: '#f8fafc',
-              color: '#09090b',
+              backgroundColor: '#09090b',
+              color: '#ffffff',
               fontWeight: 900,
               py: 1.25,
               mt: 1,
-              '&:hover': { backgroundColor: '#e2e8f0' },
+              '&:hover': { backgroundColor: '#18181b' },
             }}
           >
             Complete Registration
           </Button>
 
-          <Box sx={{ pt: 2, borderTop: '1px solid #27272a', textCenter: 'center' }}>
-            <Typography variant="caption" sx={{ color: '#a1a1aa' }}>
+          <Box sx={{ pt: 2, borderTop: '1px solid #e2e0d8', textCenter: 'center' }}>
+            <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>
               Already registered?{' '}
-              <Link href="/login" className="font-bold text-white underline">
+              <Link href="/login" className="font-bold text-black underline">
                 Sign In
               </Link>
             </Typography>

@@ -4,18 +4,18 @@ import { createTheme } from '@mui/material/styles';
 
 export const urbanTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     background: {
-      default: '#09090b', // Deep rich black
-      paper: '#121215',   // Off-black architectural card surface
+      default: '#f5f3ee', // Warm off-white civic environment
+      paper: '#ffffff',   // Crisp warm white card surface
     },
     primary: {
-      main: '#f8fafc',    // Off-white primary control color
-      contrastText: '#09090b',
+      main: '#09090b',    // Deep black primary control color
+      contrastText: '#ffffff',
     },
     secondary: {
-      main: '#27272a',    // Dark warm neutral
-      contrastText: '#f8fafc',
+      main: '#e2e0d8',    // Warm neutral secondary surface
+      contrastText: '#09090b',
     },
     error: {
       main: '#dc2626',    // Restrained crimson
@@ -24,20 +24,20 @@ export const urbanTheme = createTheme({
       main: '#d97706',    // Warm amber
     },
     info: {
-      main: '#71717a',    // Zinc gray metadata
+      main: '#52525b',    // Slate dark metadata
     },
     success: {
       main: '#16a34a',    // Muted emerald
     },
     text: {
-      primary: '#f8fafc',
-      secondary: '#a1a1aa',
-      disabled: '#52525b',
+      primary: '#09090b',   // Deep near-black typography
+      secondary: '#52525b', // Neutral secondary
+      disabled: '#a1a1aa',
     },
-    divider: '#27272a',
+    divider: '#e2e0d8',
   },
   shape: {
-    borderRadius: 2, // Architectural minimal 2px rounding
+    borderRadius: 2, // Minimal 2px architectural rounding
   },
   typography: {
     fontFamily: [
@@ -50,32 +50,36 @@ export const urbanTheme = createTheme({
       'sans-serif',
     ].join(','),
     h1: {
-      fontWeight: 800,
+      fontWeight: 900,
       letterSpacing: '-0.03em',
-      lineHeight: 1.1,
+      lineHeight: 1.05,
+      color: '#09090b',
     },
     h2: {
       fontWeight: 800,
       letterSpacing: '-0.02em',
       lineHeight: 1.15,
+      color: '#09090b',
     },
     h3: {
-      fontWeight: 700,
+      fontWeight: 800,
       letterSpacing: '-0.015em',
       lineHeight: 1.2,
+      color: '#09090b',
     },
     h4: {
-      fontWeight: 700,
+      fontWeight: 800,
       letterSpacing: '-0.01em',
+      color: '#09090b',
     },
     button: {
       textTransform: 'uppercase',
-      fontWeight: 700,
+      fontWeight: 800,
       letterSpacing: '0.05em',
     },
     overline: {
       letterSpacing: '0.1em',
-      fontWeight: 700,
+      fontWeight: 800,
     },
   },
   components: {
@@ -85,24 +89,25 @@ export const urbanTheme = createTheme({
           borderRadius: 2,
           padding: '8px 18px',
           boxShadow: 'none',
+          transition: 'all 0.15s ease-in-out',
           '&:hover': {
             boxShadow: 'none',
           },
         },
         containedPrimary: {
-          backgroundColor: '#f8fafc',
-          color: '#09090b',
-          border: '1px solid #ffffff',
+          backgroundColor: '#09090b',
+          color: '#ffffff',
+          border: '1px solid #09090b',
           '&:hover': {
-            backgroundColor: '#e2e8f0',
+            backgroundColor: '#18181b',
           },
         },
         outlined: {
-          borderColor: '#27272a',
-          color: '#f8fafc',
+          borderColor: '#d1d5db',
+          color: '#09090b',
           '&:hover': {
-            borderColor: '#52525b',
-            backgroundColor: '#18181b',
+            borderColor: '#09090b',
+            backgroundColor: '#f3f1ec',
           },
         },
       },
@@ -111,8 +116,9 @@ export const urbanTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: 'none',
-          border: '1px solid #27272a',
+          border: '1px solid #e2e0d8',
           borderRadius: 2,
+          backgroundColor: '#ffffff',
         },
       },
     },
@@ -120,8 +126,8 @@ export const urbanTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 2,
-          border: '1px solid #27272a',
-          backgroundColor: '#121215',
+          border: '1px solid #e2e0d8',
+          backgroundColor: '#ffffff',
         },
       },
     },
@@ -129,7 +135,7 @@ export const urbanTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 2,
-          fontWeight: 600,
+          fontWeight: 700,
         },
       },
     },
@@ -138,15 +144,16 @@ export const urbanTheme = createTheme({
         root: {
           '& .MuiOutlinedInput-root': {
             borderRadius: 2,
+            backgroundColor: '#ffffff',
             '& fieldset': {
-              borderColor: '#27272a',
+              borderColor: '#d1d5db',
             },
             '&:hover fieldset': {
-              borderColor: '#52525b',
+              borderColor: '#09090b',
             },
             '&.Mui-focused fieldset': {
-              borderColor: '#f8fafc',
-              borderWidth: '1px',
+              borderColor: '#09090b',
+              borderWidth: '1.5px',
             },
           },
         },

@@ -19,11 +19,11 @@ export const ComplaintTimeline: React.FC<ComplaintTimelineProps> = ({ timeline }
   }, [timeline]);
 
   if (!timeline || timeline.length === 0) {
-    return <Typography variant="body2" sx={{ color: '#a1a1aa' }}>No activity history logged yet.</Typography>;
+    return <Typography variant="body2" sx={{ color: '#52525b' }}>No activity history logged yet.</Typography>;
   }
 
   return (
-    <Box className="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-zinc-800">
+    <Box className="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-zinc-300">
       {timeline.map((event, idx) => {
         const isLatest = idx === 0;
 
@@ -41,9 +41,9 @@ export const ComplaintTimeline: React.FC<ComplaintTimelineProps> = ({ timeline }
                 justifyContent: 'center',
                 borderRadius: '2px',
                 border: '1px solid',
-                borderColor: isLatest ? '#f8fafc' : '#3f3f46',
-                backgroundColor: isLatest ? '#f8fafc' : '#09090b',
-                color: isLatest ? '#09090b' : '#a1a1aa',
+                borderColor: isLatest ? '#09090b' : '#9ca3af',
+                backgroundColor: isLatest ? '#09090b' : '#ffffff',
+                color: isLatest ? '#ffffff' : '#09090b',
               }}
             >
               <Clock className="w-3.5 h-3.5" />
@@ -55,22 +55,23 @@ export const ComplaintTimeline: React.FC<ComplaintTimelineProps> = ({ timeline }
               sx={{
                 flex: 1,
                 p: 2.5,
-                backgroundColor: '#121215',
-                borderColor: '#27272a',
+                backgroundColor: '#ffffff',
+                borderColor: '#e2e0d8',
                 borderRadius: '2px',
+                transition: 'border-color 0.2s ease',
                 '&:hover': {
-                  borderColor: '#52525b',
+                  borderColor: '#09090b',
                 },
               }}
             >
               <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 1, mb: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#09090b' }}>
                     {event.title}
                   </Typography>
                   <StatusBadge status={event.status} size="small" showIcon={false} />
                 </Box>
-                <Typography variant="caption" sx={{ color: '#71717a', fontFamily: 'monospace' }}>
+                <Typography variant="caption" sx={{ color: '#71717a', fontFamily: 'monospace', fontWeight: 600 }}>
                   {new Date(event.timestamp).toLocaleString(undefined, {
                     dateStyle: 'medium',
                     timeStyle: 'short',
@@ -78,7 +79,7 @@ export const ComplaintTimeline: React.FC<ComplaintTimelineProps> = ({ timeline }
                 </Typography>
               </Box>
 
-              <Typography variant="body2" sx={{ color: '#a1a1aa', fontSize: '0.8125rem', mb: 2, leading: 1.6 }}>
+              <Typography variant="body2" sx={{ color: '#52525b', fontSize: '0.8125rem', mb: 2, leading: 1.6 }}>
                 {event.description}
               </Typography>
 
@@ -87,23 +88,23 @@ export const ComplaintTimeline: React.FC<ComplaintTimelineProps> = ({ timeline }
                   sx={{
                     p: 1.5,
                     borderRadius: '2px',
-                    backgroundColor: '#09090b',
-                    border: '1px solid #27272a',
+                    backgroundColor: '#f5f3ee',
+                    border: '1px solid #e2e0d8',
                     fontFamily: 'monospace',
                     fontSize: '0.75rem',
-                    color: '#e4e4e7',
+                    color: '#18181b',
                     mb: 2,
                   }}
                 >
-                  <strong className="text-zinc-100 uppercase">NOTES: </strong>
+                  <strong className="text-zinc-950 uppercase font-black">NOTES: </strong>
                   {event.notes}
                 </Box>
               )}
 
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', pt: 1.5, borderTop: '1px solid #27272a', fontSize: '0.75rem', color: '#71717a' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', pt: 1.5, borderTop: '1px solid #e2e0d8', fontSize: '0.75rem', color: '#52525b' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                  <User className="w-3.5 h-3.5 text-zinc-500" />
-                  <span>{event.actor.name}</span>
+                  <User className="w-3.5 h-3.5 text-zinc-600" />
+                  <span className="font-semibold text-zinc-900">{event.actor.name}</span>
                 </Box>
                 <Typography
                   variant="overline"
@@ -113,9 +114,9 @@ export const ComplaintTimeline: React.FC<ComplaintTimelineProps> = ({ timeline }
                     px: 1,
                     py: 0.25,
                     borderRadius: '2px',
-                    backgroundColor: '#18181b',
-                    color: '#a1a1aa',
-                    border: '1px solid #27272a',
+                    backgroundColor: '#f5f3ee',
+                    color: '#09090b',
+                    border: '1px solid #e2e0d8',
                   }}
                 >
                   {event.actor.role}

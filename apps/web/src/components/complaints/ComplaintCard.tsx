@@ -36,14 +36,15 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       elevation={0}
       sx={{
         borderRadius: '2px',
-        backgroundColor: '#121215',
-        borderColor: '#27272a',
+        backgroundColor: '#ffffff',
+        borderColor: '#e2e0d8',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        transition: 'border-color 0.2s ease',
+        transition: 'all 0.2s ease-in-out',
         '&:hover': {
-          borderColor: '#52525b',
+          borderColor: '#09090b',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
         },
       }}
     >
@@ -58,11 +59,11 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           sx={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to top, rgba(9,9,11,0.9), transparent)',
+            background: 'linear-gradient(to top, rgba(9,9,11,0.85), transparent)',
           }}
         />
 
-        <Box sx={{ position: 'absolute', top: 12, left: 12, zIndex: 10, display: 'flex', gap: 1 }}>
+        <Box sx={{ position: 'absolute', top: 12, left: 12, zIndex: 10 }}>
           <CategoryBadge category={complaint.category} size="small" />
         </Box>
 
@@ -86,13 +87,14 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
             variant="caption"
             sx={{
               fontFamily: 'monospace',
-              color: '#e4e4e7',
+              color: '#ffffff',
               backgroundColor: 'rgba(9,9,11,0.9)',
               px: 1,
               py: 0.25,
               borderRadius: '2px',
-              border: '1px solid #27272a',
+              border: '1px solid rgba(255,255,255,0.2)',
               fontSize: '0.6875rem',
+              fontWeight: 700,
             }}
           >
             {complaint.id}
@@ -102,13 +104,13 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       </Box>
 
       {/* Card Body */}
-      <Box sx={{ p: 2.5, flex: 1, display: 'flex', flexDirection: 'column', justifyBetween: 'space-between', gap: 2 }}>
+      <Box sx={{ p: 2.5, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 2 }}>
         <Box>
           <Typography
             variant="subtitle1"
             sx={{
               fontWeight: 800,
-              color: '#f8fafc',
+              color: '#09090b',
               lineHeight: 1.3,
               display: '-webkit-box',
               WebkitLineClamp: 1,
@@ -121,7 +123,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           <Typography
             variant="body2"
             sx={{
-              color: '#a1a1aa',
+              color: '#52525b',
               mt: 1,
               fontSize: '0.8125rem',
               lineHeight: 1.5,
@@ -135,20 +137,20 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           </Typography>
         </Box>
 
-        <Box sx={{ pt: 1.5, borderTop: '1px solid #27272a', mt: 'auto', spaceY: 1 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#d4d4d8', fontSize: '0.75rem', mb: 1 }}>
-            <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
-            <span className="truncate">{complaint.address}</span>
+        <Box sx={{ pt: 1.5, borderTop: '1px solid #e2e0d8', mt: 'auto' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#3f3f46', fontSize: '0.75rem', mb: 1 }}>
+            <MapPin className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
+            <span className="truncate font-medium">{complaint.address}</span>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', color: '#71717a', fontSize: '0.75rem', pt: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
               <User className="w-3.5 h-3.5 text-zinc-500" />
-              <span>{complaint.reporter.name}</span>
+              <span className="font-semibold text-zinc-800">{complaint.reporter.name}</span>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
               <Calendar className="w-3.5 h-3.5 text-zinc-500" />
-              <span>{formattedDate}</span>
+              <span className="font-mono text-zinc-600">{formattedDate}</span>
             </Box>
           </Box>
         </Box>
@@ -160,7 +162,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             pt: 1.5,
-            borderTop: '1px solid #27272a',
+            borderTop: '1px solid #e2e0d8',
           }}
         >
           <button
@@ -168,19 +170,19 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
               e.preventDefault();
               if (onUpvote) onUpvote(complaint.id);
             }}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-bold transition-colors border ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-bold transition-all ${
               isUpvoted
-                ? 'bg-zinc-100 text-zinc-950 border-white'
-                : 'bg-zinc-900 text-zinc-300 border-zinc-700 hover:text-white hover:bg-zinc-800'
+                ? 'bg-zinc-950 text-white border border-zinc-950'
+                : 'bg-zinc-100 text-zinc-800 border border-zinc-300 hover:bg-zinc-200'
             }`}
           >
-            <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? 'fill-zinc-950 text-zinc-950' : ''}`} />
+            <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? 'fill-white text-white' : ''}`} />
             <span>{complaint.upvotesCount} UPVOTES</span>
           </button>
 
           <Link
             href={`/complaints/${complaint.id}`}
-            className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-zinc-100 hover:text-white transition-colors"
+            className="flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-zinc-950 hover:text-black transition-colors"
           >
             <span>DOSSIER</span>
             <ArrowRight className="w-3.5 h-3.5" />

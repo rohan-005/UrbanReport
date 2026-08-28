@@ -23,7 +23,7 @@ export const FloatingBottomNav: React.FC = () => {
     { href: '/report', label: 'Report', icon: Plus, highlight: true },
     { href: '/complaints', label: 'Feed', icon: ListFilter },
     { href: '/profile', label: 'Profile', icon: User },
-    { href: '/admin', label: 'Admin', icon: ShieldCheck, admin: true },
+    { href: '/admin', label: 'Admin', icon: ShieldCheck },
   ];
 
   const isActive = (path: string) => {
@@ -32,28 +32,27 @@ export const FloatingBottomNav: React.FC = () => {
   };
 
   useEffect(() => {
-    // Check prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion || !navContainerRef.current) return;
 
     gsap.fromTo(
       navContainerRef.current,
-      { y: 40, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', delay: 0.2 }
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.4, ease: 'power3.out', delay: 0.15 }
     );
   }, []);
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[92vw] sm:max-w-max pointer-events-auto">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[94vw] sm:max-w-max pointer-events-auto">
       <nav
         ref={navContainerRef}
-        className="flex items-center gap-1.5 p-1.5 rounded bg-zinc-950/95 border border-zinc-800 shadow-2xl backdrop-blur-md"
-        aria-label="Bottom Floating Command Dock"
+        className="flex items-center gap-1.5 p-1.5 rounded-sm bg-zinc-950/95 border border-zinc-800 shadow-2xl backdrop-blur-md"
+        aria-label="Floating Bottom Navigation Control Dock"
       >
         {/* Brand Mark Minimal Emblem */}
         <Link
           href="/"
-          className="hidden sm:flex items-center gap-2 px-3 py-2 mr-1 border-r border-zinc-800 text-xs font-black tracking-widest text-zinc-100 uppercase"
+          className="hidden sm:flex items-center gap-2 px-3 py-2 mr-1 border-r border-zinc-800 text-xs font-black tracking-widest text-zinc-100 uppercase hover:text-white transition-colors"
         >
           <span className="w-2 h-2 rounded-none bg-zinc-100" />
           <span>URBAN</span>
@@ -70,10 +69,10 @@ export const FloatingBottomNav: React.FC = () => {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded transition-all ${
+                  className={`flex items-center gap-1.5 px-3.5 sm:px-4 py-2 text-xs font-black uppercase tracking-wider rounded-sm transition-all duration-200 ${
                     active
-                      ? 'bg-zinc-100 text-zinc-950 border border-white shadow-sm'
-                      : 'bg-zinc-100 text-zinc-950 hover:bg-zinc-200 border border-zinc-200'
+                      ? 'bg-zinc-100 text-zinc-950 border border-white shadow-md scale-[1.02]'
+                      : 'bg-zinc-100 text-zinc-950 hover:bg-white border border-zinc-200 shadow-sm'
                   }`}
                 >
                   <Icon className="w-4 h-4 stroke-[2.5]" />
@@ -86,9 +85,9 @@ export const FloatingBottomNav: React.FC = () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex items-center gap-2 px-3 py-2 text-xs font-medium uppercase tracking-wider rounded transition-all ${
+                className={`relative flex items-center gap-2 px-2.5 sm:px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-sm transition-all duration-200 ${
                   active
-                    ? 'bg-zinc-800/90 text-zinc-100 font-bold border border-zinc-700'
+                    ? 'bg-zinc-800/90 text-zinc-100 border border-zinc-700'
                     : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 border border-transparent'
                 }`}
               >

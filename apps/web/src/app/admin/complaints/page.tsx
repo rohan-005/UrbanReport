@@ -42,14 +42,14 @@ export default function AdminComplaintsPage() {
   }, [filters]);
 
   return (
-    <Box sx={{ py: 6, backgroundColor: '#09090b', flex: 1, pb: 12 }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
       <Container maxWidth="xl">
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #27272a', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
           <Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 0.5 }}>
+            <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
               Admin Resolution Queue
             </Typography>
-            <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+            <Typography variant="body2" sx={{ color: '#52525b' }}>
               Multi-criteria filter and dispatch control table.
             </Typography>
           </Box>
@@ -60,7 +60,7 @@ export default function AdminComplaintsPage() {
         </Box>
 
         {/* Filter Controls */}
-        <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', mb: 4 }}>
+        <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '2fr 1fr 1fr 1fr' }, gap: 2 }}>
             <TextField
               size="small"
@@ -70,7 +70,7 @@ export default function AdminComplaintsPage() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Search className="w-4 h-4 text-zinc-400" />
+                    <Search className="w-4 h-4 text-zinc-500" />
                   </InputAdornment>
                 ),
               }}

@@ -46,15 +46,15 @@ export default function ComplaintsPage() {
   };
 
   return (
-    <Box sx={{ py: 6, backgroundColor: '#09090b', flex: 1, pb: 12 }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
       <Container maxWidth="xl">
         {/* Header */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #27272a', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
           <Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 0.5 }}>
+            <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
               Civic Incident Catalog
             </Typography>
-            <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+            <Typography variant="body2" sx={{ color: '#52525b' }}>
               Editorial issue feed of reported infrastructure & environmental defects.
             </Typography>
           </Box>

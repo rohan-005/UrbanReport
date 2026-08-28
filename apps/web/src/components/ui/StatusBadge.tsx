@@ -1,6 +1,5 @@
 import React from 'react';
 import { ComplaintStatus } from '@/lib/types';
-import Chip from '@mui/material/Chip';
 import Box from '@mui/material/Box';
 
 interface StatusBadgeProps {
@@ -13,14 +12,14 @@ const statusConfig: Record<
   ComplaintStatus,
   { label: string; bg: string; text: string; border: string }
 > = {
-  SUBMITTED: { label: 'Submitted', bg: '#18181b', text: '#e4e4e7', border: '#27272a' },
-  UNDER_REVIEW: { label: 'Under Review', bg: '#27272a', text: '#f4f4f5', border: '#3f3f46' },
-  VERIFIED: { label: 'Verified', bg: '#18181b', text: '#ffffff', border: '#52525b' },
-  ASSIGNED: { label: 'Assigned', bg: '#27272a', text: '#e4e4e7', border: '#3f3f46' },
-  IN_PROGRESS: { label: 'In Progress', bg: '#09090b', text: '#ffffff', border: '#a1a1aa' },
-  RESOLVED: { label: 'Resolved', bg: '#f8fafc', text: '#09090b', border: '#ffffff' },
-  REOPENED: { label: 'Reopened', bg: '#27272a', text: '#f4f4f5', border: '#71717a' },
-  REJECTED: { label: 'Rejected', bg: '#09090b', text: '#a1a1aa', border: '#3f3f46' },
+  SUBMITTED: { label: 'Submitted', bg: '#f5f3ee', text: '#18181b', border: '#d1d5db' },
+  UNDER_REVIEW: { label: 'Under Review', bg: '#e2e0d8', text: '#09090b', border: '#9ca3af' },
+  VERIFIED: { label: 'Verified', bg: '#18181b', text: '#ffffff', border: '#18181b' },
+  ASSIGNED: { label: 'Assigned', bg: '#27272a', text: '#ffffff', border: '#27272a' },
+  IN_PROGRESS: { label: 'In Progress', bg: '#09090b', text: '#ffffff', border: '#09090b' },
+  RESOLVED: { label: 'Resolved', bg: '#16a34a', text: '#ffffff', border: '#15803d' },
+  REOPENED: { label: 'Reopened', bg: '#d97706', text: '#ffffff', border: '#b45309' },
+  REJECTED: { label: 'Rejected', bg: '#f3f4f6', text: '#6b7280', border: '#d1d5db' },
 };
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({
@@ -38,7 +37,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
         px: size === 'small' ? 1 : 1.5,
         py: size === 'small' ? 0.25 : 0.5,
         fontSize: size === 'small' ? '0.6875rem' : '0.75rem',
-        fontWeight: 700,
+        fontWeight: 800,
         letterSpacing: '0.06em',
         textTransform: 'uppercase',
         borderRadius: '2px',

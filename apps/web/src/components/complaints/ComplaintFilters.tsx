@@ -48,8 +48,8 @@ export const ComplaintFiltersBar: React.FC<ComplaintFiltersProps> = ({
       elevation={0}
       sx={{
         p: 2.5,
-        backgroundColor: '#121215',
-        borderColor: '#27272a',
+        backgroundColor: '#ffffff',
+        borderColor: '#e2e0d8',
         borderRadius: '2px',
         display: 'flex',
         flexDirection: 'column',
@@ -66,7 +66,7 @@ export const ComplaintFiltersBar: React.FC<ComplaintFiltersProps> = ({
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Search className="w-4 h-4 text-zinc-400" />
+                <Search className="w-4 h-4 text-zinc-500" />
               </InputAdornment>
             ),
           }}
@@ -122,8 +122,8 @@ export const ComplaintFiltersBar: React.FC<ComplaintFiltersProps> = ({
       </Box>
 
       {/* Category Quick Select Pills */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, overflowX: 'auto', pt: 1, borderTop: '1px solid #27272a' }}>
-        <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider shrink-0 mr-1">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, overflowX: 'auto', pt: 1.5, borderTop: '1px solid #e2e0d8' }}>
+        <span className="text-[11px] font-black text-zinc-950 uppercase tracking-wider shrink-0 mr-1">
           Quick Filter:
         </span>
         {categories.map((cat) => (
@@ -132,8 +132,8 @@ export const ComplaintFiltersBar: React.FC<ComplaintFiltersProps> = ({
             onClick={() => onChange({ ...filters, category: cat })}
             className={`text-xs px-2.5 py-1 rounded-none uppercase font-bold tracking-wider whitespace-nowrap transition-colors border ${
               filters.category === cat
-                ? 'bg-zinc-100 text-zinc-950 border-white'
-                : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-200'
+                ? 'bg-zinc-950 text-white border-zinc-950'
+                : 'bg-zinc-100 text-zinc-700 border-zinc-300 hover:bg-zinc-200 hover:text-zinc-950'
             }`}
           >
             {cat === 'ALL' ? 'All Issues' : cat}

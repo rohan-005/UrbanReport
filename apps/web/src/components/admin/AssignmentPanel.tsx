@@ -71,17 +71,17 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
       onSubmit={handleSubmit}
       sx={{
         p: 3,
-        backgroundColor: '#121215',
-        borderColor: '#27272a',
+        backgroundColor: '#ffffff',
+        borderColor: '#e2e0d8',
         borderRadius: '2px',
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1.5, borderBottom: '1px solid #27272a' }}>
-        <Building2 className="w-5 h-5 text-zinc-100" />
-        <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc', fontSize: '0.9375rem' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1.5, borderBottom: '1px solid #e2e0d8' }}>
+        <Building2 className="w-5 h-5 text-zinc-950" />
+        <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', fontSize: '0.9375rem' }}>
           Department Assignment Desk
         </Typography>
       </Box>
@@ -139,11 +139,11 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
         startIcon={<UserCheck className="w-4 h-4" />}
         sx={{
           mt: 1,
-          backgroundColor: '#f8fafc',
-          color: '#09090b',
+          backgroundColor: '#09090b',
+          color: '#ffffff',
           fontWeight: 800,
           '&:hover': {
-            backgroundColor: '#e2e8f0',
+            backgroundColor: '#18181b',
           },
         }}
       >

@@ -13,12 +13,10 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { 
   Send, 
-  MapPin, 
   CheckCircle2, 
   ArrowRight,
   Construction,
@@ -131,22 +129,22 @@ export default function ReportPage() {
   };
 
   return (
-    <Box sx={{ py: 8, backgroundColor: '#09090b', flex: 1 }}>
+    <Box sx={{ py: 8, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
       <Container maxWidth="md">
         <Box sx={{ mb: 6 }}>
-          <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 1 }}>
+          <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 1 }}>
             Report a Civic Incident
           </Typography>
-          <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+          <Typography variant="body2" sx={{ color: '#52525b' }}>
             Pinpoint infrastructure issues for immediate municipal dispatch.
           </Typography>
         </Box>
 
         <form onSubmit={handleSubmit}>
-          <Box sx={{ spaceY: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {/* Step 1: Category */}
-            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc', mb: 3 }}>
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 3 }}>
                 1. Select Issue Category
               </Typography>
 
@@ -163,20 +161,21 @@ export default function ReportPage() {
                           p: 2,
                           borderRadius: '2px',
                           border: '1px solid',
-                          borderColor: isSelected ? '#f8fafc' : '#27272a',
-                          backgroundColor: isSelected ? '#18181b' : '#09090b',
+                          borderColor: isSelected ? '#09090b' : '#e2e0d8',
+                          backgroundColor: isSelected ? '#09090b' : '#f5f3ee',
+                          color: isSelected ? '#ffffff' : '#09090b',
                           cursor: 'pointer',
                           transition: 'all 0.15s ease',
-                          '&:hover': { borderColor: '#52525b' },
+                          '&:hover': { borderColor: '#09090b' },
                         }}
                       >
-                        <Box sx={{ color: isSelected ? '#ffffff' : '#a1a1aa', mb: 1 }}>
+                        <Box sx={{ color: isSelected ? '#ffffff' : '#09090b', mb: 1 }}>
                           <Icon className="w-5 h-5" />
                         </Box>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: isSelected ? '#ffffff' : '#e4e4e7', fontSize: '0.875rem' }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: isSelected ? '#ffffff' : '#09090b', fontSize: '0.875rem' }}>
                           {cat.name}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#71717a', fontSize: '0.6875rem', display: 'block', mt: 0.5, lineHeight: 1.2 }}>
+                        <Typography variant="caption" sx={{ color: isSelected ? '#d4d4d8' : '#52525b', fontSize: '0.6875rem', display: 'block', mt: 0.5, lineHeight: 1.2 }}>
                           {cat.description}
                         </Typography>
                       </Box>
@@ -187,8 +186,8 @@ export default function ReportPage() {
             </Paper>
 
             {/* Step 2: Details */}
-            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', spaceY: 3 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc', mb: 3 }}>
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 3 }}>
                 2. Problem Details & Severity
               </Typography>
 
@@ -216,7 +215,7 @@ export default function ReportPage() {
                 />
 
                 <Box>
-                  <Typography variant="overline" sx={{ color: '#a1a1aa', fontWeight: 800, mb: 1.5, display: 'block' }}>
+                  <Typography variant="overline" sx={{ color: '#09090b', fontWeight: 900, mb: 1.5, display: 'block' }}>
                     Assess Severity Level
                   </Typography>
 
@@ -231,8 +230,8 @@ export default function ReportPage() {
                               p: 2,
                               borderRadius: '2px',
                               border: '1px solid',
-                              borderColor: isSelected ? '#f8fafc' : '#27272a',
-                              backgroundColor: isSelected ? '#18181b' : '#09090b',
+                              borderColor: isSelected ? '#09090b' : '#e2e0d8',
+                              backgroundColor: isSelected ? '#f5f3ee' : '#ffffff',
                               cursor: 'pointer',
                               height: '100%',
                             }}
@@ -240,7 +239,7 @@ export default function ReportPage() {
                             <Box sx={{ mb: 1 }}>
                               <SeverityBadge severity={sev.value} size="small" />
                             </Box>
-                            <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.6875rem', display: 'block', lineHeight: 1.3 }}>
+                            <Typography variant="caption" sx={{ color: '#52525b', fontSize: '0.6875rem', display: 'block', lineHeight: 1.3, fontWeight: 600 }}>
                               {sev.desc}
                             </Typography>
                           </Box>
@@ -253,8 +252,8 @@ export default function ReportPage() {
             </Paper>
 
             {/* Step 3: Location */}
-            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc', mb: 3 }}>
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 3 }}>
                 3. Geospatial Location
               </Typography>
 
@@ -281,8 +280,8 @@ export default function ReportPage() {
             </Paper>
 
             {/* Step 4: Media Upload */}
-            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc', mb: 3 }}>
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 3 }}>
                 4. Photo Evidence
               </Typography>
 
@@ -290,8 +289,8 @@ export default function ReportPage() {
             </Paper>
 
             {/* Submit Action */}
-            <Paper elevation={0} sx={{ p: 3, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
-              <Typography variant="caption" sx={{ color: '#71717a' }}>
+            <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
+              <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>
                 Generates a tracking ID and notifies ward control.
               </Typography>
 
@@ -302,11 +301,11 @@ export default function ReportPage() {
                 disabled={submitting}
                 startIcon={<Send className="w-4 h-4" />}
                 sx={{
-                  backgroundColor: '#f8fafc',
-                  color: '#09090b',
+                  backgroundColor: '#09090b',
+                  color: '#ffffff',
                   fontWeight: 900,
                   px: 4,
-                  '&:hover': { backgroundColor: '#e2e8f0' },
+                  '&:hover': { backgroundColor: '#18181b' },
                 }}
               >
                 Submit Report
@@ -322,19 +321,19 @@ export default function ReportPage() {
           title="Report Successfully Dispatched"
         >
           {createdComplaint && (
-            <Box sx={{ textCenter: 'center', py: 2, spaceY: 3 }}>
+            <Box sx={{ textCenter: 'center', py: 2 }}>
               <Box sx={{ display: 'flex', justifyCenter: 'center', mb: 2 }}>
-                <CheckCircle2 className="w-12 h-12 text-zinc-100" />
+                <CheckCircle2 className="w-12 h-12 text-zinc-950" />
               </Box>
 
-              <Typography variant="overline" sx={{ color: '#a1a1aa', fontWeight: 800 }}>
+              <Typography variant="overline" sx={{ color: '#52525b', fontWeight: 900 }}>
                 TRACKING REFERENCE ID
               </Typography>
-              <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', fontFamily: 'monospace' }}>
+              <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', fontFamily: 'monospace', my: 1 }}>
                 {createdComplaint.id}
               </Typography>
 
-              <Typography variant="body2" sx={{ color: '#a1a1aa', mt: 2, mb: 4 }}>
+              <Typography variant="body2" sx={{ color: '#52525b', mt: 2, mb: 4 }}>
                 Your report has been queued for municipal triage.
               </Typography>
 

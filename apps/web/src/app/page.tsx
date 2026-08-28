@@ -63,9 +63,9 @@ export default function LandingHomePage() {
   }, []);
 
   return (
-    <Box sx={{ backgroundColor: '#09090b', color: '#f8fafc', flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ backgroundColor: '#f5f3ee', color: '#09090b', flex: 1, display: 'flex', flexDirection: 'column' }}>
       {/* Editorial Hero Header */}
-      <Box sx={{ borderBottom: '1px solid #27272a', py: { xs: 6, md: 10 }, backgroundColor: '#09090b' }}>
+      <Box sx={{ borderBottom: '1px solid #e2e0d8', py: { xs: 6, md: 10 }, backgroundColor: '#f5f3ee' }}>
         <Container maxWidth="xl">
           <Grid container spacing={6} alignItems="center">
             {/* Left Content */}
@@ -79,17 +79,18 @@ export default function LandingHomePage() {
                     px: 1.5,
                     py: 0.5,
                     borderRadius: '2px',
-                    backgroundColor: '#18181b',
-                    border: '1px solid #27272a',
-                    color: '#a1a1aa',
+                    backgroundColor: '#ffffff',
+                    border: '1px solid #d1d5db',
+                    color: '#09090b',
                     fontSize: '0.6875rem',
                     fontWeight: 800,
                     letterSpacing: '0.08em',
                     textTransform: 'uppercase',
                     mb: 2,
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
                   }}
                 >
-                  <span className="w-1.5 h-1.5 bg-zinc-100 rounded-none inline-block" />
+                  <span className="w-1.5 h-1.5 bg-zinc-950 rounded-none inline-block" />
                   <span>Geospatial Civic Intelligence</span>
                 </Box>
 
@@ -98,7 +99,7 @@ export default function LandingHomePage() {
                   sx={{
                     fontSize: { xs: '2.5rem', sm: '3.75rem', lg: '4.25rem' },
                     fontWeight: 900,
-                    color: '#f8fafc',
+                    color: '#09090b',
                     letterSpacing: '-0.03em',
                     lineHeight: 1.05,
                     mb: 2,
@@ -110,8 +111,8 @@ export default function LandingHomePage() {
                 <Typography
                   variant="h5"
                   sx={{
-                    color: '#e4e4e7',
-                    fontWeight: 700,
+                    color: '#27272a',
+                    fontWeight: 800,
                     fontSize: { xs: '1.125rem', sm: '1.35rem' },
                     lineHeight: 1.4,
                     mb: 3,
@@ -123,7 +124,7 @@ export default function LandingHomePage() {
                 <Typography
                   variant="body1"
                   sx={{
-                    color: '#a1a1aa',
+                    color: '#52525b',
                     fontSize: '0.9375rem',
                     lineHeight: 1.6,
                     mb: 4,
@@ -140,13 +141,13 @@ export default function LandingHomePage() {
                       size="large"
                       startIcon={<Plus className="w-4 h-4 stroke-[3]" />}
                       sx={{
-                        backgroundColor: '#f8fafc',
-                        color: '#09090b',
+                        backgroundColor: '#09090b',
+                        color: '#ffffff',
                         fontWeight: 900,
                         px: 3.5,
                         py: 1.25,
                         borderRadius: '2px',
-                        '&:hover': { backgroundColor: '#e2e8f0' },
+                        '&:hover': { backgroundColor: '#18181b' },
                       }}
                     >
                       Report an Issue
@@ -159,13 +160,13 @@ export default function LandingHomePage() {
                       size="large"
                       startIcon={<Compass className="w-4 h-4" />}
                       sx={{
-                        borderColor: '#27272a',
-                        color: '#f8fafc',
+                        borderColor: '#d1d5db',
+                        color: '#09090b',
                         fontWeight: 800,
                         px: 3.5,
                         py: 1.25,
                         borderRadius: '2px',
-                        '&:hover': { borderColor: '#52525b', backgroundColor: '#18181b' },
+                        '&:hover': { borderColor: '#09090b', backgroundColor: '#ebe7df' },
                       }}
                     >
                       Explore Map
@@ -174,28 +175,28 @@ export default function LandingHomePage() {
                 </Box>
 
                 {stats && (
-                  <Grid container spacing={2} sx={{ pt: 4, mt: 2, borderTop: '1px solid #27272a' }}>
+                  <Grid container spacing={2} sx={{ pt: 4, mt: 2, borderTop: '1px solid #e2e0d8' }}>
                     <Grid item xs={4}>
-                      <Typography variant="h4" sx={{ fontWeight: 900, color: '#f8fafc' }}>
+                      <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b' }}>
                         {stats.total}+
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700 }}>
+                      <Typography variant="caption" sx={{ color: '#52525b', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 800 }}>
                         Reports Filed
                       </Typography>
                     </Grid>
                     <Grid item xs={4}>
-                      <Typography variant="h4" sx={{ fontWeight: 900, color: '#ffffff' }}>
+                      <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b' }}>
                         {stats.resolved}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700 }}>
+                      <Typography variant="caption" sx={{ color: '#52525b', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 800 }}>
                         Resolved
                       </Typography>
                     </Grid>
                     <Grid item xs={4}>
-                      <Typography variant="h4" sx={{ fontWeight: 900, color: '#e4e4e7' }}>
+                      <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b' }}>
                         {stats.inProgress}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700 }}>
+                      <Typography variant="caption" sx={{ color: '#52525b', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 800 }}>
                         Active Work
                       </Typography>
                     </Grid>
@@ -210,10 +211,11 @@ export default function LandingHomePage() {
                 elevation={0}
                 sx={{
                   p: 1.5,
-                  backgroundColor: '#121215',
-                  borderColor: '#27272a',
+                  backgroundColor: '#ffffff',
+                  borderColor: '#e2e0d8',
                   borderRadius: '2px',
                   position: 'relative',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.04)',
                 }}
               >
                 <Box
@@ -223,22 +225,22 @@ export default function LandingHomePage() {
                     justifyContent: 'space-between',
                     px: 2,
                     py: 1,
-                    borderBottom: '1px solid #27272a',
+                    borderBottom: '1px solid #e2e0d8',
                     mb: 1.5,
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <MapPin className="w-4 h-4 text-zinc-100" />
-                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#f8fafc', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                    <MapPin className="w-4 h-4 text-zinc-950" />
+                    <Typography variant="caption" sx={{ fontWeight: 900, color: '#09090b', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                       City Geospatial Canvas
                     </Typography>
                   </Box>
-                  <Link href="/map" className="text-xs font-bold text-zinc-100 uppercase tracking-wider hover:underline">
+                  <Link href="/map" className="text-xs font-bold text-zinc-950 uppercase tracking-wider hover:underline">
                     Fullscreen Map →
                   </Link>
                 </Box>
 
-                <Box sx={{ height: { xs: 340, sm: 440 }, width: '100%', borderRadius: '2px', overflow: 'hidden', border: '1px solid #27272a' }}>
+                <Box sx={{ height: { xs: 340, sm: 440 }, width: '100%', borderRadius: '2px', overflow: 'hidden', border: '1px solid #e2e0d8' }}>
                   <MapView complaints={complaints} zoom={12} interactive={true} />
                 </Box>
               </Paper>
@@ -248,14 +250,14 @@ export default function LandingHomePage() {
       </Box>
 
       {/* Category Grid */}
-      <Box sx={{ py: 10, borderBottom: '1px solid #27272a', backgroundColor: '#121215' }}>
+      <Box sx={{ py: 10, borderBottom: '1px solid #e2e0d8', backgroundColor: '#ffffff' }}>
         <Container maxWidth="xl">
           <FadeIn>
             <Box sx={{ textAlign: 'center', maxWidth: 600, mx: 'auto', mb: 6 }}>
-              <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 1 }}>
+              <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 1 }}>
                 Infrastructure Categories
               </Typography>
-              <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+              <Typography variant="body2" sx={{ color: '#52525b' }}>
                 Categorized issue tracking automatically dispatched to municipal sector units.
               </Typography>
             </Box>
@@ -266,29 +268,30 @@ export default function LandingHomePage() {
               const Icon = cat.icon;
               return (
                 <Grid item xs={6} sm={3} key={cat.name}>
-                  <FadeIn delay={idx * 0.05}>
+                  <FadeIn delay={idx * 0.04}>
                     <Link href={`/complaints?category=${cat.name}`} style={{ textDecoration: 'none' }}>
                       <Paper
                         elevation={0}
                         sx={{
                           p: 3,
-                          backgroundColor: '#09090b',
-                          borderColor: '#27272a',
+                          backgroundColor: '#f5f3ee',
+                          borderColor: '#e2e0d8',
                           borderRadius: '2px',
                           transition: 'all 0.2s ease',
                           '&:hover': {
-                            borderColor: '#52525b',
-                            backgroundColor: '#18181b',
+                            borderColor: '#09090b',
+                            backgroundColor: '#ffffff',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                           },
                         }}
                       >
-                        <Box sx={{ p: 1.5, borderRadius: '2px', backgroundColor: '#18181b', border: '1px solid #27272a', width: 'fit-content', color: '#f8fafc', mb: 2 }}>
+                        <Box sx={{ p: 1.5, borderRadius: '2px', backgroundColor: '#09090b', width: 'fit-content', color: '#ffffff', mb: 2 }}>
                           <Icon className="w-5 h-5" />
                         </Box>
-                        <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc', fontSize: '1rem', mb: 0.5 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', fontSize: '1rem', mb: 0.5 }}>
                           {cat.name}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#a1a1aa', fontFamily: 'monospace' }}>
+                        <Typography variant="caption" sx={{ color: '#52525b', fontFamily: 'monospace', fontWeight: 600 }}>
                           {cat.count}
                         </Typography>
                       </Paper>
@@ -302,14 +305,14 @@ export default function LandingHomePage() {
       </Box>
 
       {/* Recent Feed */}
-      <Box sx={{ py: 10, backgroundColor: '#09090b' }}>
+      <Box sx={{ py: 10, backgroundColor: '#f5f3ee' }}>
         <Container maxWidth="xl">
           <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 6 }}>
             <Box>
-              <Typography variant="h4" sx={{ fontWeight: 900, color: '#f8fafc' }}>
+              <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b' }}>
                 Recent Civic Dossiers
               </Typography>
-              <Typography variant="caption" sx={{ color: '#a1a1aa' }}>
+              <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>
                 Active infrastructure issues reported by citizens.
               </Typography>
             </Box>
@@ -323,7 +326,7 @@ export default function LandingHomePage() {
           <Grid container spacing={3}>
             {complaints.slice(0, 3).map((item, idx) => (
               <Grid item xs={12} md={4} key={item.id}>
-                <FadeIn delay={idx * 0.1}>
+                <FadeIn delay={idx * 0.08}>
                   <ComplaintCard complaint={item} />
                 </FadeIn>
               </Grid>

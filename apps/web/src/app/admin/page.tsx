@@ -12,7 +12,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { ShieldCheck, ListFilter, AlertTriangle, ArrowRight, RefreshCw } from 'lucide-react';
+import { ShieldCheck, ListFilter, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
@@ -37,15 +37,15 @@ export default function AdminDashboardPage() {
   const criticalComplaints = complaints.filter((c) => c.severity === 'CRITICAL');
 
   return (
-    <Box sx={{ py: 6, backgroundColor: '#09090b', flex: 1, pb: 12 }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
       <Container maxWidth="xl">
         {/* Header */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #27272a', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
           <Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 0.5 }}>
+            <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
               Municipal Operations Desk
             </Typography>
-            <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+            <Typography variant="body2" sx={{ color: '#52525b' }}>
               Real-time triage, departmental assignment, and resolution verification control.
             </Typography>
           </Box>
@@ -73,8 +73,8 @@ export default function AdminDashboardPage() {
                 elevation={0}
                 sx={{
                   p: 3,
-                  backgroundColor: '#450a0a',
-                  borderColor: '#991b1b',
+                  backgroundColor: '#fee2e2',
+                  borderColor: '#fca5a5',
                   borderRadius: '2px',
                   display: 'flex',
                   flexDirection: { xs: 'column', sm: 'row' },
@@ -84,12 +84,12 @@ export default function AdminDashboardPage() {
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <AlertTriangle className="w-6 h-6 text-red-400 animate-pulse shrink-0" />
+                  <AlertTriangle className="w-6 h-6 text-red-700 animate-pulse shrink-0" />
                   <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#fca5a5' }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#991b1b' }}>
                       {criticalComplaints.length} Critical Hazard Alert(s) Requiring Immediate Dispatch
                     </Typography>
-                    <Typography variant="caption" sx={{ color: '#fca5a5' }}>
+                    <Typography variant="caption" sx={{ color: '#b91c1c', fontWeight: 600 }}>
                       Emergency issues flagged with direct danger to human life or infrastructure.
                     </Typography>
                   </Box>
@@ -105,12 +105,12 @@ export default function AdminDashboardPage() {
             <Box sx={{ spaceY: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <ShieldCheck className="w-5 h-5 text-zinc-100" />
-                  <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+                  <ShieldCheck className="w-5 h-5 text-zinc-950" />
+                  <Typography variant="h6" sx={{ fontWeight: 900, color: '#09090b' }}>
                     Recent Incident Queue ({complaints.length})
                   </Typography>
                 </Box>
-                <Link href="/admin/complaints" className="text-xs font-bold uppercase tracking-wider text-zinc-100 hover:underline">
+                <Link href="/admin/complaints" className="text-xs font-black uppercase tracking-wider text-zinc-950 hover:underline">
                   Full Queue →
                 </Link>
               </Box>
