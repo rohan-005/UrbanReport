@@ -20,6 +20,8 @@ export type ComplaintStatus =
   | 'REOPENED'
   | 'REJECTED';
 
+export type UserRole = 'CITIZEN' | 'ADMIN' | 'OFFICER' | 'AUTHORITY';
+
 export interface TimelineEvent {
   id: string;
   status: ComplaintStatus;
@@ -28,7 +30,7 @@ export interface TimelineEvent {
   timestamp: string;
   actor: {
     name: string;
-    role: 'CITIZEN' | 'ADMIN' | 'OFFICER' | 'SYSTEM';
+    role: 'CITIZEN' | 'ADMIN' | 'OFFICER' | 'SYSTEM' | 'AUTHORITY';
   };
   notes?: string;
 }
@@ -48,15 +50,23 @@ export interface MediaItem {
   caption?: string;
 }
 
+export interface NotificationPreferences {
+  complaintUpdates: boolean;
+  resolutionNotifications: boolean;
+  assignmentUpdates: boolean;
+}
+
 export interface User {
   id: string;
   name: string;
   email: string;
   phone: string;
-  role: 'CITIZEN' | 'ADMIN' | 'OFFICER';
+  role: UserRole;
   aadhaarNumber?: string;
   isVerified?: boolean;
   avatarUrl?: string;
+  avatar?: string;
+  notificationPreferences?: NotificationPreferences;
 }
 
 export interface Complaint {

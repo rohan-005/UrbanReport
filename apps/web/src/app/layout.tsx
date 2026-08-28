@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { ThemeRegistry } from '@/components/providers/ThemeRegistry';
+import { AuthProvider } from '@/components/providers/AuthProvider';
 import { FloatingBottomNav } from '@/components/layout/FloatingBottomNav';
 import { Footer } from '@/components/layout/Footer';
 
@@ -19,9 +20,11 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-[#f5f3ee] text-[#09090b] antialiased min-h-screen flex flex-col font-sans">
         <ThemeRegistry>
-          <div className="flex-1 flex flex-col">{children}</div>
-          <Footer />
-          <FloatingBottomNav />
+          <AuthProvider>
+            <div className="flex-1 flex flex-col">{children}</div>
+            <Footer />
+            <FloatingBottomNav />
+          </AuthProvider>
         </ThemeRegistry>
       </body>
     </html>

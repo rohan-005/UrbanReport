@@ -3,5 +3,7 @@ packages:
   - 'services/*'
   - 'packages/*'
 allowBuilds:
+  '@nestjs/core': true
+  bcrypt: true
   esbuild: true
   unrs-resolver: true
