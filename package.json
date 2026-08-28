@@ -3,6 +3,9 @@
   "private": true,
   "scripts": {
     "dev": "turbo dev",
+    "dev:services": "concurrently -n users,complaints,media -c cyan,blue,magenta \"pnpm --filter @urbanreports/users start:dev\" \"pnpm --filter @urbanreports/complaints start:dev\" \"pnpm --filter @urbanreports/media start:dev\"",
+    "services:dev": "pnpm dev:services",
+    "dev:all": "concurrently -n web,users,complaints,media -c green,cyan,blue,magenta \"pnpm --filter @urbanreports/web dev\" \"pnpm --filter @urbanreports/users start:dev\" \"pnpm --filter @urbanreports/complaints start:dev\" \"pnpm --filter @urbanreports/media start:dev\"",
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
@@ -10,6 +13,7 @@
     "db:seed": "pnpm --filter @urbanreports/complaints db:seed"
   },
   "devDependencies": {
+    "concurrently": "^10.0.5",
     "turbo": "^2.4.0"
   },
   "packageManager": "pnpm@11.24.0"

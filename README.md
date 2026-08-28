@@ -51,14 +51,23 @@ pnpm install
 # 2. Build workspace
 pnpm build
 
-# 3. Start development servers
+# 3. Start all backend microservices concurrently (Users, Complaints, Media)
+pnpm dev:services
+
+# Or start all services + web frontend at once
+pnpm dev:all
+
+# Alternatively start services individually in separate terminals:
 # Terminal 1: Users Service (Port 3001)
 pnpm --filter @urbanreports/users start:dev
 
 # Terminal 2: Complaints Service (Port 3002)
 pnpm --filter @urbanreports/complaints start:dev
 
-# Terminal 3: Web App (Port 3000)
+# Terminal 3: Media Service (Port 3003)
+pnpm --filter @urbanreports/media start:dev
+
+# Terminal 4: Web App (Port 3000)
 pnpm --filter @urbanreports/web dev
 
 # Optional: Populate development seed complaints manually
