@@ -18,10 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-[#f5f3ee] text-[#09090b] antialiased min-h-screen flex flex-col font-sans">
+      <body className="bg-[#f5f3ee] text-[#09090b] antialiased min-h-screen flex flex-col font-sans overflow-x-hidden">
         <ThemeRegistry>
           <AuthProvider>
-            <div className="flex-1 flex flex-col">{children}</div>
+            <div className="flex-1 flex flex-col w-full relative">{children}</div>
             <Footer />
             <FloatingBottomNav />
           </AuthProvider>
