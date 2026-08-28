@@ -133,7 +133,7 @@ export default function LoginPage() {
           </div>
 
           <div className="pt-4 border-t border-slate-800 text-center text-xs text-slate-400">
-            Don't have an account yet?{' '}
+            Don&apos;t have an account yet?{' '}
             <Link href="/register" className="font-semibold text-sky-400 hover:underline">
               Register Citizen Account
             </Link>

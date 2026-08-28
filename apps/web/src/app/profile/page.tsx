@@ -211,7 +211,7 @@ export default function ProfilePage() {
           <div className="space-y-4">
             {complaints.length === 0 ? (
               <div className="p-8 text-center bg-slate-900 rounded-2xl border border-slate-800 text-slate-400">
-                You haven't submitted any complaints yet.
+                You haven&apos;t submitted any complaints yet.
               </div>
             ) : (
               complaints.map((item) => (
