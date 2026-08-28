@@ -4,7 +4,15 @@ import { Complaint } from '@/lib/types';
 import { StatusBadge } from '../ui/StatusBadge';
 import { SeverityBadge } from '../ui/SeverityBadge';
 import { CategoryBadge } from '../ui/CategoryBadge';
-import { Button } from '../ui/Button';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { ArrowRight, MapPin, Building2 } from 'lucide-react';
 
 interface AdminComplaintTableProps {
@@ -13,75 +21,72 @@ interface AdminComplaintTableProps {
 
 export const AdminComplaintTable: React.FC<AdminComplaintTableProps> = ({ complaints }) => {
   return (
-    <div className="w-full overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900 shadow-xl">
-      <table className="w-full text-left text-sm text-slate-300">
-        <thead className="bg-slate-950 text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-800">
-          <tr>
-            <th scope="col" className="py-3.5 px-4">Complaint ID</th>
-            <th scope="col" className="py-3.5 px-4">Title & Address</th>
-            <th scope="col" className="py-3.5 px-4">Category</th>
-            <th scope="col" className="py-3.5 px-4">Severity</th>
-            <th scope="col" className="py-3.5 px-4">Status</th>
-            <th scope="col" className="py-3.5 px-4">Assignment</th>
-            <th scope="col" className="py-3.5 px-4 text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-800/80">
+    <TableContainer component={Paper} elevation={0} sx={{ backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
+      <Table sx={{ minWidth: 650 }} aria-label="admin complaint queue table">
+        <TableHead sx={{ backgroundColor: '#09090b' }}>
+          <TableRow>
+            <TableCell sx={{ color: '#a1a1aa', fontWeight: 800, fontSize: '0.6875rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>ID</TableCell>
+            <TableCell sx={{ color: '#a1a1aa', fontWeight: 800, fontSize: '0.6875rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Title & Address</TableCell>
+            <TableCell sx={{ color: '#a1a1aa', fontWeight: 800, fontSize: '0.6875rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Category</TableCell>
+            <TableCell sx={{ color: '#a1a1aa', fontWeight: 800, fontSize: '0.6875rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Severity</TableCell>
+            <TableCell sx={{ color: '#a1a1aa', fontWeight: 800, fontSize: '0.6875rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Status</TableCell>
+            <TableCell sx={{ color: '#a1a1aa', fontWeight: 800, fontSize: '0.6875rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Department</TableCell>
+            <TableCell align="right" sx={{ color: '#a1a1aa', fontWeight: 800, fontSize: '0.6875rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Action</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {complaints.map((item) => (
-            <tr key={item.id} className="hover:bg-slate-800/40 transition-colors">
-              {/* ID */}
-              <td className="py-3.5 px-4 font-mono text-xs text-sky-400 font-bold whitespace-nowrap">
+            <TableRow key={item.id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, '&:hover': { backgroundColor: '#18181b' } }}>
+              <TableCell component="th" scope="row" sx={{ fontFamily: 'monospace', fontWeight: 800, color: '#f8fafc', fontSize: '0.75rem' }}>
                 {item.id}
-              </td>
+              </TableCell>
 
-              {/* Title & Address */}
-              <td className="py-3.5 px-4 max-w-xs">
-                <div className="font-semibold text-slate-100 line-clamp-1">{item.title}</div>
-                <div className="text-xs text-slate-400 flex items-center gap-1 mt-0.5 line-clamp-1">
-                  <MapPin className="w-3 h-3 text-slate-500 shrink-0" />
-                  <span>{item.address}</span>
-                </div>
-              </td>
+              <TableCell sx={{ maxWidth: 260 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#f8fafc', fontSize: '0.8125rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {item.title}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#a1a1aa', fontSize: '0.75rem', mt: 0.25 }}>
+                  <MapPin className="w-3 h-3 text-zinc-500 shrink-0" />
+                  <span className="truncate">{item.address}</span>
+                </Box>
+              </TableCell>
 
-              {/* Category */}
-              <td className="py-3.5 px-4 whitespace-nowrap">
-                <CategoryBadge category={item.category} size="sm" />
-              </td>
+              <TableCell>
+                <CategoryBadge category={item.category} size="small" />
+              </TableCell>
 
-              {/* Severity */}
-              <td className="py-3.5 px-4 whitespace-nowrap">
-                <SeverityBadge severity={item.severity} size="sm" />
-              </td>
+              <TableCell>
+                <SeverityBadge severity={item.severity} size="small" />
+              </TableCell>
 
-              {/* Status */}
-              <td className="py-3.5 px-4 whitespace-nowrap">
-                <StatusBadge status={item.status} size="sm" />
-              </td>
+              <TableCell>
+                <StatusBadge status={item.status} size="small" />
+              </TableCell>
 
-              {/* Assignment */}
-              <td className="py-3.5 px-4 text-xs whitespace-nowrap">
+              <TableCell sx={{ fontSize: '0.75rem', color: '#e4e4e7' }}>
                 {item.assignment ? (
-                  <div className="flex items-center gap-1.5 text-purple-300">
-                    <Building2 className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                    <Building2 className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
                     <span className="truncate max-w-[140px]">{item.assignment.department}</span>
-                  </div>
+                  </Box>
                 ) : (
-                  <span className="text-slate-500 italic">Unassigned</span>
+                  <span className="text-zinc-500 italic">Unassigned</span>
                 )}
-              </td>
+              </TableCell>
 
-              {/* Actions */}
-              <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                <Link href={`/admin/complaints/${item.id}`}>
-                  <Button size="sm" variant="outline" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                    Manage Desk
-                  </Button>
+              <TableCell align="right">
+                <Link
+                  href={`/admin/complaints/${item.id}`}
+                  className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-zinc-100 hover:text-white px-2.5 py-1 rounded bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 transition-colors"
+                >
+                  <span>ACTION</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };

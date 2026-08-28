@@ -1,23 +1,23 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Complaint, Category } from '@/lib/types';
 import { MapView } from '@/components/map/MapView';
 import { ComplaintCard } from '@/components/complaints/ComplaintCard';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { CategoryBadge } from '@/components/ui/CategoryBadge';
-import { Button } from '@/components/ui/Button';
-import { LoadingState } from '@/components/ui/LoadingState';
+import { FadeIn } from '@/components/motion/FadeIn';
+import { animateHeroTitle } from '@/lib/motion/gsap';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import { 
   MapPin, 
-  PlusCircle, 
+  Plus, 
   Compass, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Wrench, 
-  ShieldCheck, 
   ArrowRight,
   Construction,
   Trash2,
@@ -25,9 +25,7 @@ import {
   Waves,
   Droplet,
   Activity,
-  HelpCircle,
-  FileCheck,
-  TrendingUp
+  HelpCircle
 } from 'lucide-react';
 
 const categoryItems: { name: Category; count: string; icon: React.ElementType }[] = [
@@ -44,225 +42,295 @@ const categoryItems: { name: Category; count: string; icon: React.ElementType }[
 export default function LandingHomePage() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true);
       const data = await complaintRepository.getAllComplaints();
       const statsData = await complaintRepository.getStats();
       setComplaints(data);
       setStats(statsData);
-      setLoading(false);
     };
     loadData();
     const unsubscribe = complaintRepository.subscribe(() => loadData());
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (heroRef.current) {
+      animateHeroTitle(heroRef.current);
+    }
+  }, []);
+
   return (
-    <div className="flex-1 flex flex-col bg-slate-950 text-slate-100">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-slate-800 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 py-12 sm:py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Hero Left Content */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-950/80 border border-sky-800/60 text-sky-400 text-xs font-semibold">
-                <span className="w-2 h-2 rounded-full bg-sky-400 animate-ping" />
-                <span>Next-Gen Smart City Civic Platform</span>
-              </div>
+    <Box sx={{ backgroundColor: '#09090b', color: '#f8fafc', flex: 1, display: 'flex', flexDirection: 'column' }}>
+      {/* Editorial Hero Header */}
+      <Box sx={{ borderBottom: '1px solid #27272a', py: { xs: 6, md: 10 }, backgroundColor: '#09090b' }}>
+        <Container maxWidth="xl">
+          <Grid container spacing={6} alignItems="center">
+            {/* Left Content */}
+            <Grid item xs={12} lg={5}>
+              <Box ref={heroRef} sx={{ spaceY: 3 }}>
+                <Box
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    px: 1.5,
+                    py: 0.5,
+                    borderRadius: '2px',
+                    backgroundColor: '#18181b',
+                    border: '1px solid #27272a',
+                    color: '#a1a1aa',
+                    fontSize: '0.6875rem',
+                    fontWeight: 800,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    mb: 2,
+                  }}
+                >
+                  <span className="w-1.5 h-1.5 bg-zinc-100 rounded-none inline-block" />
+                  <span>Geospatial Civic Intelligence</span>
+                </Box>
 
-              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
-                Map-First Civic Reporting for{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-300">
-                  Cleaner & Safer Cities
-                </span>
-              </h1>
+                <Typography
+                  variant="h1"
+                  sx={{
+                    fontSize: { xs: '2.5rem', sm: '3.75rem', lg: '4.25rem' },
+                    fontWeight: 900,
+                    color: '#f8fafc',
+                    letterSpacing: '-0.03em',
+                    lineHeight: 1.05,
+                    mb: 2,
+                  }}
+                >
+                  URBANREPORTS
+                </Typography>
 
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
-                Spot a pothole, overflowing garbage, broken streetlight, or burst pipe? Pin the location, upload evidence, and track municipal repair progress transparently in real time.
-              </p>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    color: '#e4e4e7',
+                    fontWeight: 700,
+                    fontSize: { xs: '1.125rem', sm: '1.35rem' },
+                    lineHeight: 1.4,
+                    mb: 3,
+                  }}
+                >
+                  Report it. Track it. Improve your city.
+                </Typography>
 
-              <div className="flex flex-wrap items-center gap-4 pt-2">
-                <Link href="/report">
-                  <Button size="lg" variant="primary" leftIcon={<PlusCircle className="w-5 h-5" />}>
-                    Report an Issue
-                  </Button>
-                </Link>
-                <Link href="/map">
-                  <Button size="lg" variant="outline" leftIcon={<Compass className="w-5 h-5" />}>
-                    Explore Live Map
-                  </Button>
-                </Link>
-              </div>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    color: '#a1a1aa',
+                    fontSize: '0.9375rem',
+                    lineHeight: 1.6,
+                    mb: 4,
+                    maxWidth: 520,
+                  }}
+                >
+                  Map-first civic reporting platform empowering citizens to pinpoint potholes, garbage, streetlights, and water leaks directly to municipal dispatch teams.
+                </Typography>
 
-              {/* Stats highlights */}
-              {stats && (
-                <div className="grid grid-cols-3 gap-4 pt-6 border-t border-slate-800/80">
-                  <div>
-                    <span className="text-2xl sm:text-3xl font-extrabold text-sky-400">
-                      {stats.total}+
-                    </span>
-                    <p className="text-xs text-slate-400 font-medium">Civic Reports Filed</p>
-                  </div>
-                  <div>
-                    <span className="text-2xl sm:text-3xl font-extrabold text-emerald-400">
-                      {stats.resolved}
-                    </span>
-                    <p className="text-xs text-slate-400 font-medium">Resolved Issues</p>
-                  </div>
-                  <div>
-                    <span className="text-2xl sm:text-3xl font-extrabold text-amber-400">
-                      {stats.inProgress}
-                    </span>
-                    <p className="text-xs text-slate-400 font-medium">Active In Repair</p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Hero Right Map Preview */}
-            <div className="lg:col-span-6">
-              <div className="rounded-3xl border border-slate-800 bg-slate-900 p-2 shadow-2xl shadow-sky-950/40 relative">
-                <div className="flex items-center justify-between px-4 py-2 border-b border-slate-800/80 mb-2 text-xs text-slate-400">
-                  <span className="font-semibold text-slate-200 flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-sky-400" />
-                    City-Wide Interactive Geospatial Map
-                  </span>
-                  <Link href="/map" className="text-sky-400 font-semibold hover:underline">
-                    Expand Fullscreen →
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+                  <Link href="/report">
+                    <Button
+                      variant="contained"
+                      size="large"
+                      startIcon={<Plus className="w-4 h-4 stroke-[3]" />}
+                      sx={{
+                        backgroundColor: '#f8fafc',
+                        color: '#09090b',
+                        fontWeight: 900,
+                        px: 3.5,
+                        py: 1.25,
+                        borderRadius: '2px',
+                        '&:hover': { backgroundColor: '#e2e8f0' },
+                      }}
+                    >
+                      Report an Issue
+                    </Button>
                   </Link>
-                </div>
 
-                <div className="h-80 sm:h-96 w-full rounded-2xl overflow-hidden border border-slate-800">
-                  {loading ? (
-                    <LoadingState message="Loading map preview..." height="h-full" />
-                  ) : (
-                    <MapView complaints={complaints} zoom={11} interactive={true} />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+                  <Link href="/map">
+                    <Button
+                      variant="outlined"
+                      size="large"
+                      startIcon={<Compass className="w-4 h-4" />}
+                      sx={{
+                        borderColor: '#27272a',
+                        color: '#f8fafc',
+                        fontWeight: 800,
+                        px: 3.5,
+                        py: 1.25,
+                        borderRadius: '2px',
+                        '&:hover': { borderColor: '#52525b', backgroundColor: '#18181b' },
+                      }}
+                    >
+                      Explore Map
+                    </Button>
+                  </Link>
+                </Box>
 
-      {/* Categories Showcase */}
-      <section className="py-16 border-b border-slate-800 bg-slate-900/60">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Civic Infrastructure Categories
-            </h2>
-            <p className="text-sm text-slate-400">
-              Categorized civic issue tracking dispatched directly to specialized municipal departments.
-            </p>
-          </div>
+                {stats && (
+                  <Grid container spacing={2} sx={{ pt: 4, mt: 2, borderTop: '1px solid #27272a' }}>
+                    <Grid item xs={4}>
+                      <Typography variant="h4" sx={{ fontWeight: 900, color: '#f8fafc' }}>
+                        {stats.total}+
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700 }}>
+                        Reports Filed
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography variant="h4" sx={{ fontWeight: 900, color: '#ffffff' }}>
+                        {stats.resolved}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700 }}>
+                        Resolved
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography variant="h4" sx={{ fontWeight: 900, color: '#e4e4e7' }}>
+                        {stats.inProgress}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#71717a', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700 }}>
+                        Active Work
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )}
+              </Box>
+            </Grid>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {categoryItems.map((cat) => {
+            {/* Right Map Canvas Preview */}
+            <Grid item xs={12} lg={7}>
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 1.5,
+                  backgroundColor: '#121215',
+                  borderColor: '#27272a',
+                  borderRadius: '2px',
+                  position: 'relative',
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    px: 2,
+                    py: 1,
+                    borderBottom: '1px solid #27272a',
+                    mb: 1.5,
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <MapPin className="w-4 h-4 text-zinc-100" />
+                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#f8fafc', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                      City Geospatial Canvas
+                    </Typography>
+                  </Box>
+                  <Link href="/map" className="text-xs font-bold text-zinc-100 uppercase tracking-wider hover:underline">
+                    Fullscreen Map →
+                  </Link>
+                </Box>
+
+                <Box sx={{ height: { xs: 340, sm: 440 }, width: '100%', borderRadius: '2px', overflow: 'hidden', border: '1px solid #27272a' }}>
+                  <MapView complaints={complaints} zoom={12} interactive={true} />
+                </Box>
+              </Paper>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
+      {/* Category Grid */}
+      <Box sx={{ py: 10, borderBottom: '1px solid #27272a', backgroundColor: '#121215' }}>
+        <Container maxWidth="xl">
+          <FadeIn>
+            <Box sx={{ textAlign: 'center', maxWidth: 600, mx: 'auto', mb: 6 }}>
+              <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 1 }}>
+                Infrastructure Categories
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+                Categorized issue tracking automatically dispatched to municipal sector units.
+              </Typography>
+            </Box>
+          </FadeIn>
+
+          <Grid container spacing={2}>
+            {categoryItems.map((cat, idx) => {
               const Icon = cat.icon;
               return (
-                <Link
-                  key={cat.name}
-                  href={`/complaints?category=${cat.name}`}
-                  className="p-5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-sky-500/50 hover:bg-slate-800/60 transition-all group"
-                >
-                  <div className="p-3 rounded-xl bg-slate-800 text-sky-400 group-hover:bg-sky-600 group-hover:text-white transition-colors w-fit mb-3">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-base font-bold text-slate-100 group-hover:text-sky-400 transition-colors">
-                    {cat.name}
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-1 font-mono">{cat.count}</p>
-                </Link>
+                <Grid item xs={6} sm={3} key={cat.name}>
+                  <FadeIn delay={idx * 0.05}>
+                    <Link href={`/complaints?category=${cat.name}`} style={{ textDecoration: 'none' }}>
+                      <Paper
+                        elevation={0}
+                        sx={{
+                          p: 3,
+                          backgroundColor: '#09090b',
+                          borderColor: '#27272a',
+                          borderRadius: '2px',
+                          transition: 'all 0.2s ease',
+                          '&:hover': {
+                            borderColor: '#52525b',
+                            backgroundColor: '#18181b',
+                          },
+                        }}
+                      >
+                        <Box sx={{ p: 1.5, borderRadius: '2px', backgroundColor: '#18181b', border: '1px solid #27272a', width: 'fit-content', color: '#f8fafc', mb: 2 }}>
+                          <Icon className="w-5 h-5" />
+                        </Box>
+                        <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc', fontSize: '1rem', mb: 0.5 }}>
+                          {cat.name}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#a1a1aa', fontFamily: 'monospace' }}>
+                          {cat.count}
+                        </Typography>
+                      </Paper>
+                    </Link>
+                  </FadeIn>
+                </Grid>
               );
             })}
-          </div>
-        </div>
-      </section>
+          </Grid>
+        </Container>
+      </Box>
 
-      {/* How it Works Workflow */}
-      <section className="py-16 border-b border-slate-800 bg-slate-950">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
-              Transparent Civic Resolution Flow
-            </h2>
-            <p className="text-sm text-slate-400">
-              From report filing to municipal verification, departmental assignment, and site closure.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="h-10 w-10 rounded-xl bg-sky-600/20 text-sky-400 flex items-center justify-center font-bold text-lg border border-sky-500/30">
-                1
-              </div>
-              <h3 className="text-base font-bold text-slate-100">1. Citizen Pinpoint Report</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Citizen tags precise GPS coordinates on map, attaches photo evidence, and selects severity.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="h-10 w-10 rounded-xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold text-lg border border-purple-500/30">
-                2
-              </div>
-              <h3 className="text-base font-bold text-slate-100">2. Admin Verification</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Municipal control desk triages report severity, verifies coordinates, and checks duplication.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="h-10 w-10 rounded-xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center font-bold text-lg border border-cyan-500/30">
-                3
-              </div>
-              <h3 className="text-base font-bold text-slate-100">3. Department Dispatch</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Work order assigned to lead engineer (e.g. Roads, Water, Electricity) with target resolution date.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-              <div className="h-10 w-10 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-lg border border-emerald-500/30">
-                4
-              </div>
-              <h3 className="text-base font-bold text-slate-100">4. Verified Resolution</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                On-site repair completed, photo verified, timeline updated, and citizen receives confirmation.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Recent Activity Feed */}
-      <section className="py-16 bg-slate-900/40">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-extrabold text-white">Recent Civic Activity Feed</h2>
-              <p className="text-xs text-slate-400 mt-1">Live reports submitted by citizens across municipal sectors.</p>
-            </div>
+      {/* Recent Feed */}
+      <Box sx={{ py: 10, backgroundColor: '#09090b' }}>
+        <Container maxWidth="xl">
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 6 }}>
+            <Box>
+              <Typography variant="h4" sx={{ fontWeight: 900, color: '#f8fafc' }}>
+                Recent Civic Dossiers
+              </Typography>
+              <Typography variant="caption" sx={{ color: '#a1a1aa' }}>
+                Active infrastructure issues reported by citizens.
+              </Typography>
+            </Box>
             <Link href="/complaints">
-              <Button variant="outline" size="sm" rightIcon={<ArrowRight className="w-4 h-4" />}>
-                View All Civic Complaints
+              <Button variant="outlined" size="small" endIcon={<ArrowRight className="w-4 h-4" />}>
+                View All Feed
               </Button>
             </Link>
-          </div>
+          </Box>
 
-          {!loading && complaints.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {complaints.slice(0, 3).map((item) => (
-                <ComplaintCard key={item.id} complaint={item} />
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-    </div>
+          <Grid container spacing={3}>
+            {complaints.slice(0, 3).map((item, idx) => (
+              <Grid item xs={12} md={4} key={item.id}>
+                <FadeIn delay={idx * 0.1}>
+                  <ComplaintCard complaint={item} />
+                </FadeIn>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
+    </Box>
   );
 }

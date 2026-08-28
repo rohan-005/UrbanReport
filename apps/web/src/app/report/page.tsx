@@ -4,20 +4,22 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Category, Severity, Complaint } from '@/lib/types';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { Button } from '@/components/ui/Button';
 import { ImageUploader } from '@/components/ui/ImageUploader';
 import { LocationPicker } from '@/components/map/LocationPicker';
-import { Modal } from '@/components/ui/Modal';
 import { SeverityBadge } from '@/components/ui/SeverityBadge';
+import { Modal } from '@/components/ui/Modal';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 import { 
   Send, 
   MapPin, 
-  AlertCircle, 
   CheckCircle2, 
-  FileText, 
-  Info,
-  ShieldCheck,
   ArrowRight,
   Construction,
   Trash2,
@@ -30,26 +32,25 @@ import {
 
 const categoryOptions: { name: Category; description: string; icon: React.ElementType }[] = [
   { name: 'Pothole', description: 'Road craters, sunken asphalt, hazardous holes', icon: Construction },
-  { name: 'Garbage', description: 'Solid waste heaps, uncollected debris, illegal dumping', icon: Trash2 },
-  { name: 'Streetlight', description: 'Dark fixtures, flickering LEDs, exposed electrical wires', icon: Lightbulb },
-  { name: 'Drainage', description: 'Clogged storm drains, missing manhole covers, sewer leaks', icon: Waves },
-  { name: 'Road Damage', description: 'Caving pavement, broken dividers, missing signage', icon: Construction },
-  { name: 'Water Supply', description: 'Burst main pipelines, low pressure, contaminated tap water', icon: Droplet },
-  { name: 'Traffic', description: 'Signal malfunctions, stuck controllers, missing speed humps', icon: Activity },
-  { name: 'Other', description: 'Vandalism, fallen trees, general civic public safety', icon: HelpCircle },
+  { name: 'Garbage', description: 'Solid waste heaps, uncollected debris', icon: Trash2 },
+  { name: 'Streetlight', description: 'Dark fixtures, flickering LEDs, unlit streets', icon: Lightbulb },
+  { name: 'Drainage', description: 'Clogged storm drains, missing manhole covers', icon: Waves },
+  { name: 'Road Damage', description: 'Caving pavement, broken dividers', icon: Construction },
+  { name: 'Water Supply', description: 'Burst main pipelines, low pressure leaks', icon: Droplet },
+  { name: 'Traffic', description: 'Signal malfunctions, stuck controllers', icon: Activity },
+  { name: 'Other', description: 'Vandalism, fallen trees, public hazards', icon: HelpCircle },
 ];
 
-const severities: { value: Severity; label: string; desc: string; color: string }[] = [
-  { value: 'LOW', label: 'Low', desc: 'Minor cosmetic defect or routine maintenance', color: 'border-slate-700 bg-slate-800/40' },
-  { value: 'MEDIUM', label: 'Medium', desc: 'Noticeable defect causing inconvenience', color: 'border-amber-700/60 bg-amber-950/20' },
-  { value: 'HIGH', label: 'High', desc: 'Significant hazard disrupting traffic/utilities', color: 'border-orange-700/60 bg-orange-950/20' },
-  { value: 'CRITICAL', label: 'Critical', desc: 'Emergency threat to human safety or life', color: 'border-rose-600/80 bg-rose-950/30' },
+const severities: { value: Severity; label: string; desc: string }[] = [
+  { value: 'LOW', label: 'Low', desc: 'Minor cosmetic defect or routine maintenance' },
+  { value: 'MEDIUM', label: 'Medium', desc: 'Noticeable defect causing inconvenience' },
+  { value: 'HIGH', label: 'High', desc: 'Significant hazard disrupting traffic/utilities' },
+  { value: 'CRITICAL', label: 'Critical', desc: 'Emergency threat to human safety or life' },
 ];
 
 export default function ReportPage() {
   const router = useRouter();
 
-  // Form State
   const [category, setCategory] = useState<Category>('Pothole');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -59,7 +60,6 @@ export default function ReportPage() {
   const [longitude, setLongitude] = useState(77.6228);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  // Status & Validation
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
@@ -123,7 +123,7 @@ export default function ReportPage() {
 
       setCreatedComplaint(newReport);
       setIsSuccessModalOpen(true);
-    } catch (err) {
+    } catch {
       setErrors({ form: 'Failed to submit report. Please check input.' });
     } finally {
       setSubmitting(false);
@@ -131,273 +131,227 @@ export default function ReportPage() {
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 w-full space-y-8">
-      <PageHeader
-        title="Report a Civic Issue"
-        description="Help municipal authorities locate and fix infrastructure, sanitation, and safety problems in your community."
-      />
+    <Box sx={{ py: 8, backgroundColor: '#09090b', flex: 1 }}>
+      <Container maxWidth="md">
+        <Box sx={{ mb: 6 }}>
+          <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 1 }}>
+            Report a Civic Incident
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+            Pinpoint infrastructure issues for immediate municipal dispatch.
+          </Typography>
+        </Box>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Step 1: Category Selection */}
-        <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4 shadow-xl">
-          <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 text-xs font-bold text-white">
-              1
-            </span>
-            Select Issue Category
-          </h3>
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ spaceY: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {/* Step 1: Category */}
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc', mb: 3 }}>
+                1. Select Issue Category
+              </Typography>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {categoryOptions.map((cat) => {
-              const Icon = cat.icon;
-              const isSelected = category === cat.name;
+              <Grid container spacing={2}>
+                {categoryOptions.map((cat) => {
+                  const Icon = cat.icon;
+                  const isSelected = category === cat.name;
 
-              return (
-                <button
-                  key={cat.name}
-                  type="button"
-                  onClick={() => setCategory(cat.name)}
-                  className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all ${
-                    isSelected
-                      ? 'border-sky-500 bg-sky-950/40 shadow-lg shadow-sky-500/10'
-                      : 'border-slate-800 bg-slate-800/40 hover:bg-slate-800 hover:border-slate-700'
-                  }`}
-                >
-                  <div
-                    className={`p-2 rounded-lg mb-2 ${
-                      isSelected ? 'bg-sky-600 text-white' : 'bg-slate-800 text-sky-400'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className={`text-sm font-semibold ${isSelected ? 'text-white' : 'text-slate-200'}`}>
-                    {cat.name}
-                  </span>
-                  <span className="text-[11px] text-slate-400 mt-1 line-clamp-2 leading-tight">
-                    {cat.description}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+                  return (
+                    <Grid item xs={6} sm={3} key={cat.name}>
+                      <Box
+                        onClick={() => setCategory(cat.name)}
+                        sx={{
+                          p: 2,
+                          borderRadius: '2px',
+                          border: '1px solid',
+                          borderColor: isSelected ? '#f8fafc' : '#27272a',
+                          backgroundColor: isSelected ? '#18181b' : '#09090b',
+                          cursor: 'pointer',
+                          transition: 'all 0.15s ease',
+                          '&:hover': { borderColor: '#52525b' },
+                        }}
+                      >
+                        <Box sx={{ color: isSelected ? '#ffffff' : '#a1a1aa', mb: 1 }}>
+                          <Icon className="w-5 h-5" />
+                        </Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: isSelected ? '#ffffff' : '#e4e4e7', fontSize: '0.875rem' }}>
+                          {cat.name}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#71717a', fontSize: '0.6875rem', display: 'block', mt: 0.5, lineHeight: 1.2 }}>
+                          {cat.description}
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            </Paper>
 
-        {/* Step 2: Issue Details */}
-        <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-6 shadow-xl">
-          <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 text-xs font-bold text-white">
-              2
-            </span>
-            Issue Details & Description
-          </h3>
+            {/* Step 2: Details */}
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', spaceY: 3 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc', mb: 3 }}>
+                2. Problem Details & Severity
+              </Typography>
 
-          {/* Title */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-              Complaint Title *
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. Hazardous Pothole on 100 Feet Ring Road"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
-            />
-            {errors.title && <p className="text-xs text-rose-400 font-medium">{errors.title}</p>}
-          </div>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <TextField
+                  label="Complaint Title *"
+                  fullWidth
+                  placeholder="e.g. Hazardous Pothole on 100 Feet Ring Road"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  error={Boolean(errors.title)}
+                  helperText={errors.title}
+                />
 
-          {/* Description */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-              Detailed Description *
-            </label>
-            <textarea
-              rows={4}
-              placeholder="Describe the exact problem, size, duration, vehicle safety hazard, or any landmark details..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-none"
-            />
-            {errors.description && (
-              <p className="text-xs text-rose-400 font-medium">{errors.description}</p>
-            )}
-          </div>
+                <TextField
+                  label="Detailed Description *"
+                  multiline
+                  rows={4}
+                  fullWidth
+                  placeholder="Describe the defect, dimensions, traffic hazard level..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  error={Boolean(errors.description)}
+                  helperText={errors.description}
+                />
 
-          {/* Severity Radio Group */}
-          <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-              Assess Severity Level *
-            </label>
+                <Box>
+                  <Typography variant="overline" sx={{ color: '#a1a1aa', fontWeight: 800, mb: 1.5, display: 'block' }}>
+                    Assess Severity Level
+                  </Typography>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {severities.map((sev) => {
-                const isSelected = severity === sev.value;
-                return (
-                  <button
-                    key={sev.value}
-                    type="button"
-                    onClick={() => setSeverity(sev.value)}
-                    className={`flex flex-col p-3 rounded-xl border text-left transition-all ${
-                      isSelected
-                        ? 'border-sky-500 bg-sky-950/40 ring-1 ring-sky-500'
-                        : `${sev.color} hover:border-slate-600`
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <SeverityBadge severity={sev.value} size="sm" />
-                      <input
-                        type="radio"
-                        name="severity"
-                        checked={isSelected}
-                        onChange={() => setSeverity(sev.value)}
-                        className="accent-sky-500"
-                      />
-                    </div>
-                    <span className="text-xs text-slate-400 mt-1 leading-tight">{sev.desc}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+                  <Grid container spacing={2}>
+                    {severities.map((sev) => {
+                      const isSelected = severity === sev.value;
+                      return (
+                        <Grid item xs={12} sm={3} key={sev.value}>
+                          <Box
+                            onClick={() => setSeverity(sev.value)}
+                            sx={{
+                              p: 2,
+                              borderRadius: '2px',
+                              border: '1px solid',
+                              borderColor: isSelected ? '#f8fafc' : '#27272a',
+                              backgroundColor: isSelected ? '#18181b' : '#09090b',
+                              cursor: 'pointer',
+                              height: '100%',
+                            }}
+                          >
+                            <Box sx={{ mb: 1 }}>
+                              <SeverityBadge severity={sev.value} size="small" />
+                            </Box>
+                            <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.6875rem', display: 'block', lineHeight: 1.3 }}>
+                              {sev.desc}
+                            </Typography>
+                          </Box>
+                        </Grid>
+                      );
+                    })}
+                  </Grid>
+                </Box>
+              </Box>
+            </Paper>
 
-        {/* Step 3: Geospatial Location */}
-        <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-6 shadow-xl">
-          <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 text-xs font-bold text-white">
-              3
-            </span>
-            Geospatial Location
-          </h3>
+            {/* Step 3: Location */}
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc', mb: 3 }}>
+                3. Geospatial Location
+              </Typography>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-              Street Address / Landmark *
-            </label>
-            <div className="relative">
-              <MapPin className="w-4 h-4 text-sky-400 absolute left-3.5 top-3" />
-              <input
-                type="text"
-                placeholder="Enter street address or landmark"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
-              />
-            </div>
-            {errors.address && <p className="text-xs text-rose-400 font-medium">{errors.address}</p>}
-          </div>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <TextField
+                  label="Street Address / Landmark *"
+                  fullWidth
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  error={Boolean(errors.address)}
+                  helperText={errors.address}
+                />
 
-          <LocationPicker
-            latitude={latitude}
-            longitude={longitude}
-            onLocationChange={(newLat, newLng, sampleAddr) => {
-              setLatitude(newLat);
-              setLongitude(newLng);
-              if (sampleAddr) setAddress(sampleAddr);
-            }}
-          />
-        </div>
+                <LocationPicker
+                  latitude={latitude}
+                  longitude={longitude}
+                  onLocationChange={(newLat, newLng, sampleAddr) => {
+                    setLatitude(newLat);
+                    setLongitude(newLng);
+                    if (sampleAddr) setAddress(sampleAddr);
+                  }}
+                />
+              </Box>
+            </Paper>
 
-        {/* Step 4: Photo Evidence Upload */}
-        <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4 shadow-xl">
-          <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-600 text-xs font-bold text-white">
-              4
-            </span>
-            Photo Evidence (Optional but Recommended)
-          </h3>
+            {/* Step 4: Media Upload */}
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc', mb: 3 }}>
+                4. Photo Evidence
+              </Typography>
 
-          <ImageUploader onImageSelected={(url) => setImageUrl(url)} />
-        </div>
+              <ImageUploader onImageSelected={(url) => setImageUrl(url)} />
+            </Paper>
 
-        {/* Submit Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-2xl bg-slate-900 border border-slate-800">
-          <div className="text-xs text-slate-400">
-            <p>© UrbanReports Citizen Dispatch Platform.</p>
-            <p className="mt-0.5 text-slate-500">
-              Submitted reports receive a unique tracking ID and appear instantly on the public map.
-            </p>
-          </div>
+            {/* Submit Action */}
+            <Paper elevation={0} sx={{ p: 3, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', display: 'flex', alignItems: 'center', justifyBetween: 'space-between' }}>
+              <Typography variant="caption" sx={{ color: '#71717a' }}>
+                Generates a tracking ID and notifies ward control.
+              </Typography>
 
-          <Button
-            type="submit"
-            variant="primary"
-            size="lg"
-            isLoading={submitting}
-            leftIcon={<Send className="w-4 h-4" />}
-            className="w-full sm:w-auto px-8"
-          >
-            Submit Complaint Report
-          </Button>
-        </div>
-      </form>
-
-      {/* Success Confirmation Modal */}
-      <Modal
-        isOpen={isSuccessModalOpen}
-        onClose={() => setIsSuccessModalOpen(false)}
-        title="Complaint Successfully Submitted"
-      >
-        {createdComplaint && (
-          <div className="space-y-6 text-center py-2">
-            <div className="flex items-center justify-center">
-              <div className="p-4 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-700/60 animate-bounce">
-                <CheckCircle2 className="w-12 h-12" />
-              </div>
-            </div>
-
-            <div>
-              <span className="text-xs text-slate-400 font-mono uppercase tracking-wider block mb-1">
-                Generated Tracking Reference Number
-              </span>
-              <h2 className="text-3xl font-extrabold text-sky-400 font-mono tracking-wider">
-                {createdComplaint.id}
-              </h2>
-            </div>
-
-            <div className="p-4 rounded-xl bg-slate-800/80 border border-slate-700 text-left text-xs space-y-2">
-              <div className="flex justify-between">
-                <span className="text-slate-400">Title:</span>
-                <span className="font-semibold text-slate-100">{createdComplaint.title}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Category:</span>
-                <span className="font-semibold text-slate-100">{createdComplaint.category}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-400">Status:</span>
-                <span className="font-semibold text-sky-400">{createdComplaint.status}</span>
-              </div>
-            </div>
-
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Your civic report has been registered in the municipal triage queue. You can track its live timeline and status updates anytime.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
               <Button
-                variant="primary"
-                className="w-full"
-                onClick={() => router.push(`/complaints/${createdComplaint.id}`)}
-                rightIcon={<ArrowRight className="w-4 h-4" />}
-              >
-                Track Complaint Timeline
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => {
-                  setIsSuccessModalOpen(false);
-                  setTitle('');
-                  setDescription('');
+                type="submit"
+                variant="contained"
+                size="large"
+                disabled={submitting}
+                startIcon={<Send className="w-4 h-4" />}
+                sx={{
+                  backgroundColor: '#f8fafc',
+                  color: '#09090b',
+                  fontWeight: 900,
+                  px: 4,
+                  '&:hover': { backgroundColor: '#e2e8f0' },
                 }}
               >
-                Report Another Issue
+                Submit Report
               </Button>
-            </div>
-          </div>
-        )}
-      </Modal>
-    </div>
+            </Paper>
+          </Box>
+        </form>
+
+        {/* Confirmation Modal */}
+        <Modal
+          isOpen={isSuccessModalOpen}
+          onClose={() => setIsSuccessModalOpen(false)}
+          title="Report Successfully Dispatched"
+        >
+          {createdComplaint && (
+            <Box sx={{ textCenter: 'center', py: 2, spaceY: 3 }}>
+              <Box sx={{ display: 'flex', justifyCenter: 'center', mb: 2 }}>
+                <CheckCircle2 className="w-12 h-12 text-zinc-100" />
+              </Box>
+
+              <Typography variant="overline" sx={{ color: '#a1a1aa', fontWeight: 800 }}>
+                TRACKING REFERENCE ID
+              </Typography>
+              <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', fontFamily: 'monospace' }}>
+                {createdComplaint.id}
+              </Typography>
+
+              <Typography variant="body2" sx={{ color: '#a1a1aa', mt: 2, mb: 4 }}>
+                Your report has been queued for municipal triage.
+              </Typography>
+
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Button
+                  variant="contained"
+                  fullWidth
+                  onClick={() => router.push(`/complaints/${createdComplaint.id}`)}
+                  endIcon={<ArrowRight className="w-4 h-4" />}
+                >
+                  View Dossier
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </Modal>
+      </Container>
+    </Box>
   );
 }

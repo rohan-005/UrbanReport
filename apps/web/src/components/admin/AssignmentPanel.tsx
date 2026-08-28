@@ -2,8 +2,13 @@
 
 import React, { useState } from 'react';
 import { Assignment } from '@/lib/types';
-import { Button } from '../ui/Button';
-import { Building2, UserCheck, Calendar, FileText } from 'lucide-react';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import Button from '@mui/material/Button';
+import { Building2, UserCheck } from 'lucide-react';
 
 interface AssignmentPanelProps {
   currentAssignment?: Assignment;
@@ -60,77 +65,90 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4 shadow-xl">
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-        <Building2 className="w-5 h-5 text-purple-400" />
-        <h3 className="text-base font-bold text-slate-100">Municipal Department Assignment</h3>
-      </div>
+    <Paper
+      elevation={0}
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        p: 3,
+        backgroundColor: '#121215',
+        borderColor: '#27272a',
+        borderRadius: '2px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+      }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1.5, borderBottom: '1px solid #27272a' }}>
+        <Building2 className="w-5 h-5 text-zinc-100" />
+        <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc', fontSize: '0.9375rem' }}>
+          Department Assignment Desk
+        </Typography>
+      </Box>
 
-      <div className="space-y-4">
-        {/* Department Select */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-            Handling Department *
-          </label>
-          <select
-            value={department}
-            onChange={(e) => {
-              const newDept = e.target.value;
-              setDepartment(newDept);
-              setAssignedOfficer(mockOfficers[newDept]?.[0] || 'Unassigned Officer');
-            }}
-            className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-purple-500"
-          >
-            {departments.map((dept) => (
-              <option key={dept} value={dept}>
-                {dept}
-              </option>
-            ))}
-          </select>
-        </div>
+      <TextField
+        select
+        label="Handling Department"
+        size="small"
+        fullWidth
+        value={department}
+        onChange={(e) => {
+          const newDept = e.target.value;
+          setDepartment(newDept);
+          setAssignedOfficer(mockOfficers[newDept]?.[0] || 'Unassigned Officer');
+        }}
+      >
+        {departments.map((dept) => (
+          <MenuItem key={dept} value={dept}>
+            {dept}
+          </MenuItem>
+        ))}
+      </TextField>
 
-        {/* Assigned Officer */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-            Lead Field Officer *
-          </label>
-          <select
-            value={assignedOfficer}
-            onChange={(e) => setAssignedOfficer(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-purple-500"
-          >
-            {availableOfficers.map((off) => (
-              <option key={off} value={off}>
-                {off}
-              </option>
-            ))}
-          </select>
-        </div>
+      <TextField
+        select
+        label="Lead Field Officer"
+        size="small"
+        fullWidth
+        value={assignedOfficer}
+        onChange={(e) => setAssignedOfficer(e.target.value)}
+      >
+        {availableOfficers.map((off) => (
+          <MenuItem key={off} value={off}>
+            {off}
+          </MenuItem>
+        ))}
+      </TextField>
 
-        {/* Dispatch Notes */}
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-            Dispatch Instructions / Priority Notes
-          </label>
-          <textarea
-            rows={3}
-            placeholder="Work instructions, equipment requirements, night-shift scheduling..."
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 resize-none"
-          />
-        </div>
+      <TextField
+        label="Dispatch Notes / Instructions"
+        multiline
+        rows={3}
+        size="small"
+        fullWidth
+        placeholder="Equipment requirements, priority schedule..."
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+      />
 
-        <Button
-          type="submit"
-          variant="primary"
-          isLoading={isLoading}
-          leftIcon={<UserCheck className="w-4 h-4" />}
-          className="w-full bg-purple-600 hover:bg-purple-500 border-purple-500/50"
-        >
-          {currentAssignment ? 'Update Assignment' : 'Dispatch Department Assignment'}
-        </Button>
-      </div>
-    </form>
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        disabled={isLoading}
+        startIcon={<UserCheck className="w-4 h-4" />}
+        sx={{
+          mt: 1,
+          backgroundColor: '#f8fafc',
+          color: '#09090b',
+          fontWeight: 800,
+          '&:hover': {
+            backgroundColor: '#e2e8f0',
+          },
+        }}
+      >
+        {currentAssignment ? 'Update Assignment' : 'Dispatch Assignment'}
+      </Button>
+    </Paper>
   );
 };

@@ -1,86 +1,130 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import { TimelineEvent } from '@/lib/types';
 import { StatusBadge } from '../ui/StatusBadge';
-import { Clock, User, ShieldCheck, CheckCircle, Wrench, AlertCircle } from 'lucide-react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import { animateTimelineNodes } from '@/lib/motion/gsap';
+import { Clock, User } from 'lucide-react';
 
 interface ComplaintTimelineProps {
   timeline: TimelineEvent[];
 }
 
 export const ComplaintTimeline: React.FC<ComplaintTimelineProps> = ({ timeline }) => {
+  useEffect(() => {
+    animateTimelineNodes('.timeline-item-node');
+  }, [timeline]);
+
   if (!timeline || timeline.length === 0) {
-    return <p className="text-sm text-slate-400">No activity history logged yet.</p>;
+    return <Typography variant="body2" sx={{ color: '#a1a1aa' }}>No activity history logged yet.</Typography>;
   }
 
-  const roleBadges = {
-    CITIZEN: 'bg-sky-950/60 text-sky-400 border-sky-800/50',
-    ADMIN: 'bg-purple-950/60 text-purple-400 border-purple-800/50',
-    OFFICER: 'bg-emerald-950/60 text-emerald-400 border-emerald-800/50',
-    SYSTEM: 'bg-slate-800 text-slate-300 border-slate-700',
-  };
-
   return (
-    <div className="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-slate-800">
+    <Box className="space-y-6 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-zinc-800">
       {timeline.map((event, idx) => {
         const isLatest = idx === 0;
 
         return (
-          <div key={event.id || idx} className="relative flex items-start gap-4 group">
+          <Box key={event.id || idx} className="timeline-item-node relative flex items-start gap-4 group">
             {/* Timeline Icon Node */}
-            <div
-              className={`relative z-10 flex h-7 w-7 items-center justify-center rounded-full border text-xs ${
-                isLatest
-                  ? 'bg-sky-600 border-sky-400 text-white ring-4 ring-sky-500/20'
-                  : 'bg-slate-900 border-slate-700 text-slate-400'
-              }`}
+            <Box
+              sx={{
+                position: 'relative',
+                zIndex: 10,
+                display: 'flex',
+                height: 28,
+                width: 28,
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '2px',
+                border: '1px solid',
+                borderColor: isLatest ? '#f8fafc' : '#3f3f46',
+                backgroundColor: isLatest ? '#f8fafc' : '#09090b',
+                color: isLatest ? '#09090b' : '#a1a1aa',
+              }}
             >
               <Clock className="w-3.5 h-3.5" />
-            </div>
+            </Box>
 
             {/* Event Content Card */}
-            <div className="flex-1 rounded-xl bg-slate-800/60 border border-slate-700/60 p-4 transition-all group-hover:border-slate-600">
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
-                <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-semibold text-slate-100">{event.title}</h4>
-                  <StatusBadge status={event.status} size="sm" showIcon={false} />
-                </div>
-                <span className="text-xs text-slate-400 font-mono">
+            <Paper
+              elevation={0}
+              sx={{
+                flex: 1,
+                p: 2.5,
+                backgroundColor: '#121215',
+                borderColor: '#27272a',
+                borderRadius: '2px',
+                '&:hover': {
+                  borderColor: '#52525b',
+                },
+              }}
+            >
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 1, mb: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+                    {event.title}
+                  </Typography>
+                  <StatusBadge status={event.status} size="small" showIcon={false} />
+                </Box>
+                <Typography variant="caption" sx={{ color: '#71717a', fontFamily: 'monospace' }}>
                   {new Date(event.timestamp).toLocaleString(undefined, {
                     dateStyle: 'medium',
                     timeStyle: 'short',
                   })}
-                </span>
-              </div>
+                </Typography>
+              </Box>
 
-              <p className="text-xs text-slate-300 mb-3 leading-relaxed">
+              <Typography variant="body2" sx={{ color: '#a1a1aa', fontSize: '0.8125rem', mb: 2, leading: 1.6 }}>
                 {event.description}
-              </p>
+              </Typography>
 
               {event.notes && (
-                <div className="p-2.5 rounded-lg bg-slate-900/80 border border-slate-700/80 text-xs text-slate-300 mb-3 font-mono">
-                  <span className="text-sky-400 font-bold">Notes: </span>
+                <Box
+                  sx={{
+                    p: 1.5,
+                    borderRadius: '2px',
+                    backgroundColor: '#09090b',
+                    border: '1px solid #27272a',
+                    fontFamily: 'monospace',
+                    fontSize: '0.75rem',
+                    color: '#e4e4e7',
+                    mb: 2,
+                  }}
+                >
+                  <strong className="text-zinc-100 uppercase">NOTES: </strong>
                   {event.notes}
-                </div>
+                </Box>
               )}
 
-              {/* Actor attribution */}
-              <div className="flex items-center justify-between pt-2 border-t border-slate-700/40 text-xs text-slate-400">
-                <div className="flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-slate-400" />
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', pt: 1.5, borderTop: '1px solid #27272a', fontSize: '0.75rem', color: '#71717a' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                  <User className="w-3.5 h-3.5 text-zinc-500" />
                   <span>{event.actor.name}</span>
-                </div>
-                <span
-                  className={`text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded border ${
-                    roleBadges[event.actor.role] || roleBadges.SYSTEM
-                  }`}
+                </Box>
+                <Typography
+                  variant="overline"
+                  sx={{
+                    fontWeight: 800,
+                    letterSpacing: '0.08em',
+                    px: 1,
+                    py: 0.25,
+                    borderRadius: '2px',
+                    backgroundColor: '#18181b',
+                    color: '#a1a1aa',
+                    border: '1px solid #27272a',
+                  }}
                 >
                   {event.actor.role}
-                </span>
-              </div>
-            </div>
-          </div>
+                </Typography>
+              </Box>
+            </Paper>
+          </Box>
         );
       })}
-    </div>
+    </Box>
   );
 };

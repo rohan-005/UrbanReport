@@ -4,19 +4,15 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Complaint } from '@/lib/types';
-import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsCards } from '@/components/admin/StatsCards';
 import { AdminComplaintTable } from '@/components/admin/AdminComplaintTable';
-import { Button } from '@/components/ui/Button';
 import { LoadingState } from '@/components/ui/LoadingState';
-import { 
-  ShieldCheck, 
-  ListFilter, 
-  AlertTriangle, 
-  CheckCircle2,
-  ArrowRight,
-  RefreshCw
-} from 'lucide-react';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import { ShieldCheck, ListFilter, AlertTriangle, ArrowRight, RefreshCw } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
@@ -39,80 +35,91 @@ export default function AdminDashboardPage() {
   }, []);
 
   const criticalComplaints = complaints.filter((c) => c.severity === 'CRITICAL');
-  const pendingComplaints = complaints.filter(
-    (c) => c.status === 'SUBMITTED' || c.status === 'UNDER_REVIEW'
-  );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 w-full space-y-8">
-      <PageHeader
-        title="Municipal Admin Overview Desk"
-        description="Real-time triage, departmental assignment dispatch, and resolution verification for city-wide civic reports."
-        action={
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" onClick={loadData} leftIcon={<RefreshCw className="w-3.5 h-3.5" />}>
-              Refresh Queue
+    <Box sx={{ py: 6, backgroundColor: '#09090b', flex: 1, pb: 12 }}>
+      <Container maxWidth="xl">
+        {/* Header */}
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #27272a', gap: 2 }}>
+          <Box>
+            <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 0.5 }}>
+              Municipal Operations Desk
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+              Real-time triage, departmental assignment, and resolution verification control.
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 1.5 }}>
+            <Button variant="outlined" size="small" onClick={loadData} startIcon={<RefreshCw className="w-3.5 h-3.5" />}>
+              Refresh
             </Button>
             <Link href="/admin/complaints">
-              <Button variant="primary" size="sm" leftIcon={<ListFilter className="w-3.5 h-3.5" />}>
-                Full Resolution Queue
+              <Button variant="contained" size="small" startIcon={<ListFilter className="w-3.5 h-3.5" />}>
+                Resolution Queue
               </Button>
             </Link>
-          </div>
-        }
-      />
+          </Box>
+        </Box>
 
-      {loading || !stats ? (
-        <LoadingState message="Calculating municipal telemetry..." height="h-64" />
-      ) : (
-        <>
-          {/* Key Metrics */}
-          <StatsCards stats={stats} />
+        {loading || !stats ? (
+          <LoadingState message="Loading telemetry..." height="h-64" />
+        ) : (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <StatsCards stats={stats} />
 
-          {/* Emergency Alert Banner if Critical Issues Exist */}
-          {criticalComplaints.length > 0 && (
-            <div className="p-4 rounded-2xl bg-rose-950/40 border border-rose-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-rose-900/60 text-rose-400 border border-rose-700/80 animate-pulse">
-                  <AlertTriangle className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-rose-200">
-                    {criticalComplaints.length} Critical Hazard Alert(s) Requiring Urgent Dispatch
-                  </h4>
-                  <p className="text-xs text-slate-300">
-                    High severity issues flagged with direct danger to citizen life/safety.
-                  </p>
-                </div>
-              </div>
-              <Link href="/admin/complaints?severity=CRITICAL">
-                <Button size="sm" variant="danger">
-                  Triage Critical Incidents
-                </Button>
-              </Link>
-            </div>
-          )}
-
-          {/* Pending Triage Queue */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-purple-400" />
-                <span>Recent Complaint Queue ({complaints.length})</span>
-              </h3>
-              <Link
-                href="/admin/complaints"
-                className="text-xs font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-1"
+            {criticalComplaints.length > 0 && (
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 3,
+                  backgroundColor: '#450a0a',
+                  borderColor: '#991b1b',
+                  borderRadius: '2px',
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  alignItems: { sm: 'center' },
+                  justifyContent: 'space-between',
+                  gap: 2,
+                }}
               >
-                <span>View All Records</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <AlertTriangle className="w-6 h-6 text-red-400 animate-pulse shrink-0" />
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#fca5a5' }}>
+                      {criticalComplaints.length} Critical Hazard Alert(s) Requiring Immediate Dispatch
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#fca5a5' }}>
+                      Emergency issues flagged with direct danger to human life or infrastructure.
+                    </Typography>
+                  </Box>
+                </Box>
+                <Link href="/admin/complaints?severity=CRITICAL">
+                  <Button variant="contained" size="small" sx={{ backgroundColor: '#dc2626', color: '#ffffff', '&:hover': { backgroundColor: '#b91c1c' } }}>
+                    Triage Critical
+                  </Button>
+                </Link>
+              </Paper>
+            )}
 
-            <AdminComplaintTable complaints={complaints.slice(0, 8)} />
-          </div>
-        </>
-      )}
-    </div>
+            <Box sx={{ spaceY: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <ShieldCheck className="w-5 h-5 text-zinc-100" />
+                  <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+                    Recent Incident Queue ({complaints.length})
+                  </Typography>
+                </Box>
+                <Link href="/admin/complaints" className="text-xs font-bold uppercase tracking-wider text-zinc-100 hover:underline">
+                  Full Queue →
+                </Link>
+              </Box>
+
+              <AdminComplaintTable complaints={complaints.slice(0, 8)} />
+            </Box>
+          </Box>
+        )}
+      </Container>
+    </Box>
   );
 }

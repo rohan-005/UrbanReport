@@ -4,23 +4,18 @@ import React, { useEffect, useState } from 'react';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Complaint, ComplaintFilters, Category, Severity, ComplaintStatus } from '@/lib/types';
 import { MapView } from '@/components/map/MapView';
-import { PageHeader } from '@/components/ui/PageHeader';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { SeverityBadge } from '@/components/ui/SeverityBadge';
 import { CategoryBadge } from '@/components/ui/CategoryBadge';
-import { Button } from '@/components/ui/Button';
 import { LoadingState } from '@/components/ui/LoadingState';
-import { 
-  Filter, 
-  Search, 
-  MapPin, 
-  ArrowRight, 
-  Layers, 
-  List, 
-  X,
-  PlusCircle,
-  ThumbsUp
-} from 'lucide-react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import InputAdornment from '@mui/material/InputAdornment';
+import Button from '@mui/material/Button';
+import { Search, MapPin, ArrowRight, X, Plus, ListFilter } from 'lucide-react';
 import Link from 'next/link';
 
 const categories: (Category | 'ALL')[] = [
@@ -69,141 +64,141 @@ export default function MapPage() {
 
   useEffect(() => {
     loadData();
-    const unsubscribe = complaintRepository.subscribe(() => {
-      loadData();
-    });
+    const unsubscribe = complaintRepository.subscribe(() => loadData());
     return () => unsubscribe();
   }, [filters]);
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden bg-slate-950">
-      {/* Header bar */}
-      <div className="bg-slate-900 border-b border-slate-800 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shrink-0">
-        <div className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
-            <Layers className="w-5 h-5" />
-          </div>
-          <div>
-            <h1 className="text-base sm:text-lg font-bold text-slate-100 leading-tight">
-              Live Civic Issue Map
-            </h1>
-            <p className="text-xs text-slate-400">
-              Showing <span className="text-sky-400 font-semibold">{complaints.length}</span> active civic reports across municipality
-            </p>
-          </div>
-        </div>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 0rem)', backgroundColor: '#09090b', pb: 10 }}>
+      {/* Header Controls */}
+      <Box sx={{ borderBottom: '1px solid #27272a', px: 3, py: 2, backgroundColor: '#121215', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <MapPin className="w-5 h-5 text-zinc-100" />
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#f8fafc', lineHeight: 1.2 }}>
+              Geospatial Complaint Map
+            </Typography>
+            <Typography variant="caption" sx={{ color: '#a1a1aa' }}>
+              Showing <span className="font-bold text-white">{complaints.length}</span> active civic incident records
+            </Typography>
+          </Box>
+        </Box>
 
-        <div className="flex items-center gap-3">
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Link href="/report">
-            <Button size="sm" variant="primary" leftIcon={<PlusCircle className="w-4 h-4" />}>
+            <Button size="small" variant="contained" startIcon={<Plus className="w-4 h-4 stroke-[3]" />}>
               Report Issue
             </Button>
           </Link>
           <Link href="/complaints">
-            <Button size="sm" variant="outline" leftIcon={<List className="w-4 h-4" />}>
-              List View
+            <Button size="small" variant="outlined" startIcon={<ListFilter className="w-4 h-4" />}>
+              Catalog Feed
             </Button>
           </Link>
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {/* Main Map Body */}
-      <div className="flex-1 flex flex-col md:flex-row relative overflow-hidden">
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, position: 'relative', overflow: 'hidden' }}>
         {/* Sidebar Filters */}
-        <aside className="w-full md:w-80 bg-slate-900/95 border-b md:border-b-0 md:border-r border-slate-800 p-4 flex flex-col gap-4 overflow-y-auto shrink-0 z-20 max-h-[35vh] md:max-h-full">
-          {/* Search */}
-          <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
-            <input
-              type="text"
-              placeholder="Search address, ID, description..."
-              value={filters.searchQuery || ''}
-              onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
-            />
-          </div>
+        <Paper
+          elevation={0}
+          sx={{
+            width: { xs: '100%', md: 320 },
+            backgroundColor: '#121215',
+            borderColor: '#27272a',
+            borderRadius: 0,
+            borderRight: { md: '1px solid #27272a' },
+            borderBottom: { xs: '1px solid #27272a', md: 'none' },
+            p: 2.5,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2.5,
+            overflowY: 'auto',
+            zIndex: 20,
+            maxHeight: { xs: '35vh', md: '100%' },
+          }}
+        >
+          <TextField
+            size="small"
+            placeholder="Search address, ID..."
+            value={filters.searchQuery || ''}
+            onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search className="w-4 h-4 text-zinc-400" />
+                </InputAdornment>
+              ),
+            }}
+          />
 
-          {/* Category Filter */}
-          <div>
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
+          <Box>
+            <Typography variant="overline" sx={{ color: '#a1a1aa', fontWeight: 800, mb: 1, display: 'block' }}>
               Category
-            </label>
-            <div className="flex flex-wrap gap-1.5">
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setFilters({ ...filters, category: cat })}
-                  className={`text-xs px-2.5 py-1 rounded-lg border transition-colors ${
+                  className={`text-[11px] px-2 py-0.5 rounded-none font-bold uppercase tracking-wider transition-colors border ${
                     filters.category === cat
-                      ? 'bg-sky-600 text-white border-sky-500 font-semibold'
-                      : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                      ? 'bg-zinc-100 text-zinc-950 border-white'
+                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-200'
                   }`}
                 >
                   {cat}
                 </button>
               ))}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          {/* Severity Filter */}
-          <div>
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-              Severity
-            </label>
-            <div className="flex flex-wrap gap-1.5">
+          <Box>
+            <Typography variant="overline" sx={{ color: '#a1a1aa', fontWeight: 800, mb: 1, display: 'block' }}>
+              Severity Level
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
               {severities.map((sev) => (
                 <button
                   key={sev}
                   onClick={() => setFilters({ ...filters, severity: sev })}
-                  className={`text-xs px-2.5 py-1 rounded-lg border transition-colors ${
+                  className={`text-[11px] px-2 py-0.5 rounded-none font-bold uppercase tracking-wider transition-colors border ${
                     filters.severity === sev
-                      ? 'bg-amber-600 text-white border-amber-500 font-semibold'
-                      : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                      ? 'bg-zinc-100 text-zinc-950 border-white'
+                      : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:bg-zinc-800 hover:text-zinc-200'
                   }`}
                 >
                   {sev}
                 </button>
               ))}
-            </div>
-          </div>
+            </Box>
+          </Box>
 
-          {/* Status Filter */}
-          <div>
-            <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">
-              Status Lifecycle
-            </label>
-            <select
+          <Box>
+            <Typography variant="overline" sx={{ color: '#a1a1aa', fontWeight: 800, mb: 1, display: 'block' }}>
+              Lifecycle Status
+            </Typography>
+            <TextField
+              select
+              size="small"
+              fullWidth
               value={filters.status || 'ALL'}
               onChange={(e) =>
                 setFilters({ ...filters, status: e.target.value as ComplaintStatus | 'ALL' })
               }
-              className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-sky-500"
             >
               {statuses.map((st) => (
-                <option key={st} value={st}>
+                <MenuItem key={st} value={st}>
                   {st === 'ALL' ? 'All Lifecycle Statuses' : st.replace('_', ' ')}
-                </option>
+                </MenuItem>
               ))}
-            </select>
-          </div>
+            </TextField>
+          </Box>
+        </Paper>
 
-          {/* Quick Stats list item */}
-          <div className="mt-auto pt-4 border-t border-slate-800 text-xs text-slate-400 space-y-1">
-            <div className="flex justify-between">
-              <span>Matching Reports:</span>
-              <span className="font-semibold text-slate-200">{complaints.length}</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Critical Incidents:</span>
-              <span className="font-semibold text-rose-400">
-                {complaints.filter((c) => c.severity === 'CRITICAL').length}
-              </span>
-            </div>
-          </div>
-        </aside>
-
-        {/* Map View Canvas Container */}
-        <main className="flex-1 relative h-full">
+        {/* Map View */}
+        <Box sx={{ flex: 1, position: 'relative', height: '100%' }}>
           {loading ? (
             <LoadingState message="Initializing geospatial map..." height="h-full" />
           ) : (
@@ -215,48 +210,59 @@ export default function MapPage() {
             />
           )}
 
-          {/* Selected Complaint Detail Drawer Card */}
+          {/* Selected Card Drawer */}
           {selectedComplaint && (
-            <div className="absolute bottom-6 right-6 left-6 md:left-auto md:w-96 z-30 bg-slate-900/95 backdrop-blur-md border border-slate-700/80 rounded-2xl p-5 shadow-2xl animate-in slide-in-from-bottom-5">
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="flex items-center gap-2">
-                  <CategoryBadge category={selectedComplaint.category} size="sm" />
-                  <SeverityBadge severity={selectedComplaint.severity} size="sm" />
-                </div>
+            <Paper
+              elevation={0}
+              sx={{
+                position: 'absolute',
+                bottom: 24,
+                right: 24,
+                left: { xs: 24, md: 'auto' },
+                width: { md: 360 },
+                zIndex: 30,
+                backgroundColor: '#121215',
+                borderColor: '#27272a',
+                p: 3,
+                borderRadius: '2px',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 1.5 }}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <CategoryBadge category={selectedComplaint.category} size="small" />
+                  <SeverityBadge severity={selectedComplaint.severity} size="small" />
+                </Box>
                 <button
                   onClick={() => setSelectedComplaint(null)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800"
+                  className="p-1 rounded text-zinc-400 hover:text-white hover:bg-zinc-800"
                 >
                   <X className="w-4 h-4" />
                 </button>
-              </div>
+              </Box>
 
-              <h3 className="text-base font-bold text-slate-100 line-clamp-1 mb-1">
+              <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc', fontSize: '1rem', mb: 0.5 }}>
                 {selectedComplaint.title}
-              </h3>
-              <p className="text-xs text-slate-400 font-mono mb-2">{selectedComplaint.id}</p>
+              </Typography>
+              <Typography variant="caption" sx={{ color: '#71717a', fontFamily: 'monospace', display: 'block', mb: 1 }}>
+                {selectedComplaint.id}
+              </Typography>
 
-              <p className="text-xs text-slate-300 line-clamp-2 mb-4 leading-relaxed">
+              <Typography variant="body2" sx={{ color: '#a1a1aa', fontSize: '0.8125rem', mb: 2 }}>
                 {selectedComplaint.description}
-              </p>
+              </Typography>
 
-              <div className="flex items-center gap-2 text-xs text-slate-400 mb-4">
-                <MapPin className="w-3.5 h-3.5 text-sky-400 shrink-0" />
-                <span className="line-clamp-1">{selectedComplaint.address}</span>
-              </div>
-
-              <div className="flex items-center justify-between pt-3 border-t border-slate-800">
-                <StatusBadge status={selectedComplaint.status} size="sm" />
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', pt: 2, borderTop: '1px solid #27272a' }}>
+                <StatusBadge status={selectedComplaint.status} size="small" />
                 <Link href={`/complaints/${selectedComplaint.id}`}>
-                  <Button size="sm" variant="primary" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
-                    Open Report
+                  <Button size="small" variant="contained" endIcon={<ArrowRight className="w-3.5 h-3.5" />}>
+                    View Dossier
                   </Button>
                 </Link>
-              </div>
-            </div>
+              </Box>
+            </Paper>
           )}
-        </main>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }

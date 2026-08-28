@@ -1,0 +1,107 @@
+'use client';
+
+import React, { useEffect, useRef } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { 
+  Compass, 
+  Map as MapIcon, 
+  Plus, 
+  ListFilter, 
+  User, 
+  ShieldCheck
+} from 'lucide-react';
+import gsap from 'gsap';
+
+export const FloatingBottomNav: React.FC = () => {
+  const pathname = usePathname();
+  const navContainerRef = useRef<HTMLDivElement>(null);
+
+  const navItems = [
+    { href: '/', label: 'Home', icon: Compass },
+    { href: '/map', label: 'Map', icon: MapIcon },
+    { href: '/report', label: 'Report', icon: Plus, highlight: true },
+    { href: '/complaints', label: 'Feed', icon: ListFilter },
+    { href: '/profile', label: 'Profile', icon: User },
+    { href: '/admin', label: 'Admin', icon: ShieldCheck, admin: true },
+  ];
+
+  const isActive = (path: string) => {
+    if (path === '/') return pathname === '/';
+    return pathname.startsWith(path);
+  };
+
+  useEffect(() => {
+    // Check prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion || !navContainerRef.current) return;
+
+    gsap.fromTo(
+      navContainerRef.current,
+      { y: 40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', delay: 0.2 }
+    );
+  }, []);
+
+  return (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[92vw] sm:max-w-max pointer-events-auto">
+      <nav
+        ref={navContainerRef}
+        className="flex items-center gap-1.5 p-1.5 rounded bg-zinc-950/95 border border-zinc-800 shadow-2xl backdrop-blur-md"
+        aria-label="Bottom Floating Command Dock"
+      >
+        {/* Brand Mark Minimal Emblem */}
+        <Link
+          href="/"
+          className="hidden sm:flex items-center gap-2 px-3 py-2 mr-1 border-r border-zinc-800 text-xs font-black tracking-widest text-zinc-100 uppercase"
+        >
+          <span className="w-2 h-2 rounded-none bg-zinc-100" />
+          <span>URBAN</span>
+        </Link>
+
+        {/* Nav Links */}
+        <div className="flex items-center gap-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+
+            if (item.highlight) {
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded transition-all ${
+                    active
+                      ? 'bg-zinc-100 text-zinc-950 border border-white shadow-sm'
+                      : 'bg-zinc-100 text-zinc-950 hover:bg-zinc-200 border border-zinc-200'
+                  }`}
+                >
+                  <Icon className="w-4 h-4 stroke-[2.5]" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            }
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`relative flex items-center gap-2 px-3 py-2 text-xs font-medium uppercase tracking-wider rounded transition-all ${
+                  active
+                    ? 'bg-zinc-800/90 text-zinc-100 font-bold border border-zinc-700'
+                    : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900 border border-transparent'
+                }`}
+              >
+                <Icon className={`w-4 h-4 ${active ? 'text-zinc-100' : 'text-zinc-400'}`} />
+                <span className="hidden xs:inline sm:inline">{item.label}</span>
+                {active && (
+                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-zinc-100 rounded-none" />
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+    </div>
+  );
+};

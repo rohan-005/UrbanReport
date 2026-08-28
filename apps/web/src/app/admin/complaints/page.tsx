@@ -2,13 +2,19 @@
 
 import React, { useEffect, useState } from 'react';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
-import { Complaint, ComplaintFilters, Category, Severity, ComplaintStatus } from '@/lib/types';
-import { PageHeader } from '@/components/ui/PageHeader';
+import { Complaint, ComplaintFilters, Severity, ComplaintStatus } from '@/lib/types';
 import { AdminComplaintTable } from '@/components/admin/AdminComplaintTable';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Search, Filter, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import InputAdornment from '@mui/material/InputAdornment';
+import Button from '@mui/material/Button';
+import { Search, RefreshCw } from 'lucide-react';
 
 export default function AdminComplaintsPage() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
@@ -36,67 +42,75 @@ export default function AdminComplaintsPage() {
   }, [filters]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 w-full space-y-8">
-      <PageHeader
-        title="Admin Resolution Queue"
-        description="Filter, inspect, and transition status for all municipal civic reports across city sectors."
-        action={
-          <Button variant="outline" size="sm" onClick={loadData} leftIcon={<RefreshCw className="w-3.5 h-3.5" />}>
+    <Box sx={{ py: 6, backgroundColor: '#09090b', flex: 1, pb: 12 }}>
+      <Container maxWidth="xl">
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #27272a', gap: 2 }}>
+          <Box>
+            <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 0.5 }}>
+              Admin Resolution Queue
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+              Multi-criteria filter and dispatch control table.
+            </Typography>
+          </Box>
+
+          <Button variant="outlined" size="small" onClick={loadData} startIcon={<RefreshCw className="w-3.5 h-3.5" />}>
             Refresh
           </Button>
-        }
-      />
+        </Box>
 
-      {/* Admin Filters */}
-      <div className="rounded-2xl bg-slate-900 border border-slate-800 p-4 space-y-3 shadow-lg">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-            <input
-              type="text"
+        {/* Filter Controls */}
+        <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', mb: 4 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '2fr 1fr 1fr 1fr' }, gap: 2 }}>
+            <TextField
+              size="small"
               placeholder="Search ID, title, address..."
               value={filters.searchQuery || ''}
               onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search className="w-4 h-4 text-zinc-400" />
+                  </InputAdornment>
+                ),
+              }}
             />
-          </div>
 
-          <div>
-            <select
+            <TextField
+              select
+              size="small"
               value={filters.severity || 'ALL'}
               onChange={(e) => setFilters({ ...filters, severity: e.target.value as Severity | 'ALL' })}
-              className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-200 focus:outline-none focus:border-purple-500"
             >
-              <option value="ALL">All Severities</option>
-              <option value="CRITICAL">Critical Only</option>
-              <option value="HIGH">High Only</option>
-              <option value="MEDIUM">Medium Only</option>
-              <option value="LOW">Low Only</option>
-            </select>
-          </div>
+              <MenuItem value="ALL">All Severities</MenuItem>
+              <MenuItem value="CRITICAL">Critical Only</MenuItem>
+              <MenuItem value="HIGH">High Only</MenuItem>
+              <MenuItem value="MEDIUM">Medium Only</MenuItem>
+              <MenuItem value="LOW">Low Only</MenuItem>
+            </TextField>
 
-          <div>
-            <select
+            <TextField
+              select
+              size="small"
               value={filters.status || 'ALL'}
               onChange={(e) =>
                 setFilters({ ...filters, status: e.target.value as ComplaintStatus | 'ALL' })
               }
-              className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-200 focus:outline-none focus:border-purple-500"
             >
-              <option value="ALL">All Lifecycle Statuses</option>
-              <option value="SUBMITTED">Submitted</option>
-              <option value="UNDER_REVIEW">Under Review</option>
-              <option value="VERIFIED">Verified</option>
-              <option value="ASSIGNED">Assigned</option>
-              <option value="IN_PROGRESS">In Progress</option>
-              <option value="RESOLVED">Resolved</option>
-              <option value="REOPENED">Reopened</option>
-              <option value="REJECTED">Rejected</option>
-            </select>
-          </div>
+              <MenuItem value="ALL">All Statuses</MenuItem>
+              <MenuItem value="SUBMITTED">Submitted</MenuItem>
+              <MenuItem value="UNDER_REVIEW">Under Review</MenuItem>
+              <MenuItem value="VERIFIED">Verified</MenuItem>
+              <MenuItem value="ASSIGNED">Assigned</MenuItem>
+              <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+              <MenuItem value="RESOLVED">Resolved</MenuItem>
+              <MenuItem value="REOPENED">Reopened</MenuItem>
+              <MenuItem value="REJECTED">Rejected</MenuItem>
+            </TextField>
 
-          <div>
-            <select
+            <TextField
+              select
+              size="small"
               value={filters.sortBy || 'severity'}
               onChange={(e) =>
                 setFilters({
@@ -104,37 +118,36 @@ export default function AdminComplaintsPage() {
                   sortBy: e.target.value as 'newest' | 'oldest' | 'upvotes' | 'severity',
                 })
               }
-              className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-200 focus:outline-none focus:border-purple-500"
             >
-              <option value="severity">Sort: Highest Severity</option>
-              <option value="newest">Sort: Newest First</option>
-              <option value="oldest">Sort: Oldest First</option>
-              <option value="upvotes">Sort: Most Upvoted</option>
-            </select>
-          </div>
-        </div>
-      </div>
+              <MenuItem value="severity">Sort: Highest Severity</MenuItem>
+              <MenuItem value="newest">Sort: Newest</MenuItem>
+              <MenuItem value="oldest">Sort: Oldest</MenuItem>
+              <MenuItem value="upvotes">Sort: Upvotes</MenuItem>
+            </TextField>
+          </Box>
+        </Paper>
 
-      {loading ? (
-        <LoadingState message="Filtering administrative records..." height="h-96" />
-      ) : complaints.length === 0 ? (
-        <EmptyState
-          title="No admin queue items found"
-          description="No complaints match the specified filter criteria."
-          actionLabel="Reset Queue Filters"
-          onAction={() =>
-            setFilters({
-              category: 'ALL',
-              severity: 'ALL',
-              status: 'ALL',
-              searchQuery: '',
-              sortBy: 'severity',
-            })
-          }
-        />
-      ) : (
-        <AdminComplaintTable complaints={complaints} />
-      )}
-    </div>
+        {loading ? (
+          <LoadingState message="Filtering administrative records..." height="h-96" />
+        ) : complaints.length === 0 ? (
+          <EmptyState
+            title="No admin queue records found"
+            description="Adjust search parameters."
+            actionLabel="Reset Queue Filters"
+            onAction={() =>
+              setFilters({
+                category: 'ALL',
+                severity: 'ALL',
+                status: 'ALL',
+                searchQuery: '',
+                sortBy: 'severity',
+              })
+            }
+          />
+        ) : (
+          <AdminComplaintTable complaints={complaints} />
+        )}
+      </Container>
+    </Box>
   );
 }

@@ -5,11 +5,14 @@ import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Complaint, ComplaintFilters } from '@/lib/types';
 import { ComplaintCard } from '@/components/complaints/ComplaintCard';
 import { ComplaintFiltersBar } from '@/components/complaints/ComplaintFilters';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { Button } from '@/components/ui/Button';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Map, PlusCircle, LayoutGrid, ListFilter } from 'lucide-react';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import { Map, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ComplaintsPage() {
@@ -33,9 +36,7 @@ export default function ComplaintsPage() {
 
   useEffect(() => {
     loadData();
-    const unsubscribe = complaintRepository.subscribe(() => {
-      loadData();
-    });
+    const unsubscribe = complaintRepository.subscribe(() => loadData());
     return () => unsubscribe();
   }, [filters]);
 
@@ -45,73 +46,82 @@ export default function ComplaintsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 w-full">
-      <PageHeader
-        title="Explore Civic Complaints"
-        description="Transparent directory of reported municipal infrastructure, public safety, and environmental issues across the city."
-        action={
-          <div className="flex items-center gap-3">
+    <Box sx={{ py: 6, backgroundColor: '#09090b', flex: 1, pb: 12 }}>
+      <Container maxWidth="xl">
+        {/* Header */}
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #27272a', gap: 2 }}>
+          <Box>
+            <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', mb: 0.5 }}>
+              Civic Incident Catalog
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+              Editorial issue feed of reported infrastructure & environmental defects.
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <Link href="/map">
-              <Button variant="outline" leftIcon={<Map className="w-4 h-4" />}>
-                View on Map
+              <Button variant="outlined" size="small" startIcon={<Map className="w-4 h-4" />}>
+                Geospatial Map
               </Button>
             </Link>
             <Link href="/report">
-              <Button variant="primary" leftIcon={<PlusCircle className="w-4 h-4" />}>
+              <Button variant="contained" size="small" startIcon={<Plus className="w-4 h-4 stroke-[3]" />}>
                 Report Issue
               </Button>
             </Link>
-          </div>
-        }
-      />
+          </Box>
+        </Box>
 
-      {/* Filter Bar */}
-      <div className="mb-8">
-        <ComplaintFiltersBar
-          filters={filters}
-          onChange={(newFilters) => setFilters(newFilters)}
-          onReset={() =>
-            setFilters({
-              category: 'ALL',
-              severity: 'ALL',
-              status: 'ALL',
-              searchQuery: '',
-              sortBy: 'newest',
-            })
-          }
-        />
-      </div>
+        {/* Filter Bar */}
+        <Box sx={{ mb: 4 }}>
+          <ComplaintFiltersBar
+            filters={filters}
+            onChange={(newFilters) => setFilters(newFilters)}
+            onReset={() =>
+              setFilters({
+                category: 'ALL',
+                severity: 'ALL',
+                status: 'ALL',
+                searchQuery: '',
+                sortBy: 'newest',
+              })
+            }
+          />
+        </Box>
 
-      {/* List / Grid Content */}
-      {loading ? (
-        <LoadingState message="Loading complaints catalog..." height="h-96" />
-      ) : complaints.length === 0 ? (
-        <EmptyState
-          title="No complaints match your search"
-          description="Try adjusting or clearing your filters to see more civic reports."
-          actionLabel="Reset All Filters"
-          onAction={() =>
-            setFilters({
-              category: 'ALL',
-              severity: 'ALL',
-              status: 'ALL',
-              searchQuery: '',
-              sortBy: 'newest',
-            })
-          }
-        />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {complaints.map((complaint) => (
-            <ComplaintCard
-              key={complaint.id}
-              complaint={complaint}
-              onUpvote={handleUpvote}
-              isUpvoted={complaint.upvotedByUserIds?.includes('user-001')}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+        {/* List Content */}
+        {loading ? (
+          <LoadingState message="Loading catalog..." height="h-96" />
+        ) : complaints.length === 0 ? (
+          <EmptyState
+            title="No complaints match filters"
+            description="Adjust search or category criteria."
+            actionLabel="Reset Filters"
+            onAction={() =>
+              setFilters({
+                category: 'ALL',
+                severity: 'ALL',
+                status: 'ALL',
+                searchQuery: '',
+                sortBy: 'newest',
+              })
+            }
+          />
+        ) : (
+          <Grid container spacing={3}>
+            {complaints.map((item) => (
+              <Grid item xs={12} sm={6} md={4} key={item.id}>
+                <ComplaintCard
+                  complaint={item}
+                  onUpvote={handleUpvote}
+                  isUpvoted={item.upvotedByUserIds?.includes('user-001')}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Container>
+    </Box>
   );
 }

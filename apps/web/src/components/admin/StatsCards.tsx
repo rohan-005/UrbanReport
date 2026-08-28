@@ -1,14 +1,15 @@
 import React from 'react';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
 import { 
   FileText, 
   Clock, 
-  CheckCircle2, 
   UserCheck, 
   Wrench, 
   CheckCircle, 
-  AlertTriangle,
-  RotateCcw,
-  XCircle
+  AlertTriangle 
 } from 'lucide-react';
 
 interface StatsCardsProps {
@@ -33,71 +34,89 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
       value: stats.total,
       label: 'All registered reports',
       icon: FileText,
-      color: 'text-sky-400',
-      border: 'border-slate-800',
     },
     {
       title: 'Critical Emergency',
       value: stats.critical,
       label: 'Immediate hazard alerts',
       icon: AlertTriangle,
-      color: 'text-rose-400 animate-pulse',
-      border: 'border-rose-800/60 bg-rose-950/20',
+      highlight: true,
     },
     {
       title: 'Pending Review',
       value: stats.submitted + stats.underReview,
       label: 'Awaiting triage',
       icon: Clock,
-      color: 'text-amber-400',
-      border: 'border-amber-800/40 bg-amber-950/10',
     },
     {
       title: 'Verified & Assigned',
       value: stats.verified + stats.assigned,
       label: 'Dispatched to departments',
       icon: UserCheck,
-      color: 'text-purple-400',
-      border: 'border-purple-800/40 bg-purple-950/10',
     },
     {
       title: 'Active In Progress',
       value: stats.inProgress,
       label: 'On-site crew repair work',
       icon: Wrench,
-      color: 'text-cyan-400',
-      border: 'border-cyan-800/40 bg-cyan-950/10',
     },
     {
       title: 'Resolved Successfully',
       value: stats.resolved,
       label: 'Work completed',
       icon: CheckCircle,
-      color: 'text-emerald-400',
-      border: 'border-emerald-800/40 bg-emerald-950/10',
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+    <Grid container spacing={2}>
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <div
-            key={card.title}
-            className={`p-4 rounded-2xl bg-slate-900 border ${card.border} space-y-2 shadow-lg`}
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider line-clamp-1">
-                {card.title}
-              </span>
-              <Icon className={`w-4 h-4 ${card.color}`} />
-            </div>
-            <p className={`text-2xl font-extrabold ${card.color}`}>{card.value}</p>
-            <p className="text-[10px] text-slate-400 line-clamp-1">{card.label}</p>
-          </div>
+          <Grid item xs={6} sm={4} md={2} key={card.title}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2,
+                backgroundColor: card.highlight ? '#450a0a' : '#121215',
+                borderColor: card.highlight ? '#991b1b' : '#27272a',
+                borderRadius: '2px',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 1 }}>
+                <Typography
+                  variant="overline"
+                  sx={{
+                    color: card.highlight ? '#fca5a5' : '#a1a1aa',
+                    fontWeight: 800,
+                    fontSize: '0.625rem',
+                    lineHeight: 1.2,
+                  }}
+                >
+                  {card.title}
+                </Typography>
+                <Icon className={`w-4 h-4 ${card.highlight ? 'text-red-400 animate-pulse' : 'text-zinc-400'}`} />
+              </Box>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 900,
+                  color: card.highlight ? '#fca5a5' : '#f8fafc',
+                }}
+              >
+                {card.value}
+              </Typography>
+              <Typography variant="caption" sx={{ color: card.highlight ? '#fca5a5' : '#71717a', fontSize: '0.6875rem' }}>
+                {card.label}
+              </Typography>
+            </Paper>
+          </Grid>
         );
       })}
-    </div>
+    </Grid>
   );
 };

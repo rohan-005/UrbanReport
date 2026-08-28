@@ -5,8 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authRepository } from '@/lib/repositories/auth.repository';
 import { validateAadhaarNumber, formatAadhaarInput, validateEmail, validatePhone } from '@/lib/utils/validation';
-import { Button } from '@/components/ui/Button';
-import { MapPin, User, Mail, Phone, Lock, CreditCard, ShieldCheck, AlertCircle } from 'lucide-react';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
+import { ShieldCheck, AlertCircle } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -30,22 +36,10 @@ export default function RegisterPage() {
     const newErrors: Record<string, string> = {};
 
     if (!name.trim()) newErrors.name = 'Full name is required.';
-
-    if (!email.trim() || !validateEmail(email)) {
-      newErrors.email = 'Valid email address is required.';
-    }
-
-    if (!phone.trim() || !validatePhone(phone)) {
-      newErrors.phone = 'Valid 10-digit mobile number is required.';
-    }
-
-    if (!password || password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters long.';
-    }
-
-    if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match.';
-    }
+    if (!email.trim() || !validateEmail(email)) newErrors.email = 'Valid email is required.';
+    if (!phone.trim() || !validatePhone(phone)) newErrors.phone = 'Valid phone is required.';
+    if (!password || password.length < 6) newErrors.password = 'Min 6 characters.';
+    if (password !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match.';
 
     const aadhaarResult = validateAadhaarNumber(aadhaarNumber);
     if (!aadhaarResult.isValid) {
@@ -58,11 +52,9 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     setLoading(true);
-
     try {
       await authRepository.register({
         name: name.trim(),
@@ -70,7 +62,6 @@ export default function RegisterPage() {
         phone: phone.trim(),
         aadhaarNumber,
       });
-
       router.push('/profile');
     } catch (err: any) {
       setErrors({ form: err.message || 'Registration failed.' });
@@ -80,177 +71,140 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4 sm:p-6 bg-slate-950">
-      <div className="w-full max-w-lg space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-600 text-white shadow-lg shadow-sky-500/20 mb-2">
-            <MapPin className="h-6 w-6" />
-          </div>
-          <h1 className="text-2xl font-extrabold text-slate-100">Citizen Registration</h1>
-          <p className="text-sm text-slate-400">
-            Create an account to report civic issues and receive municipal resolution updates
-          </p>
-        </div>
+    <Box sx={{ minHeight: 'calc(100vh - 4rem)', display: 'flex', alignItems: 'center', justifyCenter: 'center', backgroundColor: '#09090b', py: 8 }}>
+      <Container maxWidth="sm">
+        <Box sx={{ textCenter: 'center', mb: 4 }}>
+          <Typography variant="h4" sx={{ fontWeight: 900, color: '#f8fafc', mb: 0.5 }}>
+            Citizen Identity Registration
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#a1a1aa' }}>
+            Register profile for issue reporting and ward status updates
+          </Typography>
+        </Box>
 
-        {/* Registration Form Card */}
-        <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-2xl">
+        <Paper elevation={0} component="form" onSubmit={handleRegister} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           {errors.form && (
-            <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-800 text-xs text-rose-300 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+            <Box sx={{ p: 2, borderRadius: '2px', backgroundColor: '#450a0a', border: '1px solid #991b1b', color: '#fca5a5', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <AlertCircle className="w-4 h-4 text-red-400" />
               <span>{errors.form}</span>
-            </div>
+            </Box>
           )}
 
-          <form onSubmit={handleRegister} className="space-y-4">
-            {/* Full Name */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-                Full Name *
-              </label>
-              <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Aarav Sharma"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
-                />
-              </div>
-              {errors.name && <p className="text-xs text-rose-400 font-medium">{errors.name}</p>}
-            </div>
+          <TextField
+            label="Full Name *"
+            required
+            fullWidth
+            size="small"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            error={Boolean(errors.name)}
+            helperText={errors.name}
+          />
 
-            {/* Email & Phone Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-                  Email Address *
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                  <input
-                    type="email"
-                    required
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
-                  />
-                </div>
-                {errors.email && <p className="text-xs text-rose-400 font-medium">{errors.email}</p>}
-              </div>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Email *"
+                type="email"
+                required
+                fullWidth
+                size="small"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                error={Boolean(errors.email)}
+                helperText={errors.email}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Mobile Phone *"
+                required
+                fullWidth
+                size="small"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                error={Boolean(errors.phone)}
+                helperText={errors.phone}
+              />
+            </Grid>
+          </Grid>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-                  Mobile Number *
-                </label>
-                <div className="relative">
-                  <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                  <input
-                    type="tel"
-                    required
-                    placeholder="+91 98765 43210"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
-                  />
-                </div>
-                {errors.phone && <p className="text-xs text-rose-400 font-medium">{errors.phone}</p>}
-              </div>
-            </div>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Password *"
+                type="password"
+                required
+                fullWidth
+                size="small"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={Boolean(errors.password)}
+                helperText={errors.password}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Confirm Password *"
+                type="password"
+                required
+                fullWidth
+                size="small"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                error={Boolean(errors.confirmPassword)}
+                helperText={errors.confirmPassword}
+              />
+            </Grid>
+          </Grid>
 
-            {/* Password & Confirm */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-                  Password *
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
-                  />
-                </div>
-                {errors.password && <p className="text-xs text-rose-400 font-medium">{errors.password}</p>}
-              </div>
+          <Box>
+            <TextField
+              label="Aadhaar Number (12 Digits) *"
+              required
+              fullWidth
+              size="small"
+              placeholder="5555 6666 7777"
+              value={aadhaarNumber}
+              onChange={handleAadhaarChange}
+              error={Boolean(errors.aadhaarNumber)}
+              helperText={errors.aadhaarNumber}
+            />
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider block">
-                  Confirm Password *
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500"
-                  />
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-xs text-rose-400 font-medium">{errors.confirmPassword}</p>
-                )}
-              </div>
-            </div>
+            <Box sx={{ p: 1.5, mt: 1, borderRadius: '2px', backgroundColor: '#09090b', border: '1px solid #27272a', fontSize: '0.75rem', color: '#a1a1aa', display: 'flex', alignItems: 'center', gap: 1 }}>
+              <ShieldCheck className="w-4 h-4 text-zinc-100 shrink-0" />
+              <span>Format is checked locally (12 digits, non-repeating). No UIDAI integration occurs.</span>
+            </Box>
+          </Box>
 
-            {/* Aadhaar Number Field */}
-            <div className="space-y-1.5 pt-2">
-              <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                <span>Aadhaar Number (12 Digits) *</span>
-                <span className="text-[10px] text-sky-400 font-mono">Format Check Only</span>
-              </label>
-              <div className="relative">
-                <CreditCard className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
-                <input
-                  type="text"
-                  required
-                  placeholder="5555 6666 7777"
-                  maxLength={14}
-                  value={aadhaarNumber}
-                  onChange={handleAadhaarChange}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 font-mono placeholder-slate-500 focus:outline-none focus:border-sky-500"
-                />
-              </div>
-              {errors.aadhaarNumber && (
-                <p className="text-xs text-rose-400 font-medium">{errors.aadhaarNumber}</p>
-              )}
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            size="large"
+            disabled={loading}
+            sx={{
+              backgroundColor: '#f8fafc',
+              color: '#09090b',
+              fontWeight: 900,
+              py: 1.25,
+              mt: 1,
+              '&:hover': { backgroundColor: '#e2e8f0' },
+            }}
+          >
+            Complete Registration
+          </Button>
 
-              <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] text-slate-400 leading-relaxed flex items-start gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>
-                  <strong>Phase 1 Security Notice:</strong> Aadhaar format is checked locally (12 numeric digits, non-repeating). No UIDAI integration occurs and no raw Aadhaar numbers are transmitted or stored.
-                </span>
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              isLoading={loading}
-              className="w-full mt-4"
-            >
-              Complete Registration
-            </Button>
-          </form>
-
-          <div className="pt-4 border-t border-slate-800 text-center text-xs text-slate-400">
-            Already registered?{' '}
-            <Link href="/login" className="font-semibold text-sky-400 hover:underline">
-              Sign In to Account
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
+          <Box sx={{ pt: 2, borderTop: '1px solid #27272a', textCenter: 'center' }}>
+            <Typography variant="caption" sx={{ color: '#a1a1aa' }}>
+              Already registered?{' '}
+              <Link href="/login" className="font-bold text-white underline">
+                Sign In
+              </Link>
+            </Typography>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 }

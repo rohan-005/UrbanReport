@@ -9,22 +9,23 @@ import { SeverityBadge } from '@/components/ui/SeverityBadge';
 import { CategoryBadge } from '@/components/ui/CategoryBadge';
 import { ComplaintTimeline } from '@/components/complaints/ComplaintTimeline';
 import { MapView } from '@/components/map/MapView';
-import { Button } from '@/components/ui/Button';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ErrorState } from '@/components/ui/ErrorState';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 import { 
   ArrowLeft, 
   MapPin, 
-  Calendar, 
-  User, 
   ThumbsUp, 
   ShieldCheck, 
   Clock, 
-  FileText,
-  Image as ImageIcon,
   Building2,
   CheckCircle2,
-  XCircle
+  Image as ImageIcon
 } from 'lucide-react';
 
 export default function ComplaintDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -47,9 +48,7 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
 
   useEffect(() => {
     loadComplaint();
-    const unsubscribe = complaintRepository.subscribe(() => {
-      loadComplaint();
-    });
+    const unsubscribe = complaintRepository.subscribe(() => loadComplaint());
     return () => unsubscribe();
   }, [complaintId]);
 
@@ -64,27 +63,20 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-5xl px-4 py-12">
-        <LoadingState message="Fetching civic issue dossier..." height="h-96" />
-      </div>
+      <Container maxWidth="lg" sx={{ py: 10 }}>
+        <LoadingState message="Opening incident dossier..." height="h-96" />
+      </Container>
     );
   }
 
   if (!complaint) {
     return (
-      <div className="mx-auto max-w-5xl px-4 py-12">
+      <Container maxWidth="lg" sx={{ py: 10 }}>
         <ErrorState
-          title="Complaint Not Found"
-          message={`No civic report found with ID ${complaintId}. It may have been archived or removed.`}
+          title="Incident Dossier Not Found"
+          message={`No civic report matches ID ${complaintId}.`}
         />
-        <div className="text-center mt-6">
-          <Link href="/complaints">
-            <Button variant="outline" leftIcon={<ArrowLeft className="w-4 h-4" />}>
-              Back to Complaints Catalog
-            </Button>
-          </Link>
-        </div>
-      </div>
+      </Container>
     );
   }
 
@@ -94,204 +86,149 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
   });
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8 w-full space-y-8">
-      {/* Navigation & Action Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
-        <Link
-          href="/complaints"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-slate-400 hover:text-sky-400 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Complaints Directory</span>
-        </Link>
-
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleUpvote}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors border ${
-              isUpvoted
-                ? 'bg-sky-600/20 text-sky-400 border-sky-500/50'
-                : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700'
-            }`}
-          >
-            <ThumbsUp className={`w-4 h-4 ${isUpvoted ? 'fill-sky-400 text-sky-400' : ''}`} />
-            <span>{complaint.upvotesCount} Upvotes</span>
-          </button>
-
-          <Link href={`/admin/complaints/${complaint.id}`}>
-            <Button variant="outline" size="md" leftIcon={<ShieldCheck className="w-4 h-4 text-purple-400" />}>
-              Admin Review Desk
-            </Button>
+    <Box sx={{ py: 6, backgroundColor: '#09090b', flex: 1, pb: 12 }}>
+      <Container maxWidth="lg">
+        {/* Navigation */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #27272a' }}>
+          <Link href="/complaints" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 hover:text-zinc-100">
+            <ArrowLeft className="w-4 h-4" />
+            <span>Return to Catalog Feed</span>
           </Link>
-        </div>
-      </div>
 
-      {/* Main Dossier Header */}
-      <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 sm:p-8 space-y-6 shadow-xl">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <CategoryBadge category={complaint.category} size="md" />
-            <SeverityBadge severity={complaint.severity} size="md" />
-          </div>
-          <StatusBadge status={complaint.status} size="lg" />
-        </div>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={handleUpvote}
+              startIcon={<ThumbsUp className={`w-4 h-4 ${isUpvoted ? 'fill-zinc-100' : ''}`} />}
+            >
+              {complaint.upvotesCount} Upvotes
+            </Button>
 
-        <div>
-          <div className="flex items-center gap-3 text-xs text-slate-400 font-mono mb-2">
-            <span className="bg-slate-800 text-sky-400 px-2.5 py-1 rounded-md border border-slate-700 font-bold">
-              {complaint.id}
-            </span>
-            <span>Reported on {formattedCreated}</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 leading-tight">
+            <Link href={`/admin/complaints/${complaint.id}`}>
+              <Button variant="contained" size="small" startIcon={<ShieldCheck className="w-4 h-4" />}>
+                Admin Action Desk
+              </Button>
+            </Link>
+          </Box>
+        </Box>
+
+        {/* Header Paper */}
+        <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', mb: 4, spaceY: 3 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 2, mb: 2 }}>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <CategoryBadge category={complaint.category} size="medium" />
+              <SeverityBadge severity={complaint.severity} size="medium" />
+            </Box>
+            <StatusBadge status={complaint.status} size="medium" />
+          </Box>
+
+          <Typography variant="caption" sx={{ color: '#71717a', fontFamily: 'monospace', display: 'block' }}>
+            DOSSIER ID: {complaint.id} • RECORDED {formattedCreated.toUpperCase()}
+          </Typography>
+
+          <Typography variant="h3" sx={{ fontWeight: 900, color: '#f8fafc', letterSpacing: '-0.02em', mb: 2 }}>
             {complaint.title}
-          </h1>
-        </div>
+          </Typography>
 
-        {/* Location & Address */}
-        <div className="flex items-start gap-3 p-4 rounded-xl bg-slate-800/60 border border-slate-700/60 text-sm text-slate-200">
-          <MapPin className="w-5 h-5 text-sky-400 shrink-0 mt-0.5" />
-          <div>
-            <span className="font-semibold text-slate-300 block text-xs uppercase tracking-wider mb-0.5">
-              Incident Location Address
-            </span>
-            <span>{complaint.address}</span>
-            <span className="block text-xs font-mono text-slate-400 mt-1">
-              GPS Coordinates: {complaint.latitude.toFixed(4)}° N, {complaint.longitude.toFixed(4)}° E
-            </span>
-          </div>
-        </div>
+          <Box sx={{ p: 2, backgroundColor: '#09090b', border: '1px solid #27272a', borderRadius: '2px', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <MapPin className="w-4 h-4 text-zinc-100 shrink-0" />
+            <Typography variant="body2" sx={{ color: '#e4e4e7', fontSize: '0.875rem' }}>
+              {complaint.address} ({complaint.latitude.toFixed(4)}° N, {complaint.longitude.toFixed(4)}° E)
+            </Typography>
+          </Box>
 
-        {/* Description */}
-        <div className="space-y-2">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Problem Description
-          </h3>
-          <p className="text-sm sm:text-base text-slate-200 leading-relaxed font-sans bg-slate-950/40 p-4 rounded-xl border border-slate-800">
+          <Typography variant="body1" sx={{ color: '#a1a1aa', lineHeight: 1.6, pt: 1 }}>
             {complaint.description}
-          </p>
-        </div>
-      </div>
+          </Typography>
+        </Paper>
 
-      {/* Grid: Left Timeline & Assignment - Right Map & Media */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Timeline & Assignment */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Assignment Information Card */}
-          {complaint.assignment && (
-            <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-4 shadow-lg">
-              <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
-                <Building2 className="w-5 h-5 text-purple-400" />
-                <h3 className="text-base font-bold text-slate-100">Municipal Assignment Desk</h3>
-              </div>
+        {/* Content Grid */}
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={7}>
+            {/* Department Assignment Info */}
+            {complaint.assignment && (
+              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1.5, mb: 2, borderBottom: '1px solid #27272a' }}>
+                  <Building2 className="w-4 h-4 text-zinc-100" />
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+                    Department Assignment
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ color: '#f8fafc', fontWeight: 800 }}>
+                  {complaint.assignment.department}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#a1a1aa', display: 'block', mt: 0.5 }}>
+                  Lead Officer: {complaint.assignment.assignedOfficer || 'Unassigned'}
+                </Typography>
+              </Paper>
+            )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <span className="text-xs text-slate-400 block font-medium">Department</span>
-                  <span className="font-semibold text-purple-300">{complaint.assignment.department}</span>
-                </div>
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <span className="text-xs text-slate-400 block font-medium">Assigned Field Officer</span>
-                  <span className="font-semibold text-slate-200">
-                    {complaint.assignment.assignedOfficer || 'Unassigned'}
-                  </span>
-                </div>
-              </div>
+            {/* Resolution Remarks */}
+            {complaint.resolutionNotes && (
+              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', mb: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                  <CheckCircle2 className="w-4 h-4 text-zinc-100" />
+                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+                    Verification Remarks
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ color: '#a1a1aa', fontFamily: 'monospace' }}>
+                  {complaint.resolutionNotes}
+                </Typography>
+              </Paper>
+            )}
 
-              {complaint.assignment.notes && (
-                <div className="p-3 rounded-xl bg-purple-950/20 border border-purple-800/40 text-xs text-slate-300">
-                  <span className="font-bold text-purple-400">Department Notes: </span>
-                  {complaint.assignment.notes}
-                </div>
-              )}
-            </div>
-          )}
+            {/* Timeline */}
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 2, mb: 3, borderBottom: '1px solid #27272a' }}>
+                <Clock className="w-5 h-5 text-zinc-100" />
+                <Typography variant="h6" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+                  Case Timeline History
+                </Typography>
+              </Box>
+              <ComplaintTimeline timeline={complaint.timeline} />
+            </Paper>
+          </Grid>
 
-          {/* Resolution Notes if Resolved/Rejected */}
-          {complaint.resolutionNotes && (
-            <div className="rounded-2xl bg-emerald-950/30 border border-emerald-800/50 p-6 space-y-2">
-              <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm">
-                <CheckCircle2 className="w-5 h-5" />
-                <span>Resolution Officer Verification Remarks</span>
-              </div>
-              <p className="text-sm text-slate-200 leading-relaxed font-mono p-3 rounded-xl bg-slate-900/80 border border-emerald-900/60">
-                {complaint.resolutionNotes}
-              </p>
-            </div>
-          )}
+          {/* Right Column Map & Media */}
+          <Grid item xs={12} md={5}>
+            <Paper elevation={0} sx={{ p: 3, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px', mb: 4 }}>
+              <Typography variant="overline" sx={{ color: '#a1a1aa', fontWeight: 800, mb: 1.5, display: 'block' }}>
+                Geospatial Pin
+              </Typography>
+              <Box sx={{ height: 260, width: '100%', borderRadius: '2px', overflow: 'hidden', border: '1px solid #27272a' }}>
+                <MapView
+                  complaints={[complaint]}
+                  selectedComplaintId={complaint.id}
+                  center={[complaint.longitude, complaint.latitude]}
+                  zoom={14}
+                  interactive={true}
+                />
+              </Box>
+            </Paper>
 
-          {/* Visual Activity Timeline */}
-          <div className="rounded-2xl bg-slate-900 border border-slate-800 p-6 space-y-6 shadow-lg">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-sky-400" />
-                <h3 className="text-lg font-bold text-slate-100">Lifecycle Progress Timeline</h3>
-              </div>
-              <span className="text-xs text-slate-400">
-                {complaint.timeline.length} Status Events
-              </span>
-            </div>
-
-            <ComplaintTimeline timeline={complaint.timeline} />
-          </div>
-        </div>
-
-        {/* Right Column: Interactive Location Map & Media Gallery */}
-        <div className="space-y-8">
-          {/* Map Location Card */}
-          <div className="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-4 shadow-lg">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-sky-400" />
-                <span>Geospatial Pin</span>
-              </h3>
-              <span className="text-xs text-slate-400 font-mono">
-                {complaint.latitude.toFixed(3)}, {complaint.longitude.toFixed(3)}
-              </span>
-            </div>
-
-            <div className="h-64 w-full rounded-xl overflow-hidden border border-slate-800">
-              <MapView
-                complaints={[complaint]}
-                selectedComplaintId={complaint.id}
-                center={[complaint.longitude, complaint.latitude]}
-                zoom={14}
-                interactive={true}
-              />
-            </div>
-          </div>
-
-          {/* Evidence Media Gallery */}
-          <div className="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-4 shadow-lg">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
-                <ImageIcon className="w-4 h-4 text-sky-400" />
-                <span>Photographic Evidence</span>
-              </h3>
-              <span className="text-xs text-slate-400">
-                {complaint.media.length} Photos
-              </span>
-            </div>
-
-            <div className="space-y-3">
+            <Paper elevation={0} sx={{ p: 3, backgroundColor: '#121215', borderColor: '#27272a', borderRadius: '2px' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <ImageIcon className="w-4 h-4 text-zinc-100" />
+                <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#f8fafc' }}>
+                  Photo Evidence
+                </Typography>
+              </Box>
               {complaint.media.map((item) => (
-                <div key={item.id} className="rounded-xl overflow-hidden border border-slate-800 bg-slate-950">
-                  <img
-                    src={item.url}
-                    alt={item.caption || 'Evidence photo'}
-                    className="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
-                  />
+                <Box key={item.id} sx={{ borderRadius: '2px', overflow: 'hidden', border: '1px solid #27272a', mb: 2 }}>
+                  <img src={item.url} alt="" className="w-full h-48 object-cover" />
                   {item.caption && (
-                    <div className="p-2.5 bg-slate-900 text-xs text-slate-400 border-t border-slate-800 font-mono">
+                    <Typography variant="caption" sx={{ p: 1, backgroundColor: '#09090b', color: '#a1a1aa', display: 'block', fontFamily: 'monospace' }}>
                       {item.caption}
-                    </div>
+                    </Typography>
                   )}
-                </div>
+                </Box>
               ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 }
