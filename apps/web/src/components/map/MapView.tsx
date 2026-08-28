@@ -3,15 +3,24 @@
 import React, { useEffect, useRef } from 'react';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Complaint, Severity } from '@/lib/types';
-import { Navigation } from 'lucide-react';
+import { Navigation, Loader2 } from 'lucide-react';
+
+export interface MapBounds {
+  minLat: number;
+  minLng: number;
+  maxLat: number;
+  maxLng: number;
+}
 
 interface MapViewProps {
   complaints: Complaint[];
   selectedComplaintId?: string;
   onSelectComplaint?: (complaint: Complaint) => void;
+  onViewportChange?: (bounds: MapBounds) => void;
   center?: [number, number];
   zoom?: number;
   interactive?: boolean;
+  isLoading?: boolean;
   className?: string;
 }
 
@@ -26,14 +35,17 @@ export const MapView: React.FC<MapViewProps> = ({
   complaints,
   selectedComplaintId,
   onSelectComplaint,
+  onViewportChange,
   center = [77.5946, 12.9716],
   zoom = 12,
   interactive = true,
+  isLoading = false,
   className = 'w-full h-full min-h-[400px]',
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<Map<string, any>>(new Map());
+  const moveEndTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -65,6 +77,28 @@ export const MapView: React.FC<MapViewProps> = ({
         mapInstance = map;
 
         map.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right');
+
+        const emitViewport = () => {
+          if (!onViewportChange || !mapRef.current) return;
+          const bounds = mapRef.current.getBounds();
+          onViewportChange({
+            minLat: bounds.getSouth(),
+            minLng: bounds.getWest(),
+            maxLat: bounds.getNorth(),
+            maxLng: bounds.getEast(),
+          });
+        };
+
+        map.on('load', () => {
+          emitViewport();
+        });
+
+        map.on('moveend', () => {
+          if (moveEndTimeoutRef.current) clearTimeout(moveEndTimeoutRef.current);
+          moveEndTimeoutRef.current = setTimeout(() => {
+            emitViewport();
+          }, 300);
+        });
       } catch (err) {
         console.error('Failed to initialize MapLibre GL instance:', err);
       }
@@ -74,6 +108,7 @@ export const MapView: React.FC<MapViewProps> = ({
 
     return () => {
       isMounted = false;
+      if (moveEndTimeoutRef.current) clearTimeout(moveEndTimeoutRef.current);
       if (markersRef.current) {
         markersRef.current.forEach((marker) => marker.remove());
         markersRef.current.clear();
@@ -195,6 +230,13 @@ export const MapView: React.FC<MapViewProps> = ({
   return (
     <div className={`relative overflow-hidden rounded-none border border-zinc-800 ${className}`}>
       <div ref={mapContainerRef} className="w-full h-full" />
+
+      {isLoading && (
+        <div className="absolute top-4 right-16 z-10 px-3 py-1.5 rounded bg-zinc-950/90 border border-zinc-800 text-white text-xs font-mono flex items-center gap-2 shadow-xl">
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+          <span>Fetching PostGIS Complaints...</span>
+        </div>
+      )}
 
       {/* Monochrome Legend */}
       <div className="absolute bottom-4 left-4 z-10 hidden sm:flex items-center gap-3 px-3 py-2 rounded-none bg-zinc-950/95 border border-zinc-800 text-xs text-zinc-300 shadow-2xl font-mono">

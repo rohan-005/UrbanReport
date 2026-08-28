@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Complaint, ComplaintFilters, Category, Severity, ComplaintStatus } from '@/lib/types';
-import { MapView } from '@/components/map/MapView';
+import { MapView, MapBounds } from '@/components/map/MapView';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { SeverityBadge } from '@/components/ui/SeverityBadge';
 import { CategoryBadge } from '@/components/ui/CategoryBadge';
@@ -45,8 +45,9 @@ const statuses: (ComplaintStatus | 'ALL')[] = [
 
 export default function MapPage() {
   const [complaints, setComplaints] = useState<Complaint[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
+  const [viewportBounds, setViewportBounds] = useState<MapBounds | null>(null);
 
   const [filters, setFilters] = useState<ComplaintFilters>({
     category: 'ALL',
@@ -55,18 +56,40 @@ export default function MapPage() {
     searchQuery: '',
   });
 
-  const loadData = async () => {
+  const loadData = useCallback(async (bounds: MapBounds | null, currentFilters: ComplaintFilters) => {
     setLoading(true);
-    const data = await complaintRepository.getAllComplaints(filters);
+    let data: Complaint[] = [];
+    if (bounds) {
+      data = await complaintRepository.getViewportComplaints(bounds, currentFilters);
+    } else {
+      data = await complaintRepository.getAllComplaints(currentFilters);
+    }
+
+    if (currentFilters.searchQuery?.trim()) {
+      const q = currentFilters.searchQuery.toLowerCase().trim();
+      data = data.filter(
+        (c) =>
+          c.title.toLowerCase().includes(q) ||
+          c.description.toLowerCase().includes(q) ||
+          c.address.toLowerCase().includes(q) ||
+          c.id.toLowerCase().includes(q)
+      );
+    }
+
     setComplaints(data);
     setLoading(false);
-  };
+  }, []);
+
+  const handleViewportChange = useCallback((bounds: MapBounds) => {
+    setViewportBounds(bounds);
+    loadData(bounds, filters);
+  }, [filters, loadData]);
 
   useEffect(() => {
-    loadData();
-    const unsubscribe = complaintRepository.subscribe(() => loadData());
+    loadData(viewportBounds, filters);
+    const unsubscribe = complaintRepository.subscribe(() => loadData(viewportBounds, filters));
     return () => unsubscribe();
-  }, [filters]);
+  }, [filters, viewportBounds, loadData]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 0rem)', backgroundColor: '#f5f3ee', pb: 10 }}>
@@ -79,7 +102,7 @@ export default function MapPage() {
               Geospatial Complaint Map
             </Typography>
             <Typography variant="caption" sx={{ color: '#52525b' }}>
-              Showing <span className="font-bold text-zinc-950">{complaints.length}</span> active civic incident records
+              Showing <span className="font-bold text-zinc-950">{complaints.length}</span> active PostGIS viewport incident records
             </Typography>
           </Box>
         </Box>
@@ -199,16 +222,14 @@ export default function MapPage() {
 
         {/* Map View */}
         <Box sx={{ flex: 1, position: 'relative', height: '100%' }}>
-          {loading ? (
-            <LoadingState message="Initializing geospatial map..." height="h-full" />
-          ) : (
-            <MapView
-              complaints={complaints}
-              selectedComplaintId={selectedComplaint?.id}
-              onSelectComplaint={(c) => setSelectedComplaint(c)}
-              className="w-full h-full border-none rounded-none"
-            />
-          )}
+          <MapView
+            complaints={complaints}
+            selectedComplaintId={selectedComplaint?.id}
+            onSelectComplaint={(c) => setSelectedComplaint(c)}
+            onViewportChange={handleViewportChange}
+            isLoading={loading}
+            className="w-full h-full border-none rounded-none"
+          />
 
           {/* Selected Card Drawer */}
           {selectedComplaint && (
