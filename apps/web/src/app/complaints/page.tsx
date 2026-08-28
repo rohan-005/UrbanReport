@@ -14,8 +14,10 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { Map, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function ComplaintsPage() {
+  const router = useRouter();
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,6 +46,12 @@ export default function ComplaintsPage() {
     await complaintRepository.upvoteComplaint(id, 'user-001');
     loadData();
   };
+
+  const isFiltered =
+    filters.category !== 'ALL' ||
+    filters.severity !== 'ALL' ||
+    filters.status !== 'ALL' ||
+    Boolean(filters.searchQuery);
 
   return (
     <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
@@ -95,18 +103,26 @@ export default function ComplaintsPage() {
           <LoadingState message="Loading catalog..." height="h-96" />
         ) : complaints.length === 0 ? (
           <EmptyState
-            title="No complaints match filters"
-            description="Adjust search or category criteria."
-            actionLabel="Reset Filters"
-            onAction={() =>
-              setFilters({
-                category: 'ALL',
-                severity: 'ALL',
-                status: 'ALL',
-                searchQuery: '',
-                sortBy: 'newest',
-              })
+            title={isFiltered ? 'No complaints match filters' : 'No civic complaints reported yet'}
+            description={
+              isFiltered
+                ? 'Adjust search or category criteria.'
+                : 'The database contains zero reported issues. Be the first citizen to report an incident in your ward.'
             }
+            actionLabel={isFiltered ? 'Reset Filters' : 'Report First Issue'}
+            onAction={() => {
+              if (isFiltered) {
+                setFilters({
+                  category: 'ALL',
+                  severity: 'ALL',
+                  status: 'ALL',
+                  searchQuery: '',
+                  sortBy: 'newest',
+                });
+              } else {
+                router.push('/report');
+              }
+            }}
           />
         ) : (
           <Grid container spacing={3}>
