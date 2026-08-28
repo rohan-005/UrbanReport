@@ -9,6 +9,8 @@ import {
 } from '../types';
 import { MOCK_COMPLAINTS } from '../data/mock-complaints';
 
+const API_BASE = process.env.NEXT_PUBLIC_COMPLAINTS_SERVICE_URL || 'http://localhost:3002';
+
 export interface IComplaintRepository {
   getAllComplaints(filters?: ComplaintFilters): Promise<Complaint[]>;
   getComplaintById(id: string): Promise<Complaint | null>;
@@ -60,7 +62,7 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
           this.complaints = JSON.parse(saved);
           return;
         } catch {
-          // fallback to initial data
+          // fallback
         }
       }
     }
@@ -338,4 +340,188 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
   }
 }
 
-export const complaintRepository = new MockComplaintRepositoryImpl();
+class ApiComplaintRepositoryImpl implements IComplaintRepository {
+  private fallbackMock = new MockComplaintRepositoryImpl();
+
+  public subscribe(listener: () => void): () => void {
+    return this.fallbackMock.subscribe(listener);
+  }
+
+  public async getAllComplaints(filters?: ComplaintFilters): Promise<Complaint[]> {
+    try {
+      const queryParams = new URLSearchParams();
+      if (filters?.category && filters.category !== 'ALL') queryParams.append('category', filters.category.toUpperCase());
+      if (filters?.severity && filters.severity !== 'ALL') queryParams.append('severity', filters.severity);
+      if (filters?.status && filters.status !== 'ALL') queryParams.append('status', filters.status);
+      if (filters?.searchQuery) queryParams.append('search', filters.searchQuery);
+      if (filters?.sortBy) queryParams.append('sortBy', filters.sortBy);
+
+      const res = await fetch(`${API_BASE}/complaints?${queryParams.toString()}`);
+      if (!res.ok) throw new Error('API Error');
+      const data = await res.json();
+
+      if (data.items && Array.isArray(data.items)) {
+        return data.items.map((item: any) => this.mapToFrontendComplaint(item));
+      }
+      return this.fallbackMock.getAllComplaints(filters);
+    } catch {
+      return this.fallbackMock.getAllComplaints(filters);
+    }
+  }
+
+  public async getComplaintById(id: string): Promise<Complaint | null> {
+    try {
+      const res = await fetch(`${API_BASE}/complaints/${id}`);
+      if (!res.ok) throw new Error('API Error');
+      const item = await res.json();
+      return this.mapToFrontendComplaint(item);
+    } catch {
+      return this.fallbackMock.getComplaintById(id);
+    }
+  }
+
+  public async createComplaint(
+    payload: Omit<Complaint, 'id' | 'createdAt' | 'updatedAt' | 'timeline' | 'upvotesCount'>
+  ): Promise<Complaint> {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
+      const res = await fetch(`${API_BASE}/complaints`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          category: payload.category.toUpperCase(),
+          title: payload.title,
+          description: payload.description,
+          severity: payload.severity,
+          latitude: payload.latitude,
+          longitude: payload.longitude,
+          address: payload.address,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to create complaint through API.');
+      }
+
+      const item = await res.json();
+      return this.mapToFrontendComplaint(item);
+    } catch (err: any) {
+      if (err.message?.includes('API')) {
+        return this.fallbackMock.createComplaint(payload);
+      }
+      return this.fallbackMock.createComplaint(payload);
+    }
+  }
+
+  public async updateStatus(
+    id: string,
+    status: ComplaintStatus,
+    actorName: string,
+    actorRole: 'CITIZEN' | 'ADMIN' | 'OFFICER' | 'SYSTEM',
+    notes?: string
+  ): Promise<Complaint | null> {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
+      const res = await fetch(`${API_BASE}/complaints/${id}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ nextStatus: status, note: notes }),
+      });
+
+      if (!res.ok) throw new Error('API Error');
+      const item = await res.json();
+      return this.mapToFrontendComplaint(item);
+    } catch {
+      return this.fallbackMock.updateStatus(id, status, actorName, actorRole, notes);
+    }
+  }
+
+  public async assignDepartment(
+    id: string,
+    assignment: Assignment,
+    actorName: string
+  ): Promise<Complaint | null> {
+    return this.fallbackMock.assignDepartment(id, assignment, actorName);
+  }
+
+  public async upvoteComplaint(id: string, userId: string): Promise<Complaint | null> {
+    return this.fallbackMock.upvoteComplaint(id, userId);
+  }
+
+  public async getStats() {
+    return this.fallbackMock.getStats();
+  }
+
+  private mapToFrontendComplaint(item: any): Complaint {
+    const categoryMap: Record<string, Category> = {
+      POTHOLE: 'Pothole',
+      GARBAGE: 'Garbage',
+      STREETLIGHT: 'Streetlight',
+      DRAINAGE: 'Drainage',
+      ROAD_DAMAGE: 'Road Damage',
+      WATER_SUPPLY: 'Water Supply',
+      TRAFFIC: 'Traffic',
+      OTHER: 'Other',
+    };
+
+    const statusHistory = item.statusHistory || [];
+    const timeline: TimelineEvent[] = statusHistory.map((h: any) => ({
+      id: h.id || `tl-${Math.random()}`,
+      status: (h.to_status || 'SUBMITTED') as ComplaintStatus,
+      title: `Status: ${h.to_status}`,
+      description: h.note || `Transitioned to ${h.to_status}`,
+      timestamp: h.created_at || item.created_at || new Date().toISOString(),
+      actor: {
+        name: h.actor_user_id || 'System Actor',
+        role: 'ADMIN',
+      },
+    }));
+
+    if (timeline.length === 0) {
+      timeline.push({
+        id: `tl-${Date.now()}`,
+        status: (item.status || 'SUBMITTED') as ComplaintStatus,
+        title: 'Complaint Submitted',
+        description: 'Initial complaint registration',
+        timestamp: item.created_at || new Date().toISOString(),
+        actor: { name: 'Citizen Reporter', role: 'CITIZEN' },
+      });
+    }
+
+    return {
+      id: item.id || `URB-${Date.now()}`,
+      title: item.title || 'Civic Issue Dossier',
+      category: categoryMap[item.category] || (item.category as Category) || 'Other',
+      description: item.description || '',
+      severity: (item.severity || 'MEDIUM') as Severity,
+      status: (item.status || 'SUBMITTED') as ComplaintStatus,
+      latitude: item.latitude ? parseFloat(item.latitude) : 28.6139,
+      longitude: item.longitude ? parseFloat(item.longitude) : 77.2090,
+      address: item.address || 'Location Coordinates',
+      createdAt: item.created_at || new Date().toISOString(),
+      updatedAt: item.updated_at || new Date().toISOString(),
+      reporter: {
+        id: item.reporter_user_id || 'user-001',
+        name: 'Aarav Sharma',
+      },
+      media: [
+        {
+          id: 'm1',
+          url: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80',
+          type: 'image',
+          caption: 'Primary issue location photo',
+        },
+      ],
+      timeline,
+      upvotesCount: item.upvotes_count || 1,
+    };
+  }
+}
+
+export const complaintRepository = new ApiComplaintRepositoryImpl();
