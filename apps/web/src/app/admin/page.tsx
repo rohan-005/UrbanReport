@@ -7,6 +7,7 @@ import { Complaint } from '@/lib/types';
 import { StatsCards } from '@/components/admin/StatsCards';
 import { AdminComplaintTable } from '@/components/admin/AdminComplaintTable';
 import { LoadingState } from '@/components/ui/LoadingState';
+import { PageTransition } from '@/components/motion/PageTransition';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -37,89 +38,91 @@ export default function AdminDashboardPage() {
   const criticalComplaints = complaints.filter((c) => c.severity === 'CRITICAL');
 
   return (
-    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
-      <Container maxWidth="xl">
-        {/* Header */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
-          <Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
-              Municipal Operations Desk
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#52525b' }}>
-              Real-time triage, departmental assignment, and resolution verification control.
-            </Typography>
-          </Box>
+    <PageTransition>
+      <Box sx={{ py: { xs: 4, md: 6 }, backgroundColor: '#f5f3ee', flex: 1, pb: { xs: 28, md: 36 } }}>
+        <Container maxWidth={false} className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
+          {/* Header */}
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
+            <Box>
+              <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
+                Municipal Operations Desk
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#52525b' }}>
+                Real-time triage, departmental assignment, and resolution verification control.
+              </Typography>
+            </Box>
 
-          <Box sx={{ display: 'flex', gap: 1.5 }}>
-            <Button variant="outlined" size="small" onClick={loadData} startIcon={<RefreshCw className="w-3.5 h-3.5" />}>
-              Refresh
-            </Button>
-            <Link href="/admin/complaints">
-              <Button variant="contained" size="small" startIcon={<ListFilter className="w-3.5 h-3.5" />}>
-                Resolution Queue
+            <Box sx={{ display: 'flex', gap: 1.5 }}>
+              <Button variant="outlined" size="small" onClick={loadData} startIcon={<RefreshCw className="w-3.5 h-3.5" />}>
+                Refresh
               </Button>
-            </Link>
-          </Box>
-        </Box>
-
-        {loading || !stats ? (
-          <LoadingState message="Loading telemetry..." height="h-64" />
-        ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <StatsCards stats={stats} />
-
-            {criticalComplaints.length > 0 && (
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 3,
-                  backgroundColor: '#fee2e2',
-                  borderColor: '#fca5a5',
-                  borderRadius: '2px',
-                  display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  alignItems: { sm: 'center' },
-                  justifyContent: 'space-between',
-                  gap: 2,
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <AlertTriangle className="w-6 h-6 text-red-700 animate-pulse shrink-0" />
-                  <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#991b1b' }}>
-                      {criticalComplaints.length} Critical Hazard Alert(s) Requiring Immediate Dispatch
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#b91c1c', fontWeight: 600 }}>
-                      Emergency issues flagged with direct danger to human life or infrastructure.
-                    </Typography>
-                  </Box>
-                </Box>
-                <Link href="/admin/complaints?severity=CRITICAL">
-                  <Button variant="contained" size="small" sx={{ backgroundColor: '#dc2626', color: '#ffffff', '&:hover': { backgroundColor: '#b91c1c' } }}>
-                    Triage Critical
-                  </Button>
-                </Link>
-              </Paper>
-            )}
-
-            <Box sx={{ spaceY: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <ShieldCheck className="w-5 h-5 text-zinc-950" />
-                  <Typography variant="h6" sx={{ fontWeight: 900, color: '#09090b' }}>
-                    Recent Incident Queue ({complaints.length})
-                  </Typography>
-                </Box>
-                <Link href="/admin/complaints" className="text-xs font-black uppercase tracking-wider text-zinc-950 hover:underline">
-                  Full Queue →
-                </Link>
-              </Box>
-
-              <AdminComplaintTable complaints={complaints.slice(0, 8)} />
+              <Link href="/admin/complaints">
+                <Button variant="contained" size="small" startIcon={<ListFilter className="w-3.5 h-3.5" />}>
+                  Resolution Queue
+                </Button>
+              </Link>
             </Box>
           </Box>
-        )}
-      </Container>
-    </Box>
+
+          {loading || !stats ? (
+            <LoadingState message="Loading telemetry..." height="h-64" />
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <StatsCards stats={stats} />
+
+              {criticalComplaints.length > 0 && (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 3,
+                    backgroundColor: '#fee2e2',
+                    borderColor: '#fca5a5',
+                    borderRadius: '2px',
+                    display: 'flex',
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { sm: 'center' },
+                    justifyContent: 'space-between',
+                    gap: 2,
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <AlertTriangle className="w-6 h-6 text-red-700 animate-pulse shrink-0" />
+                    <Box>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#991b1b' }}>
+                        {criticalComplaints.length} Critical Hazard Alert(s) Requiring Immediate Dispatch
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#b91c1c', fontWeight: 600 }}>
+                        Emergency issues flagged with direct danger to human life or infrastructure.
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Link href="/admin/complaints?severity=CRITICAL">
+                    <Button variant="contained" size="small" sx={{ backgroundColor: '#dc2626', color: '#ffffff', '&:hover': { backgroundColor: '#b91c1c' } }}>
+                      Triage Critical
+                    </Button>
+                  </Link>
+                </Paper>
+              )}
+
+              <Box sx={{ spaceY: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <ShieldCheck className="w-5 h-5 text-zinc-950" />
+                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#09090b' }}>
+                      Recent Incident Queue ({complaints.length})
+                    </Typography>
+                  </Box>
+                  <Link href="/admin/complaints" className="text-xs font-black uppercase tracking-wider text-zinc-950 hover:underline">
+                    Full Queue →
+                  </Link>
+                </Box>
+
+                <AdminComplaintTable complaints={complaints.slice(0, 8)} />
+              </Box>
+            </Box>
+          )}
+        </Container>
+      </Box>
+    </PageTransition>
   );
 }
