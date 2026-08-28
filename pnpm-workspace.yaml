@@ -3,6 +3,7 @@ packages:
   - 'services/*'
   - 'packages/*'
 allowBuilds:
+  '@apollo/protobufjs': true
   '@nestjs/core': true
   bcrypt: true
   esbuild: true
