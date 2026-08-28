@@ -54,6 +54,7 @@ export const Modal: React.FC<ModalProps> = ({
     >
       <Box ref={contentRef}>
         <DialogTitle
+          component="div"
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -62,10 +63,10 @@ export const Modal: React.FC<ModalProps> = ({
             borderBottom: '1px solid #e2e0d8',
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 900, color: '#09090b', fontSize: '1.125rem' }}>
+          <Typography variant="h6" component="h2" sx={{ fontWeight: 900, color: '#09090b', fontSize: '1.125rem' }}>
             {title}
           </Typography>
-          <IconButton onClick={onClose} size="small" sx={{ color: '#52525b' }}>
+          <IconButton onClick={onClose} size="small" sx={{ color: '#52525b' }} aria-label="Close dialog">
             <X className="w-4 h-4" />
           </IconButton>
         </DialogTitle>
