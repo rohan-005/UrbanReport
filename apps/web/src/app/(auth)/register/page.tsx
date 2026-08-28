@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { LoadingButton } from '@/components/ui/LoadingButton';
 import { validateAadhaarNumber, formatAadhaarInput, validateEmail, validatePhone } from '@/lib/utils/validation';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { ShieldCheck, AlertCircle } from 'lucide-react';
 
@@ -180,12 +180,13 @@ export default function RegisterPage() {
             </Box>
           </Box>
 
-          <Button
+          <LoadingButton
             type="submit"
             variant="contained"
             fullWidth
             size="large"
-            disabled={submitting}
+            loading={submitting}
+            loadingText="Registering Account..."
             sx={{
               backgroundColor: '#09090b',
               color: '#ffffff',
@@ -195,8 +196,8 @@ export default function RegisterPage() {
               '&:hover': { backgroundColor: '#18181b' },
             }}
           >
-            {submitting ? 'Registering Account...' : 'Complete Registration'}
-          </Button>
+            Complete Registration
+          </LoadingButton>
 
           <Box sx={{ pt: 2, borderTop: '1px solid #e2e0d8', textCenter: 'center' }}>
             <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>

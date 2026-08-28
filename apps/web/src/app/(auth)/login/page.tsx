@@ -4,12 +4,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { LoadingButton } from '@/components/ui/LoadingButton';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { LogIn, AlertCircle } from 'lucide-react';
@@ -90,12 +90,13 @@ export default function LoginPage() {
             label={<Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>Remember session</Typography>}
           />
 
-          <Button
+          <LoadingButton
             type="submit"
             variant="contained"
             fullWidth
             size="large"
-            disabled={submitting}
+            loading={submitting}
+            loadingText="Signing In..."
             startIcon={<LogIn className="w-4 h-4" />}
             sx={{
               backgroundColor: '#09090b',
@@ -105,8 +106,8 @@ export default function LoginPage() {
               '&:hover': { backgroundColor: '#18181b' },
             }}
           >
-            {submitting ? 'Signing In...' : 'Sign In'}
-          </Button>
+            Sign In
+          </LoadingButton>
 
           <Box sx={{ pt: 2, borderTop: '1px solid #e2e0d8', textCenter: 'center' }}>
             <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>
