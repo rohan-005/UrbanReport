@@ -1,10 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { MapPin, Navigation } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Navigation } from 'lucide-react';
 
 interface LocationPickerProps {
   latitude: number;
@@ -26,52 +24,70 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   onLocationChange,
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const markerRef = useRef<maplibregl.Marker | null>(null);
+  const mapRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    const apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY;
-    const styleUrl = apiKey
-      ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`
-      : 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+    let isMounted = true;
+    let mapInstance: any = null;
 
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      style: styleUrl,
-      center: [longitude, latitude],
-      zoom: 13,
-    });
+    const initMap = async () => {
+      try {
+        const maplibreglModule = await import('maplibre-gl');
+        const maplibregl = maplibreglModule.default || maplibreglModule;
 
-    mapRef.current = map;
+        if (!isMounted || !mapContainerRef.current) return;
 
-    // Draggable / Clickable Pin Marker
-    const marker = new maplibregl.Marker({ color: '#0284c7', draggable: true })
-      .setLngLat([longitude, latitude])
-      .addTo(map);
+        const apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY;
+        const styleUrl = apiKey
+          ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`
+          : 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 
-    markerRef.current = marker;
+        const map = new maplibregl.Map({
+          container: mapContainerRef.current,
+          style: styleUrl,
+          center: [longitude, latitude],
+          zoom: 13,
+        });
 
-    marker.on('dragend', () => {
-      const lngLat = marker.getLngLat();
-      const randomAddr = sampleAddresses[Math.floor(Math.random() * sampleAddresses.length)];
-      onLocationChange(lngLat.lat, lngLat.lng, randomAddr);
-    });
+        mapRef.current = map;
+        mapInstance = map;
 
-    map.on('click', (e) => {
-      marker.setLngLat(e.lngLat);
-      const randomAddr = sampleAddresses[Math.floor(Math.random() * sampleAddresses.length)];
-      onLocationChange(e.lngLat.lat, e.lngLat.lng, randomAddr);
-    });
+        const marker = new maplibregl.Marker({ color: '#0284c7', draggable: true })
+          .setLngLat([longitude, latitude])
+          .addTo(map);
+
+        markerRef.current = marker;
+
+        marker.on('dragend', () => {
+          const lngLat = marker.getLngLat();
+          const randomAddr = sampleAddresses[Math.floor(Math.random() * sampleAddresses.length)];
+          onLocationChange(lngLat.lat, lngLat.lng, randomAddr);
+        });
+
+        map.on('click', (e: any) => {
+          marker.setLngLat(e.lngLat);
+          const randomAddr = sampleAddresses[Math.floor(Math.random() * sampleAddresses.length)];
+          onLocationChange(e.lngLat.lat, e.lngLat.lng, randomAddr);
+        });
+      } catch (err) {
+        console.error('Failed to initialize LocationPicker map:', err);
+      }
+    };
+
+    initMap();
 
     return () => {
-      map.remove();
+      isMounted = false;
+      if (mapInstance) {
+        mapInstance.remove();
+      }
     };
   }, []);
 
   const handleUseCurrentLocation = () => {
-    // Default to Bengaluru Center with slight offset
     const lat = 12.9716 + (Math.random() - 0.5) * 0.05;
     const lng = 77.5946 + (Math.random() - 0.5) * 0.05;
     const addr = sampleAddresses[Math.floor(Math.random() * sampleAddresses.length)];

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Complaint, Severity } from '@/lib/types';
 import { Navigation } from 'lucide-react';
@@ -33,33 +32,55 @@ export const MapView: React.FC<MapViewProps> = ({
   className = 'w-full h-full min-h-[400px]',
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const markersRef = useRef<Map<string, maplibregl.Marker>>(new Map());
+  const mapRef = useRef<any>(null);
+  const markersRef = useRef<Map<string, any>>(new Map());
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
-    const apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY;
-    const styleUrl = apiKey
-      ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`
-      : 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+    let isMounted = true;
+    let mapInstance: any = null;
 
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      style: styleUrl,
-      center: center,
-      zoom: zoom,
-      interactive: interactive,
-    });
+    const initMap = async () => {
+      try {
+        const maplibreglModule = await import('maplibre-gl');
+        const maplibregl = maplibreglModule.default || maplibreglModule;
 
-    mapRef.current = map;
+        if (!isMounted || !mapContainerRef.current) return;
 
-    map.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right');
+        const apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY;
+        const styleUrl = apiKey
+          ? `https://api.maptiler.com/maps/streets-v2/style.json?key=${apiKey}`
+          : 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+
+        const map = new maplibregl.Map({
+          container: mapContainerRef.current,
+          style: styleUrl,
+          center: center,
+          zoom: zoom,
+          interactive: interactive,
+        });
+
+        mapRef.current = map;
+        mapInstance = map;
+
+        map.addControl(new maplibregl.NavigationControl({ showCompass: true }), 'top-right');
+      } catch (err) {
+        console.error('Failed to initialize MapLibre GL instance:', err);
+      }
+    };
+
+    initMap();
 
     return () => {
-      markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current.clear();
-      map.remove();
+      isMounted = false;
+      if (markersRef.current) {
+        markersRef.current.forEach((marker) => marker.remove());
+        markersRef.current.clear();
+      }
+      if (mapInstance) {
+        mapInstance.remove();
+      }
     };
   }, []);
 
@@ -68,63 +89,82 @@ export const MapView: React.FC<MapViewProps> = ({
     const map = mapRef.current;
     if (!map) return;
 
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current.clear();
+    let isMounted = true;
 
-    complaints.forEach((complaint) => {
-      const color = severityColors[complaint.severity] || '#f8fafc';
+    const updateMarkers = async () => {
+      try {
+        const maplibreglModule = await import('maplibre-gl');
+        const maplibregl = maplibreglModule.default || maplibreglModule;
 
-      const el = document.createElement('div');
-      el.className = 'custom-complaint-marker group cursor-pointer';
+        if (!isMounted || !mapRef.current) return;
 
-      const isCritical = complaint.severity === 'CRITICAL';
-      const isSelected = selectedComplaintId === complaint.id;
+        markersRef.current.forEach((m) => m.remove());
+        markersRef.current.clear();
 
-      el.innerHTML = `
-        <div class="relative flex items-center justify-center">
-          ${
-            isCritical
-              ? `<span class="absolute inline-flex h-8 w-8 rounded-none bg-red-600 opacity-75 animate-ping"></span>`
-              : ''
-          }
-          <div class="relative z-10 flex items-center justify-center ${
-            isSelected ? 'w-10 h-10 ring-2 ring-white scale-110' : 'w-8 h-8'
-          } rounded-none border border-zinc-900 shadow-2xl transition-all duration-200" style="background-color: ${color}">
-            <span class="w-2.5 h-2.5 bg-zinc-950 rounded-none"></span>
-          </div>
-        </div>
-      `;
+        complaints.forEach((complaint) => {
+          const color = severityColors[complaint.severity] || '#f8fafc';
 
-      const popupHtml = `
-        <div class="p-2 max-w-xs font-sans text-zinc-100">
-          <div class="flex items-center justify-between gap-2 mb-1.5">
-            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-none bg-zinc-800 text-zinc-200 border border-zinc-700">${complaint.category}</span>
-            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-none text-zinc-950 uppercase" style="background-color: ${color}">${complaint.severity}</span>
-          </div>
-          <h4 class="text-xs font-bold text-white leading-tight mb-1">${complaint.title}</h4>
-          <p class="text-[11px] text-zinc-400 line-clamp-2 mb-2">${complaint.address}</p>
-          <div class="flex items-center justify-between pt-2 border-t border-zinc-800">
-            <span class="text-[10px] text-zinc-400 font-mono">${complaint.status}</span>
-            <a href="/complaints/${complaint.id}" class="inline-flex items-center gap-1 text-[11px] font-bold text-white uppercase tracking-wider hover:underline">
-              DOSSIER →
-            </a>
-          </div>
-        </div>
-      `;
+          const el = document.createElement('div');
+          el.className = 'custom-complaint-marker group cursor-pointer';
 
-      const popup = new maplibregl.Popup({ offset: 20, closeButton: true }).setHTML(popupHtml);
+          const isCritical = complaint.severity === 'CRITICAL';
+          const isSelected = selectedComplaintId === complaint.id;
 
-      const marker = new maplibregl.Marker({ element: el })
-        .setLngLat([complaint.longitude, complaint.latitude])
-        .setPopup(popup)
-        .addTo(map);
+          el.innerHTML = `
+            <div class="relative flex items-center justify-center">
+              ${
+                isCritical
+                  ? `<span class="absolute inline-flex h-8 w-8 rounded-none bg-red-600 opacity-75 animate-ping"></span>`
+                  : ''
+              }
+              <div class="relative z-10 flex items-center justify-center ${
+                isSelected ? 'w-10 h-10 ring-2 ring-white scale-110' : 'w-8 h-8'
+              } rounded-none border border-zinc-900 shadow-2xl transition-all duration-200" style="background-color: ${color}">
+                <span class="w-2.5 h-2.5 bg-zinc-950 rounded-none"></span>
+              </div>
+            </div>
+          `;
 
-      el.addEventListener('click', () => {
-        if (onSelectComplaint) onSelectComplaint(complaint);
-      });
+          const popupHtml = `
+            <div class="p-2 max-w-xs font-sans text-zinc-100">
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-none bg-zinc-800 text-zinc-200 border border-zinc-700">${complaint.category}</span>
+                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-none text-zinc-950 uppercase" style="background-color: ${color}">${complaint.severity}</span>
+              </div>
+              <h4 class="text-xs font-bold text-white leading-tight mb-1">${complaint.title}</h4>
+              <p class="text-[11px] text-zinc-400 line-clamp-2 mb-2">${complaint.address}</p>
+              <div class="flex items-center justify-between pt-2 border-t border-zinc-800">
+                <span class="text-[10px] text-zinc-400 font-mono">${complaint.status}</span>
+                <a href="/complaints/${complaint.id}" class="inline-flex items-center gap-1 text-[11px] font-bold text-white uppercase tracking-wider hover:underline">
+                  DOSSIER →
+                </a>
+              </div>
+            </div>
+          `;
 
-      markersRef.current.set(complaint.id, marker);
-    });
+          const popup = new maplibregl.Popup({ offset: 20, closeButton: true }).setHTML(popupHtml);
+
+          const marker = new maplibregl.Marker({ element: el })
+            .setLngLat([complaint.longitude, complaint.latitude])
+            .setPopup(popup)
+            .addTo(mapRef.current);
+
+          el.addEventListener('click', () => {
+            if (onSelectComplaint) onSelectComplaint(complaint);
+          });
+
+          markersRef.current.set(complaint.id, marker);
+        });
+      } catch (err) {
+        console.error('Failed to update map markers:', err);
+      }
+    };
+
+    updateMarkers();
+
+    return () => {
+      isMounted = false;
+    };
   }, [complaints, selectedComplaintId]);
 
   useEffect(() => {
