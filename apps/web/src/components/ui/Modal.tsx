@@ -1,12 +1,21 @@
-import React, { useEffect } from 'react';
+'use client';
+
+import React, { useEffect, useRef } from 'react';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import { X } from 'lucide-react';
+import gsap from 'gsap';
+import { isReducedMotion } from '@/lib/motion/gsap';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title?: string;
+  title: string;
   children: React.ReactNode;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -14,60 +23,57 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   children,
-  maxWidth = 'md',
 }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      window.addEventListener('keydown', handleKeyDown);
+    if (isOpen && !isReducedMotion() && contentRef.current) {
+      gsap.fromTo(
+        contentRef.current,
+        { scale: 0.96, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.25, ease: 'power2.out' }
+      );
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
-
-  const maxWidthClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
-    '2xl': 'max-w-2xl',
-  };
+  }, [isOpen]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
-      />
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{
+        sx: {
+          backgroundColor: '#ffffff',
+          borderColor: '#e2e0d8',
+          borderRadius: '2px',
+          p: 1,
+          boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
+        },
+      }}
+    >
+      <Box ref={contentRef}>
+        <DialogTitle
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            pb: 1.5,
+            borderBottom: '1px solid #e2e0d8',
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: 900, color: '#09090b', fontSize: '1.125rem' }}>
+            {title}
+          </Typography>
+          <IconButton onClick={onClose} size="small" sx={{ color: '#52525b' }}>
+            <X className="w-4 h-4" />
+          </IconButton>
+        </DialogTitle>
 
-      {/* Modal Dialog */}
-      <div
-        className={`relative w-full ${maxWidthClasses[maxWidth]} rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-6 transition-all transform z-10`}
-      >
-        <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
-          {title ? (
-            <h3 className="text-lg font-semibold text-slate-100">{title}</h3>
-          ) : (
-            <div />
-          )}
-          <button
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <div>{children}</div>
-      </div>
-    </div>
+        <DialogContent sx={{ pt: 3 }}>
+          {children}
+        </DialogContent>
+      </Box>
+    </Dialog>
   );
 };
