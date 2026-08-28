@@ -36,7 +36,20 @@ export class ComplaintsRepository {
 
       const complaint = res.rows[0];
 
-      // 2. Initial status history record
+      // 2. Insert complaint_media links if mediaIds are provided
+      if (dto.mediaIds && dto.mediaIds.length > 0) {
+        for (const mediaId of dto.mediaIds) {
+          await client.query(
+            `
+            INSERT INTO complaint_media (complaint_id, media_id, type, caption, url)
+            VALUES ($1, $2, 'image', 'Evidence photo', $3);
+            `,
+            [complaint.id, mediaId, `/media/${mediaId}`],
+          );
+        }
+      }
+
+      // 3. Initial status history record
       await client.query(
         `
         INSERT INTO status_history (complaint_id, from_status, to_status, actor_user_id, note)
@@ -45,16 +58,17 @@ export class ComplaintsRepository {
         [complaint.id, reporterUserId],
       );
 
-      // 3. Audit event
+      // 4. Audit event
       await client.query(
         `
         INSERT INTO audit_events (actor_id, action, resource, resource_id, metadata)
         VALUES ($1, 'CREATE_COMPLAINT', 'complaint', $2, $3);
         `,
-        [reporterUserId, complaint.id, JSON.stringify({ category: dto.category, severity: dto.severity })],
+        [reporterUserId, complaint.id, JSON.stringify({ category: dto.category, severity: dto.severity, mediaCount: dto.mediaIds?.length || 0 })],
       );
 
-      return complaint;
+      const [withMedia] = await this.attachMediaToComplaints([complaint]);
+      return withMedia;
     });
   }
 
@@ -84,8 +98,10 @@ export class ComplaintsRepository {
       [id],
     );
 
+    const [withMedia] = await this.attachMediaToComplaints([complaint]);
+
     return {
-      ...complaint,
+      ...withMedia,
       statusHistory: historyRes.rows,
     };
   }
@@ -141,8 +157,10 @@ export class ComplaintsRepository {
       [...params, limit, offset],
     );
 
+    const itemsWithMedia = await this.attachMediaToComplaints(itemsRes.rows);
+
     return {
-      items: itemsRes.rows,
+      items: itemsWithMedia,
       total,
       page,
       limit,
@@ -160,7 +178,7 @@ export class ComplaintsRepository {
       `,
       [reporterUserId],
     );
-    return res.rows;
+    return this.attachMediaToComplaints(res.rows);
   }
 
   async findNearby(dto: NearbyQueryDto): Promise<any[]> {
@@ -177,7 +195,7 @@ export class ComplaintsRepository {
       `,
       [dto.lng, dto.lat, radiusMeters],
     );
-    return res.rows;
+    return this.attachMediaToComplaints(res.rows);
   }
 
   async findViewport(dto: ViewportQueryDto): Promise<any[]> {
@@ -210,7 +228,7 @@ export class ComplaintsRepository {
       `,
       params,
     );
-    return res.rows;
+    return this.attachMediaToComplaints(res.rows);
   }
 
   async updateStatus(
@@ -257,7 +275,43 @@ export class ComplaintsRepository {
         [actorUserId, id, JSON.stringify({ fromStatus, toStatus, note })],
       );
 
-      return updated;
+      const [withMedia] = await this.attachMediaToComplaints([updated]);
+      return withMedia;
     });
+  }
+
+  private async attachMediaToComplaints(items: any[]): Promise<any[]> {
+    if (!items || items.length === 0) return items;
+    const complaintIds = items.map((i) => i.id);
+
+    const mediaRes = await this.db.query(
+      `
+      SELECT complaint_id, media_id, type, caption, url, created_at
+      FROM complaint_media
+      WHERE complaint_id = ANY($1::uuid[])
+      ORDER BY created_at ASC;
+      `,
+      [complaintIds],
+    );
+
+    const mediaMap = new Map<string, any[]>();
+    for (const row of mediaRes.rows) {
+      if (!mediaMap.has(row.complaint_id)) {
+        mediaMap.set(row.complaint_id, []);
+      }
+      mediaMap.get(row.complaint_id)!.push({
+        id: row.media_id,
+        mediaId: row.media_id,
+        type: row.type,
+        caption: row.caption,
+        url: row.url,
+        createdAt: row.created_at,
+      });
+    }
+
+    return items.map((item) => ({
+      ...item,
+      media: mediaMap.get(item.id) || [],
+    }));
   }
 }

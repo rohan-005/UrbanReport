@@ -1,7 +1,9 @@
 import {
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Max,
   Min,
@@ -53,4 +55,9 @@ export class CreateComplaintDto {
   @IsString()
   @IsNotEmpty()
   address: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  mediaIds?: string[];
 }
