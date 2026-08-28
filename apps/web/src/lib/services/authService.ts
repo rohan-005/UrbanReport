@@ -21,43 +21,20 @@ class AuthServiceAPI {
   }
 
   async login(email: string, password?: string): Promise<{ token: string; user: User }> {
-    try {
-      const res = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: password || 'password123' }),
-      });
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.message || 'Invalid email address or password.');
-      }
-
-      const data = await res.json();
-      this.setToken(data.accessToken);
-      return { token: data.accessToken, user: data.user };
-    } catch (err: any) {
-      // If network fails (e.g. backend offline during pure local dev), fallback gracefully
-      if (err.message.includes('Failed to fetch') || err.name === 'TypeError') {
-        const mockUser: User = {
-          id: 'user-001',
-          name: 'Aarav Sharma',
-          email,
-          phone: '+91 98765 43210',
-          role: 'CITIZEN',
-          aadhaarNumber: 'XXXX-XXXX-7777',
-          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-          notificationPreferences: {
-            complaintUpdates: true,
-            resolutionNotifications: true,
-            assignmentUpdates: true,
-          },
-        };
-        this.setToken('mock-jwt-token-fallback');
-        return { token: 'mock-jwt-token-fallback', user: mockUser };
-      }
-      throw err;
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || 'Invalid email address or password.');
     }
+
+    const data = await res.json();
+    this.setToken(data.accessToken);
+    return { token: data.accessToken, user: data.user };
   }
 
   async register(data: {
@@ -68,75 +45,36 @@ class AuthServiceAPI {
     confirmPassword?: string;
     aadhaarNumber: string;
   }): Promise<{ token: string; user: User }> {
-    try {
-      const res = await fetch(`${API_BASE}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          password: data.password || 'password123',
-          confirmPassword: data.confirmPassword || data.password || 'password123',
-          aadhaar: data.aadhaarNumber,
-        }),
-      });
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        confirmPassword: data.confirmPassword || data.password,
+        aadhaar: data.aadhaarNumber,
+      }),
+    });
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(
-          Array.isArray(errData.message)
-            ? errData.message[0]
-            : errData.message || 'Registration failed.',
-        );
-      }
-
-      const resData = await res.json();
-      this.setToken(resData.accessToken);
-      return { token: resData.accessToken, user: resData.user };
-    } catch (err: any) {
-      if (err.message.includes('Failed to fetch') || err.name === 'TypeError') {
-        const mockUser: User = {
-          id: `user-${Date.now()}`,
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          role: 'CITIZEN',
-          aadhaarNumber: `XXXX-XXXX-${data.aadhaarNumber.slice(-4)}`,
-          avatarUrl: undefined,
-          notificationPreferences: {
-            complaintUpdates: true,
-            resolutionNotifications: true,
-            assignmentUpdates: true,
-          },
-        };
-        this.setToken('mock-jwt-token-fallback');
-        return { token: 'mock-jwt-token-fallback', user: mockUser };
-      }
-      throw err;
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(
+        Array.isArray(errData.message)
+          ? errData.message[0]
+          : errData.message || 'Registration failed.',
+      );
     }
+
+    const resData = await res.json();
+    this.setToken(resData.accessToken);
+    return { token: resData.accessToken, user: resData.user };
   }
 
   async getCurrentUser(): Promise<User | null> {
     const token = this.getToken();
     if (!token) return null;
-
-    if (token === 'mock-jwt-token-fallback') {
-      return {
-        id: 'user-001',
-        name: 'Aarav Sharma',
-        email: 'aarav.sharma@example.com',
-        phone: '+91 98765 43210',
-        role: 'CITIZEN',
-        aadhaarNumber: 'XXXX-XXXX-7777',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
-        notificationPreferences: {
-          complaintUpdates: true,
-          resolutionNotifications: true,
-          assignmentUpdates: true,
-        },
-      };
-    }
 
     try {
       const res = await fetch(`${API_BASE}/users/me`, {
