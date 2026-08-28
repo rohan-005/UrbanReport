@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { authRepository } from '@/lib/repositories/auth.repository';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { validateAadhaarNumber, formatAadhaarInput, validateEmail, validatePhone } from '@/lib/utils/validation';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
@@ -16,6 +16,7 @@ import { ShieldCheck, AlertCircle } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { register } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,7 +26,7 @@ export default function RegisterPage() {
   const [aadhaarNumber, setAadhaarNumber] = useState('');
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleAadhaarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatAadhaarInput(e.target.value);
@@ -54,19 +55,21 @@ export default function RegisterPage() {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setLoading(true);
+    setSubmitting(true);
     try {
-      await authRepository.register({
+      await register({
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),
+        password,
+        confirmPassword,
         aadhaarNumber,
       });
       router.push('/profile');
     } catch (err: any) {
       setErrors({ form: err.message || 'Registration failed.' });
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -84,8 +87,8 @@ export default function RegisterPage() {
 
         <Paper elevation={0} component="form" onSubmit={handleRegister} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           {errors.form && (
-            <Box sx={{ p: 2, borderRadius: '2px', backgroundColor: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <AlertCircle className="w-4 h-4 text-red-600" />
+            <Box sx={{ p: 2, borderRadius: '2px', backgroundColor: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600 }}>
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
               <span>{errors.form}</span>
             </Box>
           )}
@@ -182,7 +185,7 @@ export default function RegisterPage() {
             variant="contained"
             fullWidth
             size="large"
-            disabled={loading}
+            disabled={submitting}
             sx={{
               backgroundColor: '#09090b',
               color: '#ffffff',
@@ -192,7 +195,7 @@ export default function RegisterPage() {
               '&:hover': { backgroundColor: '#18181b' },
             }}
           >
-            Complete Registration
+            {submitting ? 'Registering Account...' : 'Complete Registration'}
           </Button>
 
           <Box sx={{ pt: 2, borderTop: '1px solid #e2e0d8', textCenter: 'center' }}>

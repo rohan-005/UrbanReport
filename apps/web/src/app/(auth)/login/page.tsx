@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { authRepository } from '@/lib/repositories/auth.repository';
+import { useAuth } from '@/components/providers/AuthProvider';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -12,24 +12,33 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { LogIn } from 'lucide-react';
+import { LogIn, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
+
   const [email, setEmail] = useState('aarav.sharma@example.com');
   const [password, setPassword] = useState('password123');
-  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setErrorMessage(null);
+    setSubmitting(true);
+
     try {
-      await authRepository.login(email);
-      router.push('/profile');
-    } catch {
-      // ignore
+      const loggedUser = await login(email.trim(), password);
+      if (loggedUser.role === 'ADMIN' || loggedUser.role === 'OFFICER' || loggedUser.role === 'AUTHORITY') {
+        router.push('/admin');
+      } else {
+        router.push('/profile');
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Invalid email address or password.');
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -49,6 +58,13 @@ export default function LoginPage() {
         </Box>
 
         <Paper elevation={0} component="form" onSubmit={handleLogin} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+          {errorMessage && (
+            <Box sx={{ p: 1.5, borderRadius: '2px', backgroundColor: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600 }}>
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+              <span>{errorMessage}</span>
+            </Box>
+          )}
+
           <TextField
             label="Email Address"
             type="email"
@@ -79,7 +95,7 @@ export default function LoginPage() {
             variant="contained"
             fullWidth
             size="large"
-            disabled={loading}
+            disabled={submitting}
             startIcon={<LogIn className="w-4 h-4" />}
             sx={{
               backgroundColor: '#09090b',
@@ -89,7 +105,7 @@ export default function LoginPage() {
               '&:hover': { backgroundColor: '#18181b' },
             }}
           >
-            Sign In
+            {submitting ? 'Signing In...' : 'Sign In'}
           </Button>
 
           <Box sx={{ pt: 2, borderTop: '1px solid #e2e0d8', textCenter: 'center' }}>

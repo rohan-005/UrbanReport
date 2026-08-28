@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { authRepository } from '@/lib/repositories/auth.repository';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
-import { User, Complaint } from '@/lib/types';
+import { Complaint } from '@/lib/types';
 import { ProfileCard } from '@/components/profile/ProfileCard';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { CategoryBadge } from '@/components/ui/CategoryBadge';
@@ -16,60 +16,82 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { LogOut, Plus, MapPin, ArrowRight, Bell } from 'lucide-react';
+import Alert from '@mui/material/Alert';
+import { LogOut, Plus, MapPin, ArrowRight, Bell, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { user, isAuthenticated, isLoading, logout, updateNotificationPreferences } = useAuth();
 
-  const [user, setUser] = useState<User | null>(null);
   const [complaints, setComplaints] = useState<Complaint[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'complaints' | 'notifications'>('complaints');
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const [emailAlerts, setEmailAlerts] = useState(true);
-  const [smsAlerts, setSmsAlerts] = useState(true);
-
-  const loadData = async () => {
-    setLoading(true);
-    const currentUser = await authRepository.getCurrentUser();
-    setUser(currentUser);
-
-    if (currentUser) {
-      const all = await complaintRepository.getAllComplaints();
-      const userReports = all.filter(
-        (c) => c.reporter.id === currentUser.id || c.reporter.name === currentUser.name
-      );
-      setComplaints(userReports.length > 0 ? userReports : all.slice(0, 5));
-    }
-    setLoading(false);
-  };
+  const [emailAlerts, setEmailAlerts] = useState(
+    user?.notificationPreferences?.complaintUpdates ?? true
+  );
+  const [resolutionAlerts, setResolutionAlerts] = useState(
+    user?.notificationPreferences?.resolutionNotifications ?? true
+  );
+  const [assignmentAlerts, setAssignmentAlerts] = useState(
+    user?.notificationPreferences?.assignmentUpdates ?? true
+  );
 
   useEffect(() => {
-    loadData();
-    const unsubscribe = authRepository.subscribe(() => loadData());
-    return () => unsubscribe();
-  }, []);
+    if (user?.notificationPreferences) {
+      setEmailAlerts(user.notificationPreferences.complaintUpdates);
+      setResolutionAlerts(user.notificationPreferences.resolutionNotifications);
+      setAssignmentAlerts(user.notificationPreferences.assignmentUpdates);
+    }
+  }, [user]);
 
-  const handleLogout = async () => {
-    await authRepository.logout();
+  useEffect(() => {
+    const loadUserReports = async () => {
+      if (user) {
+        const all = await complaintRepository.getAllComplaints();
+        const userReports = all.filter(
+          (c) => c.reporter.id === user.id || c.reporter.name === user.name
+        );
+        setComplaints(userReports.length > 0 ? userReports : all.slice(0, 5));
+      }
+    };
+    loadUserReports();
+  }, [user]);
+
+  const handleLogout = () => {
+    logout();
     router.push('/login');
   };
 
-  if (loading) {
+  const handleSavePreferences = async (newPrefs: {
+    complaintUpdates: boolean;
+    resolutionNotifications: boolean;
+    assignmentUpdates: boolean;
+  }) => {
+    try {
+      await updateNotificationPreferences(newPrefs);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch {
+      // fallback
+    }
+  };
+
+  if (isLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 10 }}>
-        <LoadingState message="Fetching citizen identity card..." height="h-96" />
+        <LoadingState message="Fetching authenticated citizen identity card..." height="h-96" />
       </Container>
     );
   }
 
-  if (!user) {
+  if (!isAuthenticated || !user) {
     return (
       <Container maxWidth="xs" sx={{ py: 12, textAlign: 'center' }}>
         <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', mb: 1 }}>
-          No Session Active
+          Session Required
         </Typography>
         <Typography variant="body2" sx={{ color: '#52525b', mb: 3 }}>
           Sign in to view your citizen identity profile.
@@ -120,7 +142,7 @@ export default function ProfilePage() {
                   : 'border-transparent text-zinc-500 hover:text-black'
               }`}
             >
-              Notifications
+              Notification Preferences
             </button>
           </Box>
 
@@ -192,18 +214,87 @@ export default function ProfilePage() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
               <Bell className="w-5 h-5 text-zinc-950" />
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b' }}>
-                Notification Preferences
+                Notification Settings & Preferences
               </Typography>
             </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {saveSuccess && (
+              <Alert icon={<CheckCircle2 className="w-4 h-4 text-green-700" />} severity="success" sx={{ mb: 3, borderRadius: '2px', backgroundColor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0' }}>
+                Notification settings saved to MongoDB user profile.
+              </Alert>
+            )}
+
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
               <FormControlLabel
-                control={<Switch checked={emailAlerts} onChange={(e) => setEmailAlerts(e.target.checked)} color="default" />}
-                label={<Typography variant="body2" sx={{ color: '#09090b', fontWeight: 600 }}>Email Resolution Alerts</Typography>}
+                control={
+                  <Switch
+                    checked={emailAlerts}
+                    onChange={(e) => {
+                      const val = e.target.checked;
+                      setEmailAlerts(val);
+                      handleSavePreferences({
+                        complaintUpdates: val,
+                        resolutionNotifications: resolutionAlerts,
+                        assignmentUpdates: assignmentAlerts,
+                      });
+                    }}
+                    color="default"
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ color: '#09090b', fontWeight: 800 }}>Complaint Status Change Alerts</Typography>
+                    <Typography variant="caption" sx={{ color: '#52525b' }}>Receive updates when ward officers change issue status.</Typography>
+                  </Box>
+                }
               />
+
               <FormControlLabel
-                control={<Switch checked={smsAlerts} onChange={(e) => setSmsAlerts(e.target.checked)} color="default" />}
-                label={<Typography variant="body2" sx={{ color: '#09090b', fontWeight: 600 }}>SMS Field Dispatch Updates</Typography>}
+                control={
+                  <Switch
+                    checked={resolutionAlerts}
+                    onChange={(e) => {
+                      const val = e.target.checked;
+                      setResolutionAlerts(val);
+                      handleSavePreferences({
+                        complaintUpdates: emailAlerts,
+                        resolutionNotifications: val,
+                        assignmentUpdates: assignmentAlerts,
+                      });
+                    }}
+                    color="default"
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ color: '#09090b', fontWeight: 800 }}>Resolution Notifications</Typography>
+                    <Typography variant="caption" sx={{ color: '#52525b' }}>Receive proof of repair when municipal crew resolves work.</Typography>
+                  </Box>
+                }
+              />
+
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={assignmentAlerts}
+                    onChange={(e) => {
+                      const val = e.target.checked;
+                      setAssignmentAlerts(val);
+                      handleSavePreferences({
+                        complaintUpdates: emailAlerts,
+                        resolutionNotifications: resolutionAlerts,
+                        assignmentUpdates: val,
+                      });
+                    }}
+                    color="default"
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ color: '#09090b', fontWeight: 800 }}>Department Assignment Updates</Typography>
+                    <Typography variant="caption" sx={{ color: '#52525b' }}>Notify when assigned to engineering or sanitation units.</Typography>
+                  </Box>
+                }
               />
             </Box>
           </Paper>
