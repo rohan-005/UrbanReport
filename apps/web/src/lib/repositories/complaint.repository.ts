@@ -93,21 +93,17 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
 
   public async getAllComplaints(filters?: ComplaintFilters): Promise<Complaint[]> {
     let result = [...this.complaints];
-
     if (!filters) return result;
 
     if (filters.category && filters.category !== 'ALL') {
       result = result.filter((c) => c.category === filters.category);
     }
-
     if (filters.severity && filters.severity !== 'ALL') {
       result = result.filter((c) => c.severity === filters.severity);
     }
-
     if (filters.status && filters.status !== 'ALL') {
       result = result.filter((c) => c.status === filters.status);
     }
-
     if (filters.searchQuery && filters.searchQuery.trim() !== '') {
       const q = filters.searchQuery.toLowerCase().trim();
       result = result.filter(
@@ -117,32 +113,6 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
           c.address.toLowerCase().includes(q) ||
           c.id.toLowerCase().includes(q)
       );
-    }
-
-    if (filters.sortBy) {
-      switch (filters.sortBy) {
-        case 'newest':
-          result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-          break;
-        case 'oldest':
-          result.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-          break;
-        case 'upvotes':
-          result.sort((a, b) => b.upvotesCount - a.upvotesCount);
-          break;
-        case 'severity': {
-          const weight: Record<Severity, number> = {
-            CRITICAL: 4,
-            HIGH: 3,
-            MEDIUM: 2,
-            LOW: 1,
-          };
-          result.sort((a, b) => weight[b.severity] - weight[a.severity]);
-          break;
-        }
-      }
-    } else {
-      result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
 
     return result;
@@ -160,26 +130,14 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
     const idNumber = Math.floor(1000 + Math.random() * 9000);
     const newId = `URB-2026-${idNumber}`;
 
-    const initialTimeline: TimelineEvent = {
-      id: `tl-${Date.now()}`,
-      status: 'SUBMITTED',
-      title: 'Complaint Submitted',
-      description: 'Complaint registered by citizen with media evidence and location.',
-      timestamp: now,
-      actor: {
-        name: payload.reporter.name || 'Anonymous Citizen',
-        role: 'CITIZEN',
-      },
-    };
-
     const newComplaint: Complaint = {
       ...payload,
       id: newId,
       status: payload.status || 'SUBMITTED',
       createdAt: now,
       updatedAt: now,
-      timeline: [initialTimeline],
-      upvotesCount: 1,
+      timeline: [],
+      upvotesCount: 0,
     };
 
     this.complaints.unshift(newComplaint);
@@ -198,49 +156,10 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
     if (index === -1) return null;
 
     const complaint = this.complaints[index];
-    const now = new Date().toISOString();
-
-    const titleMap: Record<ComplaintStatus, string> = {
-      SUBMITTED: 'Status Reset to Submitted',
-      UNDER_REVIEW: 'Under Review by Admin Desk',
-      VERIFIED: 'Verified by Field Inspector',
-      ASSIGNED: 'Assigned to Municipal Department',
-      IN_PROGRESS: 'Work Started by Repair Crew',
-      RESOLVED: 'Marked as Resolved',
-      REOPENED: 'Reopened by Citizen',
-      REJECTED: 'Complaint Rejected / Closed',
-    };
-
-    const descriptionMap: Record<ComplaintStatus, string> = {
-      SUBMITTED: 'Status was reset to submitted state.',
-      UNDER_REVIEW: 'Complaint details and location are being reviewed for priority triage.',
-      VERIFIED: 'Issue authenticity verified. Queued for departmental assignment.',
-      ASSIGNED: 'Work order dispatched to handling department.',
-      IN_PROGRESS: 'On-site maintenance team deployed to location.',
-      RESOLVED: 'Resolution verified and work completed successfully.',
-      REOPENED: 'Citizen reported issue persists after resolution attempt.',
-      REJECTED: 'Closed by administration due to duplicate entry or invalid claim.',
-    };
-
-    const newTimelineEvent: TimelineEvent = {
-      id: `tl-${Date.now()}`,
-      status,
-      title: titleMap[status] || `Status changed to ${status}`,
-      description: descriptionMap[status] || `Status updated to ${status}.`,
-      timestamp: now,
-      actor: {
-        name: actorName,
-        role: actorRole,
-      },
-      notes,
-    };
-
     const updated: Complaint = {
       ...complaint,
       status,
-      updatedAt: now,
-      resolutionNotes: status === 'RESOLVED' || status === 'REJECTED' ? notes || complaint.resolutionNotes : complaint.resolutionNotes,
-      timeline: [newTimelineEvent, ...complaint.timeline],
+      updatedAt: new Date().toISOString(),
     };
 
     this.complaints[index] = updated;
@@ -257,32 +176,11 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
     if (index === -1) return null;
 
     const complaint = this.complaints[index];
-    const now = new Date().toISOString();
-
-    const timelineEvent: TimelineEvent = {
-      id: `tl-${Date.now()}`,
-      status: 'ASSIGNED',
-      title: `Assigned to ${assignment.department}`,
-      description: assignment.assignedOfficer
-        ? `Dispatched to officer ${assignment.assignedOfficer}.`
-        : `Work order dispatched to ${assignment.department}.`,
-      timestamp: now,
-      actor: {
-        name: actorName,
-        role: 'ADMIN',
-      },
-      notes: assignment.notes,
-    };
-
     const updated: Complaint = {
       ...complaint,
       status: 'ASSIGNED',
-      assignment: {
-        ...assignment,
-        assignedAt: now,
-      },
-      updatedAt: now,
-      timeline: [timelineEvent, ...complaint.timeline],
+      assignment,
+      updatedAt: new Date().toISOString(),
     };
 
     this.complaints[index] = updated;
@@ -296,11 +194,8 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
 
     const complaint = this.complaints[index];
     const userIds = complaint.upvotedByUserIds || [];
-
     const hasUpvoted = userIds.includes(userId);
-    const newUpvotedIds = hasUpvoted
-      ? userIds.filter((uid) => uid !== userId)
-      : [...userIds, userId];
+    const newUpvotedIds = hasUpvoted ? userIds.filter((uid) => uid !== userId) : [...userIds, userId];
 
     const updated: Complaint = {
       ...complaint,
@@ -314,28 +209,17 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
   }
 
   public async getStats() {
-    const total = this.complaints.length;
-    const submitted = this.complaints.filter((c) => c.status === 'SUBMITTED').length;
-    const underReview = this.complaints.filter((c) => c.status === 'UNDER_REVIEW').length;
-    const verified = this.complaints.filter((c) => c.status === 'VERIFIED').length;
-    const assigned = this.complaints.filter((c) => c.status === 'ASSIGNED').length;
-    const inProgress = this.complaints.filter((c) => c.status === 'IN_PROGRESS').length;
-    const resolved = this.complaints.filter((c) => c.status === 'RESOLVED').length;
-    const reopened = this.complaints.filter((c) => c.status === 'REOPENED').length;
-    const rejected = this.complaints.filter((c) => c.status === 'REJECTED').length;
-    const critical = this.complaints.filter((c) => c.severity === 'CRITICAL').length;
-
     return {
-      total,
-      submitted,
-      underReview,
-      verified,
-      assigned,
-      inProgress,
-      resolved,
-      reopened,
-      rejected,
-      critical,
+      total: this.complaints.length,
+      submitted: this.complaints.filter((c) => c.status === 'SUBMITTED').length,
+      underReview: this.complaints.filter((c) => c.status === 'UNDER_REVIEW').length,
+      verified: this.complaints.filter((c) => c.status === 'VERIFIED').length,
+      assigned: this.complaints.filter((c) => c.status === 'ASSIGNED').length,
+      inProgress: this.complaints.filter((c) => c.status === 'IN_PROGRESS').length,
+      resolved: this.complaints.filter((c) => c.status === 'RESOLVED').length,
+      reopened: this.complaints.filter((c) => c.status === 'REOPENED').length,
+      rejected: this.complaints.filter((c) => c.status === 'REJECTED').length,
+      critical: this.complaints.filter((c) => c.severity === 'CRITICAL').length,
     };
   }
 }
@@ -357,63 +241,57 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       if (filters?.sortBy) queryParams.append('sortBy', filters.sortBy);
 
       const res = await fetch(`${API_BASE}/complaints?${queryParams.toString()}`);
-      if (!res.ok) throw new Error('API Error');
+      if (!res.ok) return [];
       const data = await res.json();
 
       if (data.items && Array.isArray(data.items)) {
         return data.items.map((item: any) => this.mapToFrontendComplaint(item));
       }
-      return this.fallbackMock.getAllComplaints(filters);
+      return [];
     } catch {
-      return this.fallbackMock.getAllComplaints(filters);
+      return [];
     }
   }
 
   public async getComplaintById(id: string): Promise<Complaint | null> {
     try {
       const res = await fetch(`${API_BASE}/complaints/${id}`);
-      if (!res.ok) throw new Error('API Error');
+      if (!res.ok) return null;
       const item = await res.json();
       return this.mapToFrontendComplaint(item);
     } catch {
-      return this.fallbackMock.getComplaintById(id);
+      return null;
     }
   }
 
   public async createComplaint(
     payload: Omit<Complaint, 'id' | 'createdAt' | 'updatedAt' | 'timeline' | 'upvotesCount'>
   ): Promise<Complaint> {
-    try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
-      const res = await fetch(`${API_BASE}/complaints`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify({
-          category: payload.category.toUpperCase(),
-          title: payload.title,
-          description: payload.description,
-          severity: payload.severity,
-          latitude: payload.latitude,
-          longitude: payload.longitude,
-          address: payload.address,
-        }),
-      });
+    const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
+    const res = await fetch(`${API_BASE}/complaints`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        category: payload.category.toUpperCase(),
+        title: payload.title,
+        description: payload.description,
+        severity: payload.severity,
+        latitude: payload.latitude,
+        longitude: payload.longitude,
+        address: payload.address,
+      }),
+    });
 
-      if (!res.ok) {
-        throw new Error('Failed to create complaint through API.');
-      }
-
-      const item = await res.json();
-      return this.mapToFrontendComplaint(item);
-    } catch (err: any) {
-      if (err.message?.includes('API')) {
-        return this.fallbackMock.createComplaint(payload);
-      }
-      return this.fallbackMock.createComplaint(payload);
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || 'Failed to submit complaint to server.');
     }
+
+    const item = await res.json();
+    return this.mapToFrontendComplaint(item);
   }
 
   public async updateStatus(
@@ -438,7 +316,7 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       const item = await res.json();
       return this.mapToFrontendComplaint(item);
     } catch {
-      return this.fallbackMock.updateStatus(id, status, actorName, actorRole, notes);
+      return null;
     }
   }
 
@@ -447,15 +325,27 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
     assignment: Assignment,
     actorName: string
   ): Promise<Complaint | null> {
-    return this.fallbackMock.assignDepartment(id, assignment, actorName);
+    return null;
   }
 
   public async upvoteComplaint(id: string, userId: string): Promise<Complaint | null> {
-    return this.fallbackMock.upvoteComplaint(id, userId);
+    return null;
   }
 
   public async getStats() {
-    return this.fallbackMock.getStats();
+    const all = await this.getAllComplaints();
+    return {
+      total: all.length,
+      submitted: all.filter((c) => c.status === 'SUBMITTED').length,
+      underReview: all.filter((c) => c.status === 'UNDER_REVIEW').length,
+      verified: all.filter((c) => c.status === 'VERIFIED').length,
+      assigned: all.filter((c) => c.status === 'ASSIGNED').length,
+      inProgress: all.filter((c) => c.status === 'IN_PROGRESS').length,
+      resolved: all.filter((c) => c.status === 'RESOLVED').length,
+      reopened: all.filter((c) => c.status === 'REOPENED').length,
+      rejected: all.filter((c) => c.status === 'REJECTED').length,
+      critical: all.filter((c) => c.severity === 'CRITICAL').length,
+    };
   }
 
   private mapToFrontendComplaint(item: any): Complaint {
@@ -483,17 +373,6 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       },
     }));
 
-    if (timeline.length === 0) {
-      timeline.push({
-        id: `tl-${Date.now()}`,
-        status: (item.status || 'SUBMITTED') as ComplaintStatus,
-        title: 'Complaint Submitted',
-        description: 'Initial complaint registration',
-        timestamp: item.created_at || new Date().toISOString(),
-        actor: { name: 'Citizen Reporter', role: 'CITIZEN' },
-      });
-    }
-
     return {
       id: item.id || `URB-${Date.now()}`,
       title: item.title || 'Civic Issue Dossier',
@@ -508,18 +387,11 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       updatedAt: item.updated_at || new Date().toISOString(),
       reporter: {
         id: item.reporter_user_id || 'user-001',
-        name: 'Aarav Sharma',
+        name: 'Citizen Reporter',
       },
-      media: [
-        {
-          id: 'm1',
-          url: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80',
-          type: 'image',
-          caption: 'Primary issue location photo',
-        },
-      ],
+      media: [],
       timeline,
-      upvotesCount: item.upvotes_count || 1,
+      upvotesCount: item.upvotes_count || 0,
     };
   }
 }
