@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently -n users,complaints,media,maps -c cyan,blue,magenta,yellow \"pnpm --filter @urbanreports/users start:dev\" \"pnpm --filter @urbanreports/complaints start:dev\" \"pnpm --filter @urbanreports/media start:dev\" \"pnpm --filter @urbanreports/maps start:dev\"",
+    "dev": "concurrently -n users,complaints,media,maps,gateway -c cyan,blue,magenta,yellow,green \"pnpm --filter @urbanreports/users start:dev\" \"pnpm --filter @urbanreports/complaints start:dev\" \"pnpm --filter @urbanreports/media start:dev\" \"pnpm --filter @urbanreports/maps start:dev\" \"pnpm --filter @urbanreports/gateway start:dev\"",
     "start": "pnpm dev"
   }
 }

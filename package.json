@@ -3,9 +3,9 @@
   "private": true,
   "scripts": {
     "dev": "turbo dev",
-    "dev:services": "concurrently -n users,complaints,media,maps -c cyan,blue,magenta,yellow \"pnpm --filter @urbanreports/users start:dev\" \"pnpm --filter @urbanreports/complaints start:dev\" \"pnpm --filter @urbanreports/media start:dev\" \"pnpm --filter @urbanreports/maps start:dev\"",
+    "dev:services": "concurrently -n users,complaints,media,maps,gateway -c cyan,blue,magenta,yellow,green \"pnpm --filter @urbanreports/users start:dev\" \"pnpm --filter @urbanreports/complaints start:dev\" \"pnpm --filter @urbanreports/media start:dev\" \"pnpm --filter @urbanreports/maps start:dev\" \"pnpm --filter @urbanreports/gateway start:dev\"",
     "services:dev": "pnpm dev:services",
-    "dev:all": "concurrently -n web,users,complaints,media,maps -c green,cyan,blue,magenta,yellow \"pnpm --filter @urbanreports/web dev\" \"pnpm --filter @urbanreports/users start:dev\" \"pnpm --filter @urbanreports/complaints start:dev\" \"pnpm --filter @urbanreports/media start:dev\" \"pnpm --filter @urbanreports/maps start:dev\"",
+    "dev:all": "concurrently -n web,users,complaints,media,maps,gateway -c white,cyan,blue,magenta,yellow,green \"pnpm --filter @urbanreports/web dev\" \"pnpm --filter @urbanreports/users start:dev\" \"pnpm --filter @urbanreports/complaints start:dev\" \"pnpm --filter @urbanreports/media start:dev\" \"pnpm --filter @urbanreports/maps start:dev\" \"pnpm --filter @urbanreports/gateway start:dev\"",
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
