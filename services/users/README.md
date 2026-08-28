@@ -2,6 +2,9 @@
 
 The **Users Service** is a NestJS microservice responsible for user identity management, authentication, role-based access control, profile updates, and notification preference storage.
 
+> [!NOTE]
+> The MongoDB user database starts completely empty (0 users). All citizen profiles are created via public registration (`POST /auth/register`). No default hardcoded credentials exist.
+
 ## 🏗️ Architecture
 
 - **Framework**: NestJS 10 (TypeScript)

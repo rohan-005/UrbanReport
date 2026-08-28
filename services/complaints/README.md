@@ -2,6 +2,9 @@
 
 The **Complaints Service** is an authoritative NestJS microservice that manages civic complaint dossiers, geospatial indexing, status lifecycle transitions, and audit trails.
 
+> [!NOTE]
+> The database starts completely empty (0 complaints, 0 assignments, 0 status history). All records are created dynamically through user reports and municipal actions. Optional development seed data can be manually populated via `pnpm db:seed`.
+
 ## 🏗️ Architecture & Technology Stack
 
 - **Framework**: NestJS 10 (TypeScript)
@@ -75,9 +78,9 @@ USERS_SERVICE_URL=http://localhost:3001
 ### Running Service
 
 ```bash
-# Start development server
+# Start development server (Database starts empty)
 pnpm --filter @urbanreports/complaints start:dev
 
-# Seed database with municipal departments and 20+ complaints
-npx ts-node services/complaints/src/database/seed.ts
+# Optional: Populate development seed complaints manually
+pnpm db:seed
 ```

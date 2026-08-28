@@ -19,9 +19,12 @@ UrbanReports is a modern, map-first civic issue reporting platform engineered fo
 - **Phase 2**: Users & Authentication Microservice (`services/users` with NestJS, MongoDB Atlas, JWT authentication, Bcrypt password hashing, local Aadhaar format validation, and profile settings persistence).
 - **Phase 3**: Complaints Core Microservice (`services/complaints` with NestJS, Neon PostgreSQL, PostGIS Point `location` SRID 4326, GiST spatial index, transactional status lifecycle, status history auditing, nearby/viewport spatial endpoints, and seed data).
 
+> [!IMPORTANT]
+> **Production Empty-Database Architecture**: UrbanReports starts completely clean with 0 users and 0 complaints in database tables. All users register dynamically via `/register`, and all complaints are reported via `/report`. Optional development seed data can be populated on demand via `pnpm db:seed`.
+
 ---
 
-## 🔑 Key Features (Phase 1 + Phase 2 + Phase 3)
+## 🔑 Key Features
 
 - **Map-First Experience**: Interactive MapLibre GL canvas with custom monochrome markers, popups, and PostGIS viewport bounds filtering.
 - **Floating Bottom Navigation Dock**: Floating command dock (`FloatingBottomNav`) providing seamless navigation across Home, Map, Report, Catalog Feed, Profile, and Admin routes.
@@ -57,6 +60,9 @@ pnpm --filter @urbanreports/complaints start:dev
 
 # Terminal 3: Web App (Port 3000)
 pnpm --filter @urbanreports/web dev
+
+# Optional: Populate development seed complaints manually
+pnpm db:seed
 ```
 
 ---
@@ -86,18 +92,4 @@ USERS_SERVICE_URL=http://localhost:3001
 NEXT_PUBLIC_USERS_SERVICE_URL=http://localhost:3001
 NEXT_PUBLIC_COMPLAINTS_SERVICE_URL=http://localhost:3002
 NEXT_PUBLIC_MAPTILER_API_KEY=
-```
-
----
-
-## 📜 Git Commit Progression
-
-```bash
-b1b5654 updated Phase 2 documentation and configuration
-2c3edf8 implemented logout and polished authentication flow
-8e13415 connected profile and notification settings
-f80fbb0 implemented login and JWT authentication
-ff69cb3 added user registration and password hashing
-b9d67a7 connected MongoDB Atlas to users service
-86e7549 created NestJS users service
 ```
