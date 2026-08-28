@@ -1,4 +1,5 @@
-const MEDIA_API_BASE = process.env.NEXT_PUBLIC_MEDIA_SERVICE_URL || 'http://localhost:3003';
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:3005';
+const MEDIA_API_BASE = `${GATEWAY_URL}/api`;
 
 export interface UploadedMediaResponse {
   id: string;

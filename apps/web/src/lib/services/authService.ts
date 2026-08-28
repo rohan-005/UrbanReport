@@ -1,6 +1,7 @@
 import { User } from '../types';
 
-const API_BASE = process.env.NEXT_PUBLIC_USERS_SERVICE_URL || 'http://localhost:3001';
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:3005';
+const API_BASE = `${GATEWAY_URL}/api`;
 
 class AuthServiceAPI {
   private tokenKey = 'urbanreports_access_token';

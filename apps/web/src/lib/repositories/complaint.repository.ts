@@ -10,7 +10,8 @@ import {
 import { MOCK_COMPLAINTS } from '../data/mock-complaints';
 import { MediaService } from '../services/mediaService';
 
-const API_BASE = process.env.NEXT_PUBLIC_COMPLAINTS_SERVICE_URL || 'http://localhost:3002';
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:3005';
+const API_BASE = `${GATEWAY_URL}/api`;
 
 export interface IComplaintRepository {
   getAllComplaints(filters?: ComplaintFilters): Promise<Complaint[]>;
