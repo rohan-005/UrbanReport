@@ -43,6 +43,11 @@ export interface IComplaintRepository {
     rejected: number;
     critical: number;
   }>;
+  getViewportComplaints(
+    bounds: { minLat: number; minLng: number; maxLat: number; maxLng: number },
+    filters?: ComplaintFilters
+  ): Promise<Complaint[]>;
+  getNearbyComplaints(lat: number, lng: number, radiusMeters?: number): Promise<Complaint[]>;
   subscribe(listener: () => void): () => void;
 }
 
@@ -223,6 +228,37 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
       critical: this.complaints.filter((c) => c.severity === 'CRITICAL').length,
     };
   }
+
+  public async getViewportComplaints(
+    bounds: { minLat: number; minLng: number; maxLat: number; maxLng: number },
+    filters?: ComplaintFilters
+  ): Promise<Complaint[]> {
+    let result = this.complaints.filter(
+      (c) =>
+        c.latitude >= bounds.minLat &&
+        c.latitude <= bounds.maxLat &&
+        c.longitude >= bounds.minLng &&
+        c.longitude <= bounds.maxLng
+    );
+    if (!filters) return result;
+    if (filters.category && filters.category !== 'ALL') {
+      result = result.filter((c) => c.category === filters.category);
+    }
+    if (filters.severity && filters.severity !== 'ALL') {
+      result = result.filter((c) => c.severity === filters.severity);
+    }
+    if (filters.status && filters.status !== 'ALL') {
+      result = result.filter((c) => c.status === filters.status);
+    }
+    return result;
+  }
+
+  public async getNearbyComplaints(lat: number, lng: number, radiusMeters = 5000): Promise<Complaint[]> {
+    return this.complaints.filter((c) => {
+      const dist = Math.hypot(c.latitude - lat, c.longitude - lng) * 111000;
+      return dist <= radiusMeters;
+    });
+  }
 }
 
 class ApiComplaintRepositoryImpl implements IComplaintRepository {
@@ -352,6 +388,47 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       rejected: all.filter((c) => c.status === 'REJECTED').length,
       critical: all.filter((c) => c.severity === 'CRITICAL').length,
     };
+  }
+
+  public async getViewportComplaints(
+    bounds: { minLat: number; minLng: number; maxLat: number; maxLng: number },
+    filters?: ComplaintFilters
+  ): Promise<Complaint[]> {
+    try {
+      const queryParams = new URLSearchParams({
+        minLat: bounds.minLat.toString(),
+        minLng: bounds.minLng.toString(),
+        maxLat: bounds.maxLat.toString(),
+        maxLng: bounds.maxLng.toString(),
+      });
+      if (filters?.category && filters.category !== 'ALL') queryParams.append('category', filters.category.toUpperCase());
+      if (filters?.severity && filters.severity !== 'ALL') queryParams.append('severity', filters.severity);
+      if (filters?.status && filters.status !== 'ALL') queryParams.append('status', filters.status);
+
+      const res = await fetch(`${API_BASE}/complaints/viewport?${queryParams.toString()}`);
+      if (!res.ok) return this.fallbackMock.getViewportComplaints(bounds, filters);
+      const items = await res.json();
+      if (Array.isArray(items)) {
+        return items.map((item: any) => this.mapToFrontendComplaint(item));
+      }
+      return this.fallbackMock.getViewportComplaints(bounds, filters);
+    } catch {
+      return this.fallbackMock.getViewportComplaints(bounds, filters);
+    }
+  }
+
+  public async getNearbyComplaints(lat: number, lng: number, radiusMeters = 5000): Promise<Complaint[]> {
+    try {
+      const res = await fetch(`${API_BASE}/complaints/nearby?lat=${lat}&lng=${lng}&radius=${radiusMeters}`);
+      if (!res.ok) return this.fallbackMock.getNearbyComplaints(lat, lng, radiusMeters);
+      const items = await res.json();
+      if (Array.isArray(items)) {
+        return items.map((item: any) => this.mapToFrontendComplaint(item));
+      }
+      return this.fallbackMock.getNearbyComplaints(lat, lng, radiusMeters);
+    } catch {
+      return this.fallbackMock.getNearbyComplaints(lat, lng, radiusMeters);
+    }
   }
 
   private mapToFrontendComplaint(item: any): Complaint {
