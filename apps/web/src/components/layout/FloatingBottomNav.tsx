@@ -3,19 +3,24 @@
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { 
   Compass, 
   Map as MapIcon, 
   Plus, 
   ListFilter, 
   User, 
-  ShieldCheck
+  ShieldCheck,
+  LogOut
 } from 'lucide-react';
 import gsap from 'gsap';
 
 export const FloatingBottomNav: React.FC = () => {
   const pathname = usePathname();
+  const { isAuthenticated, role, logout } = useAuth();
   const navContainerRef = useRef<HTMLDivElement>(null);
+
+  const showAdmin = isAuthenticated && (role === 'ADMIN' || role === 'OFFICER' || role === 'AUTHORITY');
 
   const navItems = [
     { href: '/', label: 'Home', icon: Compass },
@@ -23,7 +28,7 @@ export const FloatingBottomNav: React.FC = () => {
     { href: '/report', label: 'Report', icon: Plus, highlight: true },
     { href: '/complaints', label: 'Feed', icon: ListFilter },
     { href: '/profile', label: 'Profile', icon: User },
-    { href: '/admin', label: 'Admin', icon: ShieldCheck },
+    ...(showAdmin ? [{ href: '/admin', label: 'Admin', icon: ShieldCheck }] : []),
   ];
 
   const isActive = (path: string) => {
@@ -99,6 +104,16 @@ export const FloatingBottomNav: React.FC = () => {
               </Link>
             );
           })}
+
+          {isAuthenticated && (
+            <button
+              onClick={logout}
+              className="flex items-center gap-1.5 px-2 py-2 text-xs font-bold text-zinc-400 hover:text-red-400 hover:bg-zinc-900 rounded-sm transition-colors ml-1 border-l border-zinc-800"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </nav>
     </div>
