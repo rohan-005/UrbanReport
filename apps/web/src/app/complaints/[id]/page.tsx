@@ -12,6 +12,7 @@ import { MapView } from '@/components/map/MapView';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ErrorState } from '@/components/ui/ErrorState';
 import { PageTransition } from '@/components/motion/PageTransition';
+import { MediaService } from '@/lib/services/mediaService';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -218,9 +219,10 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
                       Photo Evidence
                     </Typography>
                   </Box>
+
                   {complaint.media.map((item) => (
                     <Box key={item.id} sx={{ borderRadius: '2px', overflow: 'hidden', border: '1px solid #e2e0d8', mb: 2 }}>
-                      <img src={item.url} alt="" className="w-full h-48 object-cover" />
+                      <img src={MediaService.getMediaUrl(item.url)} alt="" className="w-full h-48 object-cover" />
                       {item.caption && (
                         <Typography variant="caption" sx={{ p: 1, backgroundColor: '#f5f3ee', color: '#52525b', display: 'block', fontFamily: 'monospace', fontWeight: 600 }}>
                           {item.caption}

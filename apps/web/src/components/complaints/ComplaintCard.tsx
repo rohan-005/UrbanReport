@@ -9,6 +9,8 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { MapPin, ThumbsUp, Calendar, ArrowRight, User } from 'lucide-react';
 
+import { MediaService } from '@/lib/services/mediaService';
+
 interface ComplaintCardProps {
   complaint: Complaint;
   onUpvote?: (id: string) => void;
@@ -22,7 +24,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
 }) => {
   const imageUrl =
     complaint.media && complaint.media.length > 0
-      ? complaint.media[0].url
+      ? MediaService.getMediaUrl(complaint.media[0].url)
       : 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=600&q=80';
 
   const formattedDate = new Date(complaint.createdAt).toLocaleDateString(undefined, {

@@ -60,6 +60,7 @@ export default function ReportPage() {
   const [latitude, setLatitude] = useState(12.9172);
   const [longitude, setLongitude] = useState(77.6228);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [uploadedMediaIds, setUploadedMediaIds] = useState<string[]>([]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -97,7 +98,14 @@ export default function ReportPage() {
     setSubmitting(true);
 
     try {
-      const mediaList = imageUrl
+      const mediaList = uploadedMediaIds.length > 0
+        ? uploadedMediaIds.map((mId) => ({
+            id: mId,
+            url: imageUrl || '',
+            type: 'image' as const,
+            caption: 'Citizen uploaded evidence photo',
+          }))
+        : imageUrl
         ? [{ id: `med-${Date.now()}`, url: imageUrl, type: 'image' as const, caption: 'Citizen uploaded evidence photo' }]
         : [];
 
@@ -291,7 +299,13 @@ export default function ReportPage() {
                   4. Photo Evidence
                 </Typography>
 
-                <ImageUploader onImageSelected={(url) => setImageUrl(url)} />
+                <ImageUploader
+                  onMediaChanged={(mediaIds, preview) => {
+                    setUploadedMediaIds(mediaIds);
+                    setImageUrl(preview);
+                  }}
+                  onImageSelected={(url) => setImageUrl(url)}
+                />
               </Paper>
 
               {/* Submit Action */}

@@ -8,6 +8,7 @@ import {
   Assignment,
 } from '../types';
 import { MOCK_COMPLAINTS } from '../data/mock-complaints';
+import { MediaService } from '../services/mediaService';
 
 const API_BASE = process.env.NEXT_PUBLIC_COMPLAINTS_SERVICE_URL || 'http://localhost:3002';
 
@@ -267,6 +268,10 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
   public async createComplaint(
     payload: Omit<Complaint, 'id' | 'createdAt' | 'updatedAt' | 'timeline' | 'upvotesCount'>
   ): Promise<Complaint> {
+    const mediaIds = (payload.media || [])
+      .map((m: any) => m.id || m.mediaId)
+      .filter(Boolean);
+
     const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
     const res = await fetch(`${API_BASE}/complaints`, {
       method: 'POST',
@@ -282,6 +287,7 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
         latitude: payload.latitude,
         longitude: payload.longitude,
         address: payload.address,
+        mediaIds,
       }),
     });
 
@@ -373,6 +379,13 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       },
     }));
 
+    const mediaList = (item.media || []).map((m: any) => ({
+      id: m.id || m.mediaId || `med-${Math.random()}`,
+      url: MediaService.getMediaUrl(m.url || m.mediaId || m.id),
+      type: (m.type || 'image') as 'image' | 'video',
+      caption: m.caption || 'Evidence photo',
+    }));
+
     return {
       id: item.id || `URB-${Date.now()}`,
       title: item.title || 'Civic Issue Dossier',
@@ -389,7 +402,7 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
         id: item.reporter_user_id || 'user-001',
         name: 'Citizen Reporter',
       },
-      media: [],
+      media: mediaList,
       timeline,
       upvotesCount: item.upvotes_count || 0,
     };
