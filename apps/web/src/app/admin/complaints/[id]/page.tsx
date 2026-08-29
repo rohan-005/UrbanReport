@@ -244,78 +244,78 @@ export default function AdminComplaintDetailPage({
     <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 36 }}>
       <Container maxWidth="lg">
         {/* Top Bar Navigation */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
-          <Link href="/admin/complaints" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-700 hover:text-black">
-            <ArrowLeft className="w-4 h-4" />
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2dfd7', gap: 2 }}>
+          <Link href="/admin/complaints" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#877b5f] hover:text-[#1f241d] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] rounded-xs">
+            <ArrowLeft className="w-4 h-4 text-[#877b5f]" />
             <span>Return to Resolution Queue</span>
           </Link>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 0.75, borderRadius: '2px', backgroundColor: '#09090b', color: '#ffffff', fontSize: '0.75rem', fontFamily: 'monospace' }}>
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 2, py: 0.75, borderRadius: '9999px', backgroundColor: '#1f241d', color: '#ffffff', fontSize: '0.75rem', fontFamily: 'monospace' }}>
+            <ShieldCheck className="w-4 h-4 text-[#a8c38e]" />
             <span>SESSION: {user?.name?.toUpperCase() || 'ADMINISTRATOR'} ({user?.role})</span>
           </Box>
         </Box>
 
         {statusError && (
-          <Alert severity="error" sx={{ mb: 4, borderRadius: '2px', fontWeight: 600 }}>
+          <Alert severity="error" sx={{ mb: 4, borderRadius: '8px', fontWeight: 600 }}>
             {statusError}
           </Alert>
         )}
 
         {/* Dossier Header */}
-        <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 2, mb: 2 }}>
+        <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', mb: 4 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 2, mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <CategoryBadge category={complaint.category} size="medium" />
               <SeverityBadge severity={complaint.severity} size="medium" />
-              <Typography variant="caption" sx={{ color: '#09090b', fontFamily: 'monospace', px: 1, py: 0.25, backgroundColor: '#f5f3ee', border: '1px solid #e2e0d8', fontWeight: 800 }}>
+              <Typography variant="caption" sx={{ color: '#1f241d', fontFamily: 'monospace', px: 1, py: 0.25, backgroundColor: '#f5f3ee', border: '1px solid #e2dfd7', fontWeight: 700, borderRadius: '4px' }}>
                 {complaint.id}
               </Typography>
             </Box>
             <StatusBadge status={complaint.status} size="medium" />
           </Box>
 
-          <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b', mb: 1, fontSize: { xs: '1.5rem', md: '2.25rem' } }}>
+          <Typography variant="h4" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 1, fontSize: { xs: '1.5rem', md: '2.25rem' } }}>
             {complaint.title}
           </Typography>
 
-          <Typography variant="body1" sx={{ color: '#3f3f46', mb: 3, leading: 'relaxed' }}>
+          <Typography variant="body1" sx={{ color: '#6b7280', mb: 3, leading: 'relaxed' }}>
             {complaint.description}
           </Typography>
 
-          <Grid container spacing={2} sx={{ pt: 2, borderTop: '1px solid #f4f4f5' }}>
+          <Grid container spacing={2} sx={{ pt: 2, borderTop: '1px solid #e2dfd7' }}>
             <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Address / Location</Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#09090b', fontWeight: 700, fontSize: '0.875rem' }}>
-                <MapPin className="w-4 h-4 text-zinc-950 shrink-0" />
+              <Typography variant="caption" sx={{ color: '#877b5f', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Address / Location</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#1f241d', fontWeight: 700, fontSize: '0.875rem' }}>
+                <MapPin className="w-4 h-4 text-[#877b5f] shrink-0" />
                 <span className="truncate">{complaint.address}</span>
               </Box>
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Citizen Reporter</Typography>
-              <Typography variant="body2" sx={{ color: '#09090b', fontWeight: 800 }}>
+              <Typography variant="caption" sx={{ color: '#877b5f', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Citizen Reporter</Typography>
+              <Typography variant="body2" sx={{ color: '#1f241d', fontWeight: 700 }}>
                 {complaint.reporter?.name || 'Citizen User'} ({complaint.reporter?.id || 'ID N/A'})
               </Typography>
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Reported Date</Typography>
-              <Typography variant="body2" sx={{ color: '#09090b', fontWeight: 800 }}>
+              <Typography variant="caption" sx={{ color: '#877b5f', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Reported Date</Typography>
+              <Typography variant="body2" sx={{ color: '#1f241d', fontWeight: 700 }}>
                 {new Date(complaint.createdAt).toLocaleString()}
               </Typography>
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Assigned Department</Typography>
-              <Typography variant="body2" sx={{ color: '#09090b', fontWeight: 800 }}>
+              <Typography variant="caption" sx={{ color: '#877b5f', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Assigned Department</Typography>
+              <Typography variant="body2" sx={{ color: '#1f241d', fontWeight: 700 }}>
                 {complaint.assignment?.department || 'Unassigned'}
               </Typography>
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>
-              <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Community Confirmations</Typography>
-              <Typography variant="body2" sx={{ color: '#166534', fontWeight: 900 }}>
+              <Typography variant="caption" sx={{ color: '#877b5f', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Community Confirmations</Typography>
+              <Typography variant="body2" sx={{ color: '#4e6d3c', fontWeight: 700 }}>
                 {complaint.confirmationsCount || complaint.upvotesCount || 0} Citizens Confirmed
               </Typography>
             </Grid>
@@ -323,13 +323,13 @@ export default function AdminComplaintDetailPage({
         </Paper>
 
         {/* Controlled Lifecycle Actions Bar */}
-        <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
-          <Typography variant="overline" sx={{ color: '#09090b', fontWeight: 900, mb: 1.5, display: 'block' }}>
-            Current Status: <span className="font-mono text-zinc-900">{complaint.status}</span> — Authorized Transition Actions
+        <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', mb: 4 }}>
+          <Typography variant="overline" sx={{ color: '#877b5f', fontWeight: 700, mb: 1.5, display: 'block' }}>
+            Current Status: <span className="font-mono text-[#1f241d]">{complaint.status}</span> — Authorized Transition Actions
           </Typography>
 
           {allowedNextStates.length === 0 ? (
-            <Alert severity="info" sx={{ borderRadius: '2px' }}>
+            <Alert severity="info" sx={{ borderRadius: '8px' }}>
               No further state transitions allowed from <strong>{complaint.status}</strong>.
             </Alert>
           ) : (
@@ -341,6 +341,7 @@ export default function AdminComplaintDetailPage({
                   disabled={actionLoading}
                   onClick={() => handleUpdateStatus('UNDER_REVIEW', 'Review started by admin desk')}
                   startIcon={<Eye className="w-4 h-4" />}
+                  sx={{ borderRadius: '8px' }}
                 >
                   Start Review
                 </Button>
@@ -352,7 +353,8 @@ export default function AdminComplaintDetailPage({
                   size="small"
                   disabled={actionLoading}
                   onClick={() => handleUpdateStatus('VERIFIED', 'Verified by Admin Desk inspection')}
-                  startIcon={<ShieldCheck className="w-4 h-4 text-emerald-600" />}
+                  startIcon={<ShieldCheck className="w-4 h-4 text-[#89a577]" />}
+                  sx={{ borderRadius: '8px' }}
                 >
                   Verify Complaint
                 </Button>
@@ -364,7 +366,8 @@ export default function AdminComplaintDetailPage({
                   size="small"
                   disabled={actionLoading}
                   onClick={() => handleUpdateStatus('IN_PROGRESS', 'Field repair crew deployed')}
-                  startIcon={<Wrench className="w-4 h-4 text-blue-600" />}
+                  startIcon={<Wrench className="w-4 h-4 text-[#877b5f]" />}
+                  sx={{ borderRadius: '8px' }}
                 >
                   Mark In Progress
                 </Button>
@@ -377,7 +380,7 @@ export default function AdminComplaintDetailPage({
                   disabled={actionLoading}
                   onClick={() => setIsResolveModalOpen(true)}
                   startIcon={<CheckCircle2 className="w-4 h-4" />}
-                  sx={{ backgroundColor: '#09090b', color: '#ffffff', fontWeight: 900 }}
+                  sx={{ backgroundColor: '#89a577', color: '#ffffff', fontWeight: 700, borderRadius: '8px', '&:hover': { backgroundColor: '#6e895d' } }}
                 >
                   Resolve & Complete
                 </Button>
@@ -390,6 +393,7 @@ export default function AdminComplaintDetailPage({
                   disabled={actionLoading}
                   onClick={() => setIsReopenModalOpen(true)}
                   startIcon={<RotateCcw className="w-4 h-4" />}
+                  sx={{ borderRadius: '8px' }}
                 >
                   Reopen Complaint
                 </Button>
@@ -403,6 +407,7 @@ export default function AdminComplaintDetailPage({
                   disabled={actionLoading}
                   onClick={() => setIsRejectModalOpen(true)}
                   startIcon={<XCircle className="w-4 h-4" />}
+                  sx={{ borderRadius: '8px' }}
                 >
                   Reject Complaint
                 </Button>
@@ -413,32 +418,32 @@ export default function AdminComplaintDetailPage({
 
         {/* Before / After Evidence Visual Section */}
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h6" sx={{ fontWeight: 900, color: '#09090b', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-            <ImageIcon className="w-5 h-5 text-zinc-950" />
+          <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+            <ImageIcon className="w-5 h-5 text-[#877b5f]" />
             <span>Complaint Evidence Verification (Before & After)</span>
           </Typography>
 
           <Grid container spacing={3}>
             {/* BEFORE EVIDENCE */}
             <Grid item xs={12} md={6}>
-              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', height: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#09090b' }}>
+              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                  <Typography variant="subtitle2" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                     BEFORE (Citizen Submission)
                   </Typography>
-                  <Chip label={`${beforeMedia.length} Photo(s)`} size="small" variant="outlined" sx={{ fontWeight: 700 }} />
+                  <Chip label={`${beforeMedia.length} Photo(s)`} size="small" variant="outlined" sx={{ fontWeight: 700, borderRadius: '9999px' }} />
                 </Box>
 
                 {beforeMedia.length === 0 ? (
-                  <Box sx={{ p: 4, textAlign: 'center', backgroundColor: '#f4f4f5', borderRadius: '2px', border: '1px dashed #d4d4d8' }}>
-                    <Typography variant="caption" sx={{ color: '#71717a' }}>No initial photos uploaded by citizen.</Typography>
+                  <Box sx={{ p: 4, textAlign: 'center', backgroundColor: '#f5f3ee', borderRadius: '8px', border: '1px dashed #e2dfd7' }}>
+                    <Typography variant="caption" sx={{ color: '#6b7280' }}>No initial photos uploaded by citizen.</Typography>
                   </Box>
                 ) : (
                   <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 2 }}>
                     {beforeMedia.map((m) => (
-                      <Box key={m.id} sx={{ borderRadius: '2px', overflow: 'hidden', border: '1px solid #e2e0d8' }}>
+                      <Box key={m.id} sx={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2dfd7' }}>
                         <img src={m.url} alt={m.caption || 'Before photo'} className="w-full h-36 object-cover" />
-                        <Typography variant="caption" sx={{ p: 1, display: 'block', backgroundColor: '#fafafa', color: '#52525b', fontSize: '0.6875rem' }}>
+                        <Typography variant="caption" sx={{ p: 1, display: 'block', backgroundColor: '#f5f3ee', color: '#6b7280', fontSize: '0.6875rem' }}>
                           {m.caption || 'Initial evidence photo'}
                         </Typography>
                       </Box>
@@ -450,17 +455,17 @@ export default function AdminComplaintDetailPage({
 
             {/* AFTER EVIDENCE */}
             <Grid item xs={12} md={6}>
-              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', height: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 2 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 900, color: '#09090b' }}>
+              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', height: '100%' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                  <Typography variant="subtitle2" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                     AFTER (Resolution Verification)
                   </Typography>
-                  <Chip label={`${afterMedia.length} Photo(s)`} size="small" color={afterMedia.length > 0 ? 'success' : 'default'} sx={{ fontWeight: 700 }} />
+                  <Chip label={`${afterMedia.length} Photo(s)`} size="small" color={afterMedia.length > 0 ? 'success' : 'default'} sx={{ fontWeight: 700, borderRadius: '9999px' }} />
                 </Box>
 
                 {afterMedia.length === 0 ? (
-                  <Box sx={{ p: 4, textAlign: 'center', backgroundColor: '#fafafa', borderRadius: '2px', border: '1px dashed #e4e4e7' }}>
-                    <Typography variant="caption" sx={{ color: '#71717a' }}>
+                  <Box sx={{ p: 4, textAlign: 'center', backgroundColor: '#f5f3ee', borderRadius: '8px', border: '1px dashed #e2dfd7' }}>
+                    <Typography variant="caption" sx={{ color: '#6b7280' }}>
                       {complaint.status === 'RESOLVED'
                         ? 'Complaint resolved without explicit photo attachment.'
                         : 'Resolution evidence photo will appear here after completion.'}
@@ -469,7 +474,7 @@ export default function AdminComplaintDetailPage({
                 ) : (
                   <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 2 }}>
                     {afterMedia.map((m) => (
-                      <Box key={m.id} sx={{ borderRadius: '2px', overflow: 'hidden', border: '1px solid #bbf7d0' }}>
+                      <Box key={m.id} sx={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #bbf7d0' }}>
                         <img src={m.url} alt={m.caption || 'After photo'} className="w-full h-36 object-cover" />
                         <Typography variant="caption" sx={{ p: 1, display: 'block', backgroundColor: '#f0fdf4', color: '#166534', fontSize: '0.6875rem', fontWeight: 600 }}>
                           {m.caption || 'Resolution proof photo'}
@@ -495,16 +500,16 @@ export default function AdminComplaintDetailPage({
               />
 
               {/* Location Map View */}
-              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-                <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', mb: 2, fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <MapPin className="w-4 h-4 text-zinc-950" />
+              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+                <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 2, fontSize: '0.9375rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <MapPin className="w-4 h-4 text-[#877b5f]" />
                   <span>Geospatial Incident Location</span>
                 </Typography>
                 
-                <Box sx={{ height: 220, width: '100%', borderRadius: '2px', overflow: 'hidden', mb: 1.5, border: '1px solid #e2e0d8' }}>
+                <Box sx={{ height: 220, width: '100%', borderRadius: '8px', overflow: 'hidden', mb: 1.5, border: '1px solid #e2dfd7' }}>
                   <MapView complaints={[complaint]} center={[complaint.longitude, complaint.latitude]} zoom={15} interactive={false} />
                 </Box>
-                <Typography variant="caption" sx={{ color: '#71717a', fontFamily: 'monospace' }}>
+                <Typography variant="caption" sx={{ color: '#6b7280', fontFamily: 'monospace' }}>
                   SRID 4326 Point: Lat {complaint.latitude.toFixed(6)}, Lng {complaint.longitude.toFixed(6)}
                 </Typography>
               </Paper>
@@ -514,8 +519,8 @@ export default function AdminComplaintDetailPage({
           <Grid item xs={12} md={7}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               {/* Timeline Log */}
-              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-                <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', mb: 3 }}>
+              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+                <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 3 }}>
                   Status History & Dispatch Timeline
                 </Typography>
                 <ComplaintTimeline timeline={complaint.timeline} />
@@ -523,26 +528,26 @@ export default function AdminComplaintDetailPage({
 
               {/* Audit Events Log */}
               {auditEvents.length > 0 && (
-                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
+                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <History className="w-4 h-4 text-zinc-950" />
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', fontSize: '0.9375rem' }}>
+                    <History className="w-4 h-4 text-[#877b5f]" />
+                    <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', fontSize: '0.9375rem' }}>
                       Server Audit Log Events ({auditEvents.length})
                     </Typography>
                   </Box>
 
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                     {auditEvents.map((evt) => (
-                      <Box key={evt.id} sx={{ p: 1.5, backgroundColor: '#fafafa', borderRadius: '2px', border: '1px solid #f4f4f5', display: 'flex', justifyBetween: 'space-between', alignItems: 'center' }}>
+                      <Box key={evt.id} sx={{ p: 1.5, backgroundColor: '#f5f3ee', borderRadius: '8px', border: '1px solid #e2dfd7', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box>
-                          <Typography variant="caption" sx={{ fontWeight: 800, color: '#09090b', display: 'block', fontFamily: 'monospace' }}>
+                          <Typography variant="caption" sx={{ fontWeight: 700, color: '#1f241d', display: 'block', fontFamily: 'monospace' }}>
                             {evt.action}
                           </Typography>
-                          <Typography variant="caption" sx={{ color: '#71717a', fontSize: '0.6875rem' }}>
+                          <Typography variant="caption" sx={{ color: '#6b7280', fontSize: '0.6875rem' }}>
                             Actor: {evt.actor_id}
                           </Typography>
                         </Box>
-                        <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.6875rem' }}>
+                        <Typography variant="caption" sx={{ color: '#6b7280', fontSize: '0.6875rem' }}>
                           {new Date(evt.created_at).toLocaleString()}
                         </Typography>
                       </Box>
@@ -561,7 +566,7 @@ export default function AdminComplaintDetailPage({
           title="Resolve Civic Complaint"
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-            <Typography variant="body2" sx={{ color: '#52525b' }}>
+            <Typography variant="body2" sx={{ color: '#6b7280' }}>
               Add completion verification notes and attach resolution/after proof photo.
             </Typography>
 
@@ -577,15 +582,15 @@ export default function AdminComplaintDetailPage({
             />
 
             <Box>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: '#09090b', mb: 1, display: 'block' }}>
+              <Typography variant="caption" sx={{ fontWeight: 700, color: '#1f241d', mb: 1, display: 'block' }}>
                 Resolution / After Evidence Photo (Optional)
               </Typography>
               <Button
                 variant="outlined"
                 component="label"
                 fullWidth
-                startIcon={<Upload className="w-4 h-4" />}
-                sx={{ textTransform: 'none', justifyContent: 'flex-start' }}
+                startIcon={<Upload className="w-4 h-4 text-[#877b5f]" />}
+                sx={{ textTransform: 'none', justifyContent: 'flex-start', borderRadius: '8px' }}
               >
                 {resolutionFile ? resolutionFile.name : 'Select Resolution Evidence Image File...'}
                 <input
@@ -609,7 +614,7 @@ export default function AdminComplaintDetailPage({
                 variant="contained"
                 disabled={actionLoading || uploadingResolutionMedia}
                 onClick={handleConfirmResolution}
-                sx={{ backgroundColor: '#09090b', color: '#ffffff', fontWeight: 800 }}
+                sx={{ backgroundColor: '#89a577', color: '#ffffff', fontWeight: 700, borderRadius: '8px', '&:hover': { backgroundColor: '#6e895d' } }}
               >
                 {uploadingResolutionMedia ? 'Uploading Evidence...' : 'Confirm Resolution'}
               </Button>
@@ -624,7 +629,7 @@ export default function AdminComplaintDetailPage({
           title="Reject Civic Complaint"
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-            <Typography variant="body2" sx={{ color: '#52525b' }}>
+            <Typography variant="body2" sx={{ color: '#6b7280' }}>
               Select a rejection category and enter explanatory details for closing this entry.
             </Typography>
 
@@ -662,6 +667,7 @@ export default function AdminComplaintDetailPage({
                 color="error"
                 disabled={actionLoading}
                 onClick={handleConfirmRejection}
+                sx={{ borderRadius: '8px' }}
               >
                 Confirm Rejection
               </Button>
@@ -676,7 +682,7 @@ export default function AdminComplaintDetailPage({
           title="Reopen Civic Complaint"
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
-            <Typography variant="body2" sx={{ color: '#52525b' }}>
+            <Typography variant="body2" sx={{ color: '#6b7280' }}>
               Specify the reason for reopening this complaint dossier for further inspection.
             </Typography>
 
@@ -699,7 +705,7 @@ export default function AdminComplaintDetailPage({
                 variant="contained"
                 disabled={actionLoading}
                 onClick={handleConfirmReopen}
-                sx={{ backgroundColor: '#09090b', color: '#ffffff' }}
+                sx={{ backgroundColor: '#89a577', color: '#ffffff', borderRadius: '8px', '&:hover': { backgroundColor: '#6e895d' } }}
               >
                 Confirm Reopen
               </Button>
@@ -710,3 +716,4 @@ export default function AdminComplaintDetailPage({
     </Box>
   );
 }
+

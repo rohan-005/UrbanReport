@@ -59,23 +59,23 @@ export default function AdminComplaintsPage() {
     <PageTransition>
       <Box sx={{ py: { xs: 4, md: 6 }, backgroundColor: '#f5f3ee', flex: 1, pb: { xs: 28, md: 36 } }}>
         <Container maxWidth={false} className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2dfd7', gap: 2 }}>
             <Box>
-              <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
+              <Typography variant="h3" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 0.5, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
                 Admin Resolution Queue
               </Typography>
-              <Typography variant="body2" sx={{ color: '#52525b' }}>
+              <Typography variant="body2" sx={{ color: '#6b7280' }}>
                 Multi-criteria filter and dispatch control table.
               </Typography>
             </Box>
 
-            <Button variant="outlined" size="small" onClick={loadData} startIcon={<RefreshCw className="w-3.5 h-3.5" />}>
+            <Button variant="outlined" size="small" onClick={loadData} startIcon={<RefreshCw className="w-3.5 h-3.5 text-[#877b5f]" />}>
               Refresh
             </Button>
           </Box>
 
           {/* Filter Controls */}
-          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
+          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', mb: 4 }}>
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '2fr 1fr 1fr 1fr' }, gap: 2 }}>
               <TextField
                 size="small"
@@ -85,7 +85,7 @@ export default function AdminComplaintsPage() {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <Search className="w-4 h-4 text-zinc-500" />
+                      <Search className="w-4 h-4 text-[#877b5f]" />
                     </InputAdornment>
                   ),
                 }}
@@ -141,6 +141,7 @@ export default function AdminComplaintsPage() {
               </TextField>
             </Box>
           </Paper>
+
 
           {loading ? (
             <LoadingState message="Filtering administrative records..." height="h-96" />

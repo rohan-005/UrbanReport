@@ -178,16 +178,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       {attachments.length < maxImages && (
         <div
           onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-zinc-300 hover:border-zinc-950 bg-zinc-50 hover:bg-zinc-100 rounded-lg p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center group"
+          className="border-2 border-dashed border-[#e2dfd7] hover:border-[#89a577] bg-[#f5f3ee] hover:bg-white rounded-md p-6 text-center cursor-pointer transition-all flex flex-col items-center justify-center group"
         >
-          <div className="p-3 rounded-full bg-zinc-900 text-white group-hover:scale-105 transition-transform mb-3 shadow-sm">
+          <div className="p-3 rounded-full bg-[#89a577] text-white group-hover:scale-105 transition-transform mb-3 shadow-xs">
             <UploadCloud className="w-6 h-6" />
           </div>
-          <h4 className="text-sm font-bold text-zinc-900">
+          <h4 className="text-sm font-bold text-[#1f241d]">
             Click or drag to upload photo evidence
           </h4>
-          <p className="text-xs text-zinc-500 mt-1 font-mono">
-            JPG, PNG, WEBP (Server Validated, Max 10MB GridFS) — {attachments.length}/{maxImages} attached
+          <p className="text-xs text-[#6b7280] mt-1 font-mono">
+            JPG, PNG, WEBP — {attachments.length}/{maxImages} attached
           </p>
         </div>
       )}
@@ -198,9 +198,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           {attachments.map((att) => (
             <div
               key={att.id}
-              className="relative rounded-lg overflow-hidden border border-zinc-200 bg-white p-2.5 shadow-sm transition-all"
+              className="relative rounded-md overflow-hidden border border-[#e2dfd7] bg-white p-2.5 shadow-xs transition-all"
             >
-              <div className="relative h-44 w-full bg-zinc-900 rounded overflow-hidden">
+              <div className="relative h-44 w-full bg-[#1f241d] rounded-sm overflow-hidden">
                 <img
                   src={att.previewUrl}
                   alt={att.fileName}
@@ -208,15 +208,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 />
 
                 {att.status === 'uploading' && (
-                  <div className="absolute inset-0 bg-zinc-950/70 backdrop-blur-sm flex flex-col items-center justify-center text-white p-4">
-                    <Loader2 className="w-7 h-7 animate-spin text-white mb-2" />
+                  <div className="absolute inset-0 bg-[#1f241d]/75 backdrop-blur-xs flex flex-col items-center justify-center text-white p-4">
+                    <Loader2 className="w-7 h-7 animate-spin text-[#89a577] mb-2" />
                     <span className="text-xs font-bold tracking-wide">Processing & Uploading...</span>
-                    <span className="text-[10px] text-zinc-400 font-mono mt-1">GridFS Binary Storage</span>
                   </div>
                 )}
 
                 {att.status === 'error' && (
-                  <div className="absolute inset-0 bg-rose-950/85 backdrop-blur-sm flex flex-col items-center justify-center text-white p-3 text-center">
+                  <div className="absolute inset-0 bg-rose-950/85 backdrop-blur-xs flex flex-col items-center justify-center text-white p-3 text-center">
                     <AlertCircle className="w-6 h-6 text-rose-400 mb-1" />
                     <span className="text-xs font-bold text-rose-200">Upload Failed</span>
                     <p className="text-[11px] text-rose-300 line-clamp-2 my-1">{att.errorMessage}</p>
@@ -224,7 +223,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                       <button
                         type="button"
                         onClick={() => handleRetry(att)}
-                        className="mt-1 px-3 py-1 bg-white text-zinc-950 rounded text-xs font-bold flex items-center gap-1 hover:bg-zinc-200 transition-colors"
+                        className="mt-1 px-3 py-1 bg-white text-[#1f241d] rounded-md text-xs font-bold flex items-center gap-1 hover:bg-[#f5f3ee] transition-colors"
                       >
                         <RefreshCw className="w-3 h-3" /> Retry
                       </button>
@@ -235,17 +234,17 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 <button
                   type="button"
                   onClick={() => handleRemove(att.id)}
-                  className="absolute top-2 right-2 p-1.5 rounded-full bg-zinc-950/80 text-zinc-300 hover:text-white hover:bg-rose-600 transition-colors shadow-md z-10"
+                  className="absolute top-2 right-2 p-1.5 rounded-full bg-[#1f241d]/80 text-white hover:bg-rose-600 transition-colors shadow-md z-10"
                   title="Remove image"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="mt-2 flex items-center justify-between text-xs font-mono text-zinc-700 px-1">
+              <div className="mt-2 flex items-center justify-between text-xs font-mono text-[#1f241d] px-1">
                 <span className="truncate max-w-[180px] font-semibold">{att.fileName}</span>
                 {att.status === 'success' && (
-                  <span className="flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  <span className="flex items-center gap-1 text-[#4e6d3c] font-bold bg-[#eef6ea] px-2 py-0.5 rounded-full border border-[#a8c38e]">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Ready
                   </span>
                 )}
@@ -254,6 +253,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           ))}
         </div>
       )}
+
     </div>
   );
 };

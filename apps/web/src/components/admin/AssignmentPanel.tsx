@@ -84,16 +84,16 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
       sx={{
         p: 3,
         backgroundColor: '#ffffff',
-        borderColor: '#e2e0d8',
-        borderRadius: '2px',
+        borderColor: '#e2dfd7',
+        borderRadius: '8px',
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1.5, borderBottom: '1px solid #e2e0d8' }}>
-        <Building2 className="w-5 h-5 text-zinc-950" />
-        <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', fontSize: '0.9375rem' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1.5, borderBottom: '1px solid #e2dfd7' }}>
+        <Building2 className="w-5 h-5 text-[#877b5f]" />
+        <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', fontSize: '1rem' }}>
           Department Assignment Desk
         </Typography>
       </Box>
@@ -151,11 +151,12 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
         startIcon={<UserCheck className="w-4 h-4" />}
         sx={{
           mt: 1,
-          backgroundColor: '#09090b',
+          backgroundColor: '#89a577',
           color: '#ffffff',
-          fontWeight: 800,
+          fontWeight: 700,
+          borderRadius: '8px',
           '&:hover': {
-            backgroundColor: '#18181b',
+            backgroundColor: '#6e895d',
           },
         }}
       >
@@ -164,3 +165,4 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
     </Paper>
   );
 };
+

@@ -51,20 +51,20 @@ export const FloatingBottomNav: React.FC = () => {
     <div className="fixed bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[calc(100vw-1rem)] sm:max-w-max pointer-events-auto pb-[env(safe-area-inset-bottom)] transition-all duration-200">
       <nav
         ref={navContainerRef}
-        className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2.5 rounded-md bg-zinc-950/95 border border-zinc-800/90 shadow-2xl backdrop-blur-xl ring-1 ring-white/10"
+        className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-md bg-[#1f241d]/95 border border-[#877b5f]/40 shadow-xl backdrop-blur-xl ring-1 ring-white/10"
         aria-label="Floating Bottom Navigation Control Dock"
       >
         {/* Brand Mark Emblem (Desktop / Tablet) */}
         <Link
           href="/"
-          className="hidden md:flex items-center gap-2.5 px-3 py-2 mr-1 border-r border-zinc-800 text-xs font-black tracking-widest text-zinc-100 uppercase hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-sm"
+          className="hidden md:flex items-center gap-2 px-3 py-2 mr-1 border-r border-[#877b5f]/40 text-xs font-bold tracking-widest text-white uppercase hover:text-[#a8c38e] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] rounded-md"
         >
-          <span className="w-2.5 h-2.5 rounded-none bg-white shadow-sm" />
-          <span>URBAN</span>
+          <span className="w-2.5 h-2.5 rounded-xs bg-[#89a577] shadow-xs" />
+          <span className="font-display">URBAN</span>
         </Link>
 
         {/* Nav Links */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
@@ -75,13 +75,13 @@ export const FloatingBottomNav: React.FC = () => {
                   key={item.href}
                   href={item.href}
                   aria-current={active ? 'page' : undefined}
-                  className={`flex items-center justify-center gap-1.5 min-h-[44px] px-3.5 sm:px-5 py-2 sm:py-2.5 text-xs font-black uppercase tracking-wider rounded-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                  className={`flex items-center justify-center gap-1.5 min-h-[40px] px-3.5 sm:px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
                     active
-                      ? 'bg-white text-zinc-950 border border-white shadow-lg scale-[1.03]'
-                      : 'bg-zinc-100 text-zinc-950 hover:bg-white border border-zinc-200 shadow-md hover:scale-[1.02] active:scale-[0.98]'
+                      ? 'bg-[#89a577] text-white border border-[#89a577] shadow-md'
+                      : 'bg-[#89a577] text-white hover:bg-[#6e895d] border border-[#89a577] shadow-xs active:scale-[0.98]'
                   }`}
                 >
-                  <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.5]" />
+                  <Icon className="w-4 h-4 stroke-[2.5]" />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -92,16 +92,16 @@ export const FloatingBottomNav: React.FC = () => {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`relative flex items-center justify-center gap-1.5 sm:gap-2 min-h-[44px] px-2.5 sm:px-4 py-2 sm:py-2.5 text-xs font-extrabold uppercase tracking-wider rounded-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white ${
+                className={`relative flex items-center justify-center gap-1.5 sm:gap-2 min-h-[40px] px-2.5 sm:px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
                   active
-                    ? 'bg-zinc-800/95 text-zinc-100 border border-zinc-700/80 shadow-sm'
-                    : 'text-zinc-400 hover:text-zinc-100 hover:bg-zinc-900/80 border border-transparent active:scale-[0.97]'
+                    ? 'bg-[#877b5f]/30 text-white border border-[#877b5f]/50 shadow-xs'
+                    : 'text-zinc-300 hover:text-white hover:bg-white/10 border border-transparent active:scale-[0.97]'
                 }`}
               >
-                <Icon className={`w-4 h-4 sm:w-4.5 sm:h-4.5 ${active ? 'text-zinc-100' : 'text-zinc-400'}`} />
+                <Icon className={`w-4 h-4 ${active ? 'text-[#a8c38e]' : 'text-zinc-400'}`} />
                 <span className="hidden sm:inline">{item.label}</span>
                 {active && (
-                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-0.5 bg-white rounded-full shadow-sm" />
+                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-0.5 bg-[#89a577] rounded-full shadow-xs" />
                 )}
               </Link>
             );
@@ -110,7 +110,7 @@ export const FloatingBottomNav: React.FC = () => {
           {isAuthenticated && (
             <button
               onClick={logout}
-              className="flex items-center justify-center gap-1.5 min-h-[44px] px-2.5 sm:px-3.5 py-2 sm:py-2.5 text-xs font-bold text-zinc-400 hover:text-red-400 hover:bg-zinc-900 rounded-sm transition-colors ml-0.5 border-l border-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+              className="flex items-center justify-center gap-1.5 min-h-[40px] px-2.5 sm:px-3 py-2 text-xs font-bold text-zinc-400 hover:text-rose-300 hover:bg-white/10 rounded-md transition-colors ml-0.5 border-l border-[#877b5f]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />
@@ -121,3 +121,4 @@ export const FloatingBottomNav: React.FC = () => {
     </div>
   );
 };
+

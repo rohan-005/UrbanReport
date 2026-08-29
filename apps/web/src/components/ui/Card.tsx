@@ -14,10 +14,10 @@ export const Card: React.FC<CardProps> = ({
 }) => {
   return (
     <div
-      className={`rounded-sm bg-white border ${
-        active ? 'border-zinc-950 shadow-md ring-1 ring-zinc-950' : 'border-[#e2e0d8] shadow-sm'
+      className={`rounded-md bg-white border ${
+        active ? 'border-[#89a577] shadow-sm ring-1 ring-[#89a577]' : 'border-[#e2dfd7] shadow-xs'
       } ${
-        hoverable ? 'hover:border-zinc-400 hover:shadow-md transition-all duration-200 cursor-pointer' : ''
+        hoverable ? 'hover:border-[#877b5f] hover:shadow-md transition-all duration-200 cursor-pointer' : ''
       } ${className}`}
       {...props}
     >
@@ -25,3 +25,4 @@ export const Card: React.FC<CardProps> = ({
     </div>
   );
 };
+

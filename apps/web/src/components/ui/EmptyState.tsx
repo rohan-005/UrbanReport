@@ -25,35 +25,43 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         p: 6,
         textAlign: 'center',
         backgroundColor: '#ffffff',
-        borderColor: '#e2e0d8',
-        borderRadius: '2px',
+        borderColor: '#e2dfd7',
+        borderRadius: '8px',
         maxWidth: 500,
         mx: 'auto',
       }}
     >
       <Box
         sx={{
-          w: 12,
-          h: 12,
-          borderRadius: '2px',
+          width: 48,
+          height: 48,
+          borderRadius: '8px',
           backgroundColor: '#f5f3ee',
-          border: '1px solid #e2e0d8',
+          border: '1px solid #e2dfd7',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           mx: 'auto',
           mb: 2,
-          color: '#09090b',
+          color: '#877b5f',
         }}
       >
         <SearchX className="w-6 h-6" />
       </Box>
 
-      <Typography variant="h6" sx={{ fontWeight: 900, color: '#09090b', mb: 1 }}>
+      <Typography
+        variant="h6"
+        sx={{
+          fontFamily: 'var(--font-display), Lora, Georgia, serif',
+          fontWeight: 700,
+          color: '#1f241d',
+          mb: 1,
+        }}
+      >
         {title}
       </Typography>
 
-      <Typography variant="body2" sx={{ color: '#52525b', mb: 3 }}>
+      <Typography variant="body2" sx={{ color: '#6b7280', mb: 3 }}>
         {description}
       </Typography>
 
@@ -63,10 +71,11 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           size="small"
           onClick={onAction}
           sx={{
-            backgroundColor: '#09090b',
+            backgroundColor: '#89a577',
             color: '#ffffff',
-            fontWeight: 800,
-            '&:hover': { backgroundColor: '#18181b' },
+            fontWeight: 700,
+            borderRadius: '8px',
+            '&:hover': { backgroundColor: '#6e895d' },
           }}
         >
           {actionLabel}
@@ -75,3 +84,4 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     </Paper>
   );
 };
+

@@ -105,9 +105,9 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
       <Box sx={{ py: { xs: 4, md: 6 }, backgroundColor: '#f5f3ee', flex: 1, pb: { xs: 28, md: 36 } }}>
         <Container maxWidth={false} className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
           {/* Navigation */}
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
-            <Link href="/complaints" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-700 hover:text-black">
-              <ArrowLeft className="w-4 h-4" />
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2dfd7', gap: 2 }}>
+            <Link href="/complaints" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#877b5f] hover:text-[#1f241d] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] rounded-xs">
+              <ArrowLeft className="w-4 h-4 text-[#877b5f]" />
               <span>Return to Catalog Feed</span>
             </Link>
 
@@ -119,9 +119,10 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
                 disabled={complaint.hasUserConfirmed}
                 startIcon={<ThumbsUp className="w-4 h-4" />}
                 sx={{
-                  backgroundColor: complaint.hasUserConfirmed ? '#166534' : undefined,
+                  backgroundColor: complaint.hasUserConfirmed ? '#4e6d3c' : undefined,
                   color: complaint.hasUserConfirmed ? '#ffffff' : undefined,
-                  fontWeight: 800,
+                  fontWeight: 700,
+                  borderRadius: '8px',
                 }}
               >
                 {complaint.hasUserConfirmed ? '✓ Confirmed by You' : 'Confirm Issue'} ({complaint.confirmationsCount || complaint.upvotesCount})
@@ -131,13 +132,14 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
                 variant="outlined"
                 size="small"
                 onClick={handleUpvote}
-                startIcon={<ThumbsUp className={`w-4 h-4 ${isUpvoted ? 'fill-zinc-950 text-zinc-950' : ''}`} />}
+                startIcon={<ThumbsUp className={`w-4 h-4 ${isUpvoted ? 'fill-[#89a577] text-[#89a577]' : 'text-[#877b5f]'}`} />}
+                sx={{ borderRadius: '8px' }}
               >
                 {complaint.upvotesCount} Upvotes
               </Button>
 
               <Link href={`/admin/complaints/${complaint.id}`}>
-                <Button variant="contained" size="small" startIcon={<ShieldCheck className="w-4 h-4" />}>
+                <Button variant="contained" size="small" startIcon={<ShieldCheck className="w-4 h-4" />} sx={{ backgroundColor: '#89a577', borderRadius: '8px', '&:hover': { backgroundColor: '#6e895d' } }}>
                   Admin Action Desk
                 </Button>
               </Link>
@@ -145,8 +147,8 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
           </Box>
 
           {/* Header Paper */}
-          <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 2, mb: 2 }}>
+          <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', mb: 4 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 2, mb: 2 }}>
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <CategoryBadge category={complaint.category} size="medium" />
                 <SeverityBadge severity={complaint.severity} size="medium" />
@@ -154,22 +156,22 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
               <StatusBadge status={complaint.status} size="medium" />
             </Box>
 
-            <Typography variant="caption" sx={{ color: '#52525b', fontFamily: 'monospace', display: 'block', mb: 1, fontWeight: 700 }}>
+            <Typography variant="caption" sx={{ color: '#877b5f', fontFamily: 'monospace', display: 'block', mb: 1, fontWeight: 700 }}>
               DOSSIER ID: {complaint.id} • RECORDED {formattedCreated.toUpperCase()}
             </Typography>
 
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', letterSpacing: '-0.02em', mb: 2, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
+            <Typography variant="h3" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', letterSpacing: '-0.01em', mb: 2, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
               {complaint.title}
             </Typography>
 
-            <Box sx={{ p: 2, backgroundColor: '#f5f3ee', border: '1px solid #e2e0d8', borderRadius: '2px', display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
-              <MapPin className="w-4 h-4 text-zinc-950 shrink-0" />
-              <Typography variant="body2" sx={{ color: '#09090b', fontSize: '0.875rem', fontWeight: 600 }}>
+            <Box sx={{ p: 2, backgroundColor: '#f5f3ee', border: '1px solid #e2dfd7', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+              <MapPin className="w-4 h-4 text-[#877b5f] shrink-0" />
+              <Typography variant="body2" sx={{ color: '#1f241d', fontSize: '0.875rem', fontWeight: 600 }}>
                 {complaint.address} ({complaint.latitude.toFixed(4)}° N, {complaint.longitude.toFixed(4)}° E)
               </Typography>
             </Box>
 
-            <Typography variant="body1" sx={{ color: '#52525b', lineHeight: 1.6 }}>
+            <Typography variant="body1" sx={{ color: '#6b7280', lineHeight: 1.6 }}>
               {complaint.description}
             </Typography>
           </Paper>
@@ -179,17 +181,17 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
             <Grid item xs={12} md={7}>
               {/* Department Assignment Info */}
               {complaint.assignment && (
-                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1.5, mb: 2, borderBottom: '1px solid #e2e0d8' }}>
-                    <Building2 className="w-4 h-4 text-zinc-950" />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#09090b' }}>
+                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', mb: 4 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1.5, mb: 2, borderBottom: '1px solid #e2dfd7' }}>
+                    <Building2 className="w-4 h-4 text-[#877b5f]" />
+                    <Typography variant="subtitle2" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                       Department Assignment
                     </Typography>
                   </Box>
-                  <Typography variant="body2" sx={{ color: '#09090b', fontWeight: 800 }}>
+                  <Typography variant="body2" sx={{ color: '#1f241d', fontWeight: 700 }}>
                     {complaint.assignment.department}
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#52525b', display: 'block', mt: 0.5, fontWeight: 600 }}>
+                  <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', mt: 0.5, fontWeight: 600 }}>
                     Lead Officer: {complaint.assignment.assignedOfficer || 'Unassigned'}
                   </Typography>
                 </Paper>
@@ -197,24 +199,24 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
 
               {/* Resolution Remarks */}
               {complaint.resolutionNotes && (
-                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
+                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', mb: 4 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    <CheckCircle2 className="w-4 h-4 text-zinc-950" />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#09090b' }}>
+                    <CheckCircle2 className="w-4 h-4 text-[#89a577]" />
+                    <Typography variant="subtitle2" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                       Verification Remarks
                     </Typography>
                   </Box>
-                  <Typography variant="body2" sx={{ color: '#52525b', fontFamily: 'monospace' }}>
+                  <Typography variant="body2" sx={{ color: '#6b7280', fontFamily: 'monospace' }}>
                     {complaint.resolutionNotes}
                   </Typography>
                 </Paper>
               )}
 
               {/* Timeline */}
-              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 2, mb: 3, borderBottom: '1px solid #e2e0d8' }}>
-                  <Clock className="w-5 h-5 text-zinc-950" />
-                  <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b' }}>
+              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 2, mb: 3, borderBottom: '1px solid #e2dfd7' }}>
+                  <Clock className="w-5 h-5 text-[#877b5f]" />
+                  <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                     Case Timeline History
                   </Typography>
                 </Box>
@@ -224,11 +226,11 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
 
             {/* Right Column Map & Media */}
             <Grid item xs={12} md={5}>
-              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', mb: 4 }}>
-                <Typography variant="overline" sx={{ color: '#09090b', fontWeight: 900, mb: 1.5, display: 'block' }}>
+              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', mb: 4 }}>
+                <Typography variant="overline" sx={{ color: '#877b5f', fontWeight: 700, mb: 1.5, display: 'block' }}>
                   Geospatial Pin
                 </Typography>
-                <Box sx={{ height: 280, width: '100%', borderRadius: '2px', overflow: 'hidden', border: '1px solid #e2e0d8' }}>
+                <Box sx={{ height: 280, width: '100%', borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2dfd7' }}>
                   <MapView
                     complaints={[complaint]}
                     selectedComplaintId={complaint.id}
@@ -240,19 +242,19 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
               </Paper>
 
               {complaint.media && complaint.media.length > 0 && (
-                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
+                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                    <ImageIcon className="w-4 h-4 text-zinc-950" />
-                    <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#09090b' }}>
+                    <ImageIcon className="w-4 h-4 text-[#877b5f]" />
+                    <Typography variant="subtitle2" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                       Photo Evidence
                     </Typography>
                   </Box>
 
                   {complaint.media.map((item) => (
-                    <Box key={item.id} sx={{ borderRadius: '2px', overflow: 'hidden', border: '1px solid #e2e0d8', mb: 2 }}>
+                    <Box key={item.id} sx={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2dfd7', mb: 2 }}>
                       <img src={MediaService.getMediaUrl(item.url)} alt="" className="w-full h-48 object-cover" />
                       {item.caption && (
-                        <Typography variant="caption" sx={{ p: 1, backgroundColor: '#f5f3ee', color: '#52525b', display: 'block', fontFamily: 'monospace', fontWeight: 600 }}>
+                        <Typography variant="caption" sx={{ p: 1, backgroundColor: '#f5f3ee', color: '#6b7280', display: 'block', fontFamily: 'monospace', fontWeight: 600 }}>
                           {item.caption}
                         </Typography>
                       )}
@@ -267,3 +269,4 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
     </PageTransition>
   );
 }
+

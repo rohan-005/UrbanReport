@@ -10,15 +10,15 @@ export const urbanTheme = createTheme({
       paper: '#ffffff',   // Crisp warm white card surface
     },
     primary: {
-      main: '#09090b',    // Deep black primary control color
+      main: '#89a577',    // Muted Sage Green primary
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#e2e0d8',    // Warm neutral secondary surface
-      contrastText: '#09090b',
+      main: '#877b5f',    // Earthy Taupe secondary accent
+      contrastText: '#ffffff',
     },
     error: {
-      main: '#dc2626',    // Restrained crimson
+      main: '#dc2626',    // Muted crimson
     },
     warning: {
       main: '#d97706',    // Warm amber
@@ -30,14 +30,14 @@ export const urbanTheme = createTheme({
       main: '#16a34a',    // Muted emerald
     },
     text: {
-      primary: '#09090b',   // Deep near-black typography
-      secondary: '#52525b', // Neutral secondary
-      disabled: '#a1a1aa',
+      primary: '#1f241d',   // Deep earthy dark typography
+      secondary: '#6b7280', // Neutral secondary
+      disabled: '#9ca3af',
     },
-    divider: '#e2e0d8',
+    divider: '#e2dfd7',
   },
   shape: {
-    borderRadius: 2, // Minimal 2px architectural rounding
+    borderRadius: 8, // Standard 8px radius
   },
   typography: {
     fontFamily: [
@@ -50,64 +50,69 @@ export const urbanTheme = createTheme({
       'sans-serif',
     ].join(','),
     h1: {
-      fontWeight: 900,
-      letterSpacing: '-0.03em',
-      lineHeight: 1.05,
-      color: '#09090b',
+      fontFamily: ['var(--font-display)', 'Lora', 'Georgia', 'serif'].join(','),
+      fontWeight: 700,
+      letterSpacing: '-0.02em',
+      lineHeight: 1.1,
+      color: '#1f241d',
     },
     h2: {
-      fontWeight: 800,
-      letterSpacing: '-0.02em',
+      fontFamily: ['var(--font-display)', 'Lora', 'Georgia', 'serif'].join(','),
+      fontWeight: 700,
+      letterSpacing: '-0.015em',
       lineHeight: 1.15,
-      color: '#09090b',
+      color: '#1f241d',
     },
     h3: {
-      fontWeight: 800,
-      letterSpacing: '-0.015em',
+      fontFamily: ['var(--font-display)', 'Lora', 'Georgia', 'serif'].join(','),
+      fontWeight: 700,
+      letterSpacing: '-0.01em',
       lineHeight: 1.2,
-      color: '#09090b',
+      color: '#1f241d',
     },
     h4: {
-      fontWeight: 800,
-      letterSpacing: '-0.01em',
-      color: '#09090b',
+      fontFamily: ['var(--font-display)', 'Lora', 'Georgia', 'serif'].join(','),
+      fontWeight: 700,
+      letterSpacing: '-0.005em',
+      color: '#1f241d',
     },
     button: {
       textTransform: 'uppercase',
-      fontWeight: 800,
-      letterSpacing: '0.05em',
+      fontWeight: 700,
+      letterSpacing: '0.04em',
     },
     overline: {
-      letterSpacing: '0.1em',
-      fontWeight: 800,
+      letterSpacing: '0.08em',
+      fontWeight: 700,
     },
   },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 2,
+          borderRadius: 8,
           padding: '8px 18px',
           boxShadow: 'none',
-          transition: 'all 0.15s ease-in-out',
+          transition: 'all 0.2s ease-in-out',
           '&:hover': {
             boxShadow: 'none',
           },
         },
         containedPrimary: {
-          backgroundColor: '#09090b',
+          backgroundColor: '#89a577',
           color: '#ffffff',
-          border: '1px solid #09090b',
+          border: '1px solid #89a577',
           '&:hover': {
-            backgroundColor: '#18181b',
+            backgroundColor: '#6e895d',
+            borderColor: '#6e895d',
           },
         },
         outlined: {
-          borderColor: '#d1d5db',
-          color: '#09090b',
+          borderColor: '#e2dfd7',
+          color: '#1f241d',
           '&:hover': {
-            borderColor: '#09090b',
-            backgroundColor: '#f3f1ec',
+            borderColor: '#877b5f',
+            backgroundColor: '#f5f3ee',
           },
         },
       },
@@ -116,8 +121,8 @@ export const urbanTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundImage: 'none',
-          border: '1px solid #e2e0d8',
-          borderRadius: 2,
+          border: '1px solid #e2dfd7',
+          borderRadius: 8,
           backgroundColor: '#ffffff',
         },
       },
@@ -125,8 +130,8 @@ export const urbanTheme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: 2,
-          border: '1px solid #e2e0d8',
+          borderRadius: 8,
+          border: '1px solid #e2dfd7',
           backgroundColor: '#ffffff',
         },
       },
@@ -134,7 +139,7 @@ export const urbanTheme = createTheme({
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 2,
+          borderRadius: 9999, // Pill status chips
           fontWeight: 700,
         },
       },
@@ -143,16 +148,16 @@ export const urbanTheme = createTheme({
       styleOverrides: {
         root: {
           '& .MuiOutlinedInput-root': {
-            borderRadius: 2,
+            borderRadius: 8,
             backgroundColor: '#ffffff',
             '& fieldset': {
-              borderColor: '#d1d5db',
+              borderColor: '#e2dfd7',
             },
             '&:hover fieldset': {
-              borderColor: '#09090b',
+              borderColor: '#877b5f',
             },
             '&.Mui-focused fieldset': {
-              borderColor: '#09090b',
+              borderColor: '#89a577',
               borderWidth: '1.5px',
             },
           },
@@ -161,3 +166,4 @@ export const urbanTheme = createTheme({
     },
   },
 });
+

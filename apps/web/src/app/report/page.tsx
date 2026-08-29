@@ -231,10 +231,10 @@ export default function ReportPage() {
       <Box sx={{ py: { xs: 4, md: 6 }, backgroundColor: '#f5f3ee', flex: 1, pb: { xs: 28, md: 36 } }}>
         <Container maxWidth="lg" className="px-4 sm:px-6 md:px-8">
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 1, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
+            <Typography variant="h3" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 1, fontSize: { xs: '1.75rem', md: '2.5rem' } }}>
               Report a Civic Incident
             </Typography>
-            <Typography variant="body2" sx={{ color: '#52525b' }}>
+            <Typography variant="body2" sx={{ color: '#6b7280' }}>
               Pinpoint infrastructure issues for immediate municipal dispatch.
             </Typography>
           </Box>
@@ -242,15 +242,15 @@ export default function ReportPage() {
           <form onSubmit={handleSubmit}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               {errors.form && (
-                <Box sx={{ p: 2, borderRadius: '2px', backgroundColor: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600 }}>
-                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                <Box sx={{ p: 2, borderRadius: '8px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', fontSize: '0.875rem', display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600 }}>
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
                   <span>{errors.form}</span>
                 </Box>
               )}
 
               {/* Step 1: Category */}
-              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 3 }}>
+              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+                <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 3 }}>
                   1. Select Issue Category
                 </Typography>
 
@@ -265,23 +265,23 @@ export default function ReportPage() {
                           onClick={() => setCategory(cat.name)}
                           sx={{
                             p: 2,
-                            borderRadius: '2px',
+                            borderRadius: '8px',
                             border: '1px solid',
-                            borderColor: isSelected ? '#09090b' : '#e2e0d8',
-                            backgroundColor: isSelected ? '#09090b' : '#f5f3ee',
-                            color: isSelected ? '#ffffff' : '#09090b',
+                            borderColor: isSelected ? '#89a577' : '#e2dfd7',
+                            backgroundColor: isSelected ? '#89a577' : '#f5f3ee',
+                            color: isSelected ? '#ffffff' : '#1f241d',
                             cursor: 'pointer',
                             transition: 'all 0.15s ease',
-                            '&:hover': { borderColor: '#09090b' },
+                            '&:hover': { borderColor: '#89a577' },
                           }}
                         >
-                          <Box sx={{ color: isSelected ? '#ffffff' : '#09090b', mb: 1 }}>
+                          <Box sx={{ color: isSelected ? '#ffffff' : '#877b5f', mb: 1 }}>
                             <Icon className="w-5 h-5" />
                           </Box>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: isSelected ? '#ffffff' : '#09090b', fontSize: '0.875rem' }}>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: isSelected ? '#ffffff' : '#1f241d', fontSize: '0.875rem' }}>
                             {cat.name}
                           </Typography>
-                          <Typography variant="caption" sx={{ color: isSelected ? '#d4d4d8' : '#52525b', fontSize: '0.6875rem', display: 'block', mt: 0.5, lineHeight: 1.2 }}>
+                          <Typography variant="caption" sx={{ color: isSelected ? '#ffffff' : '#6b7280', fontSize: '0.6875rem', display: 'block', mt: 0.5, lineHeight: 1.2 }}>
                             {cat.description}
                           </Typography>
                         </Box>
@@ -292,8 +292,8 @@ export default function ReportPage() {
               </Paper>
 
               {/* Step 2: Details */}
-              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 3 }}>
+              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+                <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 3 }}>
                   2. Problem Details & Severity
                 </Typography>
 
@@ -321,7 +321,7 @@ export default function ReportPage() {
                   />
 
                   <Box>
-                    <Typography variant="overline" sx={{ color: '#09090b', fontWeight: 900, mb: 1.5, display: 'block' }}>
+                    <Typography variant="overline" sx={{ color: '#877b5f', fontWeight: 700, mb: 1.5, display: 'block' }}>
                       Assess Severity Level
                     </Typography>
 
@@ -334,9 +334,9 @@ export default function ReportPage() {
                               onClick={() => setSeverity(sev.value)}
                               sx={{
                                 p: 2,
-                                borderRadius: '2px',
+                                borderRadius: '8px',
                                 border: '1px solid',
-                                borderColor: isSelected ? '#09090b' : '#e2e0d8',
+                                borderColor: isSelected ? '#89a577' : '#e2dfd7',
                                 backgroundColor: isSelected ? '#f5f3ee' : '#ffffff',
                                 cursor: 'pointer',
                                 height: '100%',
@@ -345,7 +345,7 @@ export default function ReportPage() {
                               <Box sx={{ mb: 1 }}>
                                 <SeverityBadge severity={sev.value} size="small" />
                               </Box>
-                              <Typography variant="caption" sx={{ color: '#52525b', fontSize: '0.6875rem', display: 'block', lineHeight: 1.3, fontWeight: 600 }}>
+                              <Typography variant="caption" sx={{ color: '#6b7280', fontSize: '0.6875rem', display: 'block', lineHeight: 1.3, fontWeight: 600 }}>
                                 {sev.desc}
                               </Typography>
                             </Box>
@@ -358,8 +358,8 @@ export default function ReportPage() {
               </Paper>
 
               {/* Step 3: Location */}
-              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 3 }}>
+              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+                <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 3 }}>
                   3. Geospatial Location
                 </Typography>
 
@@ -387,9 +387,9 @@ export default function ReportPage() {
 
               {/* DUPLICATE CANDIDATES DETECTION PANEL */}
               {checkingDuplicates ? (
-                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <CircularProgress size={20} sx={{ color: '#09090b' }} />
-                  <Typography variant="body2" sx={{ fontWeight: 700, color: '#09090b', fontFamily: 'monospace' }}>
+                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <CircularProgress size={20} sx={{ color: '#89a577' }} />
+                  <Typography variant="body2" sx={{ fontWeight: 700, color: '#1f241d', fontFamily: 'monospace' }}>
                     PostGIS Spatial Check: Searching active reports within 250m radius...
                   </Typography>
                 </Paper>
@@ -400,15 +400,15 @@ export default function ReportPage() {
                     p: 4,
                     backgroundColor: '#fffbeb',
                     borderColor: '#fcd34d',
-                    borderRadius: '2px',
+                    borderRadius: '8px',
                     borderLeft: '6px solid #f59e0b',
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 1 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <ShieldAlert className="w-6 h-6 text-amber-600 shrink-0" />
                       <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 900, color: '#78350f', fontSize: '1.0625rem' }}>
+                        <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#78350f', fontSize: '1.0625rem' }}>
                           Possible Existing Reports Nearby ({duplicates.length} Candidate{duplicates.length > 1 ? 's' : ''})
                         </Typography>
                         <Typography variant="caption" sx={{ color: '#92400e', fontWeight: 600 }}>
@@ -421,14 +421,14 @@ export default function ReportPage() {
                       variant="text"
                       size="small"
                       onClick={() => setDuplicateCheckDismissed(true)}
-                      sx={{ textTransform: 'none', color: '#78350f', fontWeight: 800 }}
+                      sx={{ textTransform: 'none', color: '#78350f', fontWeight: 700 }}
                     >
                       Dismiss & Continue New Report →
                     </Button>
                   </Box>
 
                   {confirmedSuccessMessage && (
-                    <Alert severity="success" sx={{ mb: 3, borderRadius: '2px', fontWeight: 700 }}>
+                    <Alert severity="success" sx={{ mb: 3, borderRadius: '8px', fontWeight: 700 }}>
                       {confirmedSuccessMessage}
                     </Alert>
                   )}
@@ -445,45 +445,45 @@ export default function ReportPage() {
                           sx={{
                             p: 3,
                             backgroundColor: '#ffffff',
-                            borderColor: isHighConf ? '#f59e0b' : '#e2e0d8',
-                            borderRadius: '2px',
+                            borderColor: isHighConf ? '#f59e0b' : '#e2dfd7',
+                            borderRadius: '8px',
                             border: '1px solid',
                           }}
                         >
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 1, mb: 1 }}>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 1 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                               <Chip
                                 label={isHighConf ? 'HIGH CONFIDENCE DUPLICATE' : 'POSSIBLE DUPLICATE'}
                                 size="small"
                                 sx={{
-                                  backgroundColor: isHighConf ? '#fef3c7' : '#f4f4f5',
-                                  color: isHighConf ? '#92400e' : '#27272a',
-                                  fontWeight: 900,
+                                  backgroundColor: isHighConf ? '#fef3c7' : '#f5f3ee',
+                                  color: isHighConf ? '#92400e' : '#1f241d',
+                                  fontWeight: 700,
                                   fontSize: '0.6875rem',
-                                  borderRadius: '2px',
+                                  borderRadius: '9999px',
                                 }}
                               />
-                              <Chip label={`${cand.similarityPercentage}% Match`} size="small" variant="outlined" sx={{ fontWeight: 800, fontSize: '0.6875rem' }} />
+                              <Chip label={`${cand.similarityPercentage}% Match`} size="small" variant="outlined" sx={{ fontWeight: 700, fontSize: '0.6875rem', borderRadius: '9999px' }} />
                               <StatusBadge status={cand.status} size="small" />
                             </Box>
 
-                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#78350f', fontFamily: 'monospace' }}>
+                            <Typography variant="caption" sx={{ fontWeight: 700, color: '#78350f', fontFamily: 'monospace' }}>
                               {cand.distanceMeters} meters away
                             </Typography>
                           </Box>
 
-                          <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
+                          <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 0.5 }}>
                             {cand.title}
                           </Typography>
 
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#52525b', fontSize: '0.75rem', mb: 2 }}>
-                            <MapPin className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#6b7280', fontSize: '0.75rem', mb: 2 }}>
+                            <MapPin className="w-3.5 h-3.5 text-[#877b5f] shrink-0" />
                             <span className="truncate">{cand.address}</span>
                             <span className="mx-1">•</span>
                             <span>Reported {new Date(cand.createdAt).toLocaleDateString()}</span>
                           </Box>
 
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center', pt: 1, borderTop: '1px solid #f4f4f5' }}>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center', pt: 1, borderTop: '1px solid #e2dfd7' }}>
                             <Button
                               variant="contained"
                               size="small"
@@ -491,10 +491,12 @@ export default function ReportPage() {
                               onClick={() => handleConfirmExistingCandidate(cand)}
                               startIcon={<ThumbsUp className="w-4 h-4" />}
                               sx={{
-                                backgroundColor: isConfirmed ? '#166534' : '#09090b',
+                                backgroundColor: isConfirmed ? '#4e6d3c' : '#89a577',
                                 color: '#ffffff',
-                                fontWeight: 800,
+                                fontWeight: 700,
                                 fontSize: '0.75rem',
+                                borderRadius: '8px',
+                                '&:hover': { backgroundColor: '#6e895d' },
                               }}
                             >
                               {confirmingLoadingId === cand.complaintId
@@ -509,7 +511,7 @@ export default function ReportPage() {
                               size="small"
                               onClick={() => setSelectedCandidateDetail(cand)}
                               startIcon={<Eye className="w-4 h-4" />}
-                              sx={{ fontSize: '0.75rem', fontWeight: 700 }}
+                              sx={{ fontSize: '0.75rem', fontWeight: 700, borderRadius: '8px' }}
                             >
                               Inspect Details
                             </Button>
@@ -522,8 +524,8 @@ export default function ReportPage() {
               ) : null}
 
               {/* Step 4: Media Upload */}
-              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 3 }}>
+              <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+                <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 3 }}>
                   4. Photo Evidence
                 </Typography>
 
@@ -537,9 +539,9 @@ export default function ReportPage() {
               </Paper>
 
               {/* Submit Action */}
-              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 2 }}>
+              <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
                 <Box>
-                  <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600, display: 'block' }}>
+                  <Typography variant="caption" sx={{ color: '#6b7280', fontWeight: 600, display: 'block' }}>
                     Generates a tracking ID and notifies ward dispatch control.
                   </Typography>
                   {duplicates.length > 0 && (
@@ -557,11 +559,12 @@ export default function ReportPage() {
                   loadingText="Submitting Report..."
                   startIcon={<Send className="w-4 h-4" />}
                   sx={{
-                    backgroundColor: '#09090b',
+                    backgroundColor: '#89a577',
                     color: '#ffffff',
-                    fontWeight: 900,
+                    fontWeight: 700,
+                    borderRadius: '8px',
                     px: 4,
-                    '&:hover': { backgroundColor: '#18181b' },
+                    '&:hover': { backgroundColor: '#6e895d' },
                   }}
                 >
                   Submit New Report
@@ -580,16 +583,16 @@ export default function ReportPage() {
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <StatusBadge status={selectedCandidateDetail.status} size="small" />
-                  <Typography variant="caption" sx={{ fontFamily: 'monospace', fontWeight: 800 }}>
+                  <Typography variant="caption" sx={{ fontFamily: 'monospace', fontWeight: 700 }}>
                     {selectedCandidateDetail.complaintId}
                   </Typography>
                 </Box>
 
-                <Typography variant="h5" sx={{ fontWeight: 900, color: '#09090b' }}>
+                <Typography variant="h5" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                   {selectedCandidateDetail.title}
                 </Typography>
 
-                <Typography variant="body2" sx={{ color: '#52525b' }}>
+                <Typography variant="body2" sx={{ color: '#6b7280' }}>
                   Location: {selectedCandidateDetail.address} ({selectedCandidateDetail.distanceMeters} meters away)
                 </Typography>
 
@@ -603,7 +606,7 @@ export default function ReportPage() {
                       setSelectedCandidateDetail(null);
                       router.push(`/complaints/${selectedCandidateDetail.complaintId}`);
                     }}
-                    sx={{ backgroundColor: '#09090b', color: '#ffffff' }}
+                    sx={{ backgroundColor: '#89a577', color: '#ffffff', '&:hover': { backgroundColor: '#6e895d' } }}
                   >
                     Go To Full Dossier →
                   </Button>
@@ -621,17 +624,17 @@ export default function ReportPage() {
             {createdComplaint && (
               <Box sx={{ textAlign: 'center', py: 2 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-                  <CheckCircle2 className="w-12 h-12 text-zinc-950" />
+                  <CheckCircle2 className="w-12 h-12 text-[#89a577]" />
                 </Box>
 
-                <Typography variant="overline" sx={{ color: '#52525b', fontWeight: 900 }}>
+                <Typography variant="overline" sx={{ color: '#877b5f', fontWeight: 700 }}>
                   TRACKING REFERENCE ID
                 </Typography>
-                <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', fontFamily: 'monospace', my: 1, fontSize: '1.75rem' }}>
+                <Typography variant="h3" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', my: 1, fontSize: '1.75rem' }}>
                   {createdComplaint.id}
                 </Typography>
 
-                <Typography variant="body2" sx={{ color: '#52525b', mt: 2, mb: 4 }}>
+                <Typography variant="body2" sx={{ color: '#6b7280', mt: 2, mb: 4 }}>
                   Your report has been queued for municipal triage.
                 </Typography>
 
@@ -641,6 +644,7 @@ export default function ReportPage() {
                     fullWidth
                     onClick={() => router.push(`/complaints/${createdComplaint.id}`)}
                     endIcon={<ArrowRight className="w-4 h-4" />}
+                    sx={{ backgroundColor: '#89a577', '&:hover': { backgroundColor: '#6e895d' } }}
                   >
                     View Dossier
                   </Button>
@@ -653,3 +657,4 @@ export default function ReportPage() {
     </PageTransition>
   );
 }
+

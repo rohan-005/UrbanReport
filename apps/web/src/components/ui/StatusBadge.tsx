@@ -12,14 +12,14 @@ const statusConfig: Record<
   ComplaintStatus,
   { label: string; bg: string; text: string; border: string }
 > = {
-  SUBMITTED: { label: 'Submitted', bg: '#f5f3ee', text: '#18181b', border: '#d1d5db' },
-  UNDER_REVIEW: { label: 'Under Review', bg: '#e2e0d8', text: '#09090b', border: '#9ca3af' },
-  VERIFIED: { label: 'Verified', bg: '#18181b', text: '#ffffff', border: '#18181b' },
-  ASSIGNED: { label: 'Assigned', bg: '#27272a', text: '#ffffff', border: '#27272a' },
-  IN_PROGRESS: { label: 'In Progress', bg: '#09090b', text: '#ffffff', border: '#09090b' },
-  RESOLVED: { label: 'Resolved', bg: '#16a34a', text: '#ffffff', border: '#15803d' },
-  REOPENED: { label: 'Reopened', bg: '#d97706', text: '#ffffff', border: '#b45309' },
-  REJECTED: { label: 'Rejected', bg: '#f3f4f6', text: '#6b7280', border: '#d1d5db' },
+  SUBMITTED: { label: 'Submitted', bg: '#f5f3ee', text: '#1f241d', border: '#e2dfd7' },
+  UNDER_REVIEW: { label: 'Under Review', bg: '#fef3c7', text: '#92400e', border: '#fcd34d' },
+  VERIFIED: { label: 'Verified', bg: '#e8f5e9', text: '#2e7d32', border: '#a5d6a7' },
+  ASSIGNED: { label: 'Assigned', bg: '#f0f4f8', text: '#334155', border: '#cbd5e1' },
+  IN_PROGRESS: { label: 'In Progress', bg: '#d4faff', text: '#0e7490', border: '#a5f3fc' },
+  RESOLVED: { label: 'Resolved', bg: '#eef6ea', text: '#4e6d3c', border: '#a8c38e' },
+  REOPENED: { label: 'Reopened', bg: '#fff7ed', text: '#c2410c', border: '#ffedd5' },
+  REJECTED: { label: 'Rejected', bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
 };
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({
@@ -34,13 +34,13 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
       sx={{
         display: 'inline-flex',
         alignItems: 'center',
-        px: size === 'small' ? 1 : 1.5,
-        py: size === 'small' ? 0.25 : 0.5,
+        px: size === 'small' ? 1.25 : 1.75,
+        py: size === 'small' ? 0.35 : 0.6,
         fontSize: size === 'small' ? '0.6875rem' : '0.75rem',
-        fontWeight: 800,
-        letterSpacing: '0.06em',
+        fontWeight: 700,
+        letterSpacing: '0.04em',
         textTransform: 'uppercase',
-        borderRadius: '2px',
+        borderRadius: '9999px',
         backgroundColor: config.bg,
         color: config.text,
         border: `1px solid ${config.border}`,
@@ -51,3 +51,4 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
     </Box>
   );
 };
+

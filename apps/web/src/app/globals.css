@@ -3,16 +3,58 @@
 @tailwind utilities;
 
 :root {
+  --color-primary-soft: #a8c38e;
+  --color-primary: #89a577;
+  --color-earth: #877b5f;
+  --color-beige: #b8a184;
+  --color-info-soft: #d4faff;
+  --color-dark-rural: #181a17;
+  --color-dark-earth: #222620;
+  --color-terracotta: #b85d38;
+
   --background: #f5f3ee;
-  --foreground: #09090b;
+  --foreground: #1f241d;
+  --paper: #ffffff;
+  --border: #e2dfd7;
+
+  --radius: 8px;
+  --radius-pill: 9999px;
 }
 
 body {
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #181a17;
+  background-image: radial-gradient(circle at 50% 0%, rgba(34, 38, 32, 0.85) 0%, rgba(24, 26, 23, 0.98) 100%), url('/rural-houses-pattern.svg');
+  background-repeat: repeat;
+  background-size: auto, 320px 240px;
+  background-attachment: fixed;
+  font-family: var(--font-sans), Inter, system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
 }
+
+/* Rural houses background utility class */
+.rural-houses-bg {
+  background-color: #181a17;
+  background-image: radial-gradient(circle at 50% 0%, rgba(34, 38, 32, 0.85) 0%, rgba(24, 26, 23, 0.98) 100%), url('/rural-houses-pattern.svg');
+  background-repeat: repeat;
+  background-size: auto, 320px 240px;
+  background-attachment: fixed;
+}
+
+/* Dark rural hero section backdrop */
+.rural-dark-hero {
+  background: linear-gradient(180deg, #1f241d 0%, #151814 100%);
+  border: 1px solid #2d342b;
+}
+
+.font-display {
+  font-family: var(--font-display), Lora, Georgia, serif;
+}
+
+.font-accent {
+  font-family: var(--font-accent), Caveat, cursive;
+}
+
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
@@ -23,48 +65,57 @@ body {
   background: #f5f3ee;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 2px;
+  background: #b8a184;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #877b5f;
+}
+
+/* Accessible focus ring default override */
+*:focus-visible {
+  outline: 2px solid #89a577 !important;
+  outline-offset: 2px !important;
 }
 
 /* Maplibre Popup Custom Overrides */
 .maplibregl-popup-content {
-  background-color: #09090b !important;
-  border: 1px solid #27272a !important;
-  border-radius: 2px !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2dfd7 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(31, 36, 29, 0.08) !important;
   padding: 12px !important;
+  color: #1f241d !important;
 }
 
 .maplibregl-popup-anchor-top .maplibregl-popup-tip,
 .maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
 .maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
-  border-bottom-color: #09090b !important;
+  border-bottom-color: #ffffff !important;
 }
 
 .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
 .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
 .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
-  border-top-color: #09090b !important;
+  border-top-color: #ffffff !important;
 }
 
 .maplibregl-popup-anchor-left .maplibregl-popup-tip {
-  border-right-color: #09090b !important;
+  border-right-color: #ffffff !important;
 }
 
 .maplibregl-popup-anchor-right .maplibregl-popup-tip {
-  border-left-color: #09090b !important;
+  border-left-color: #ffffff !important;
 }
 
 .maplibregl-popup-close-button {
-  color: #a1a1aa !important;
+  color: #877b5f !important;
   font-size: 16px !important;
   padding: 4px 8px !important;
+  border-radius: 4px !important;
 }
 .maplibregl-popup-close-button:hover {
-  color: #ffffff !important;
-  background: transparent !important;
+  color: #1f241d !important;
+  background: #f5f3ee !important;
 }
+

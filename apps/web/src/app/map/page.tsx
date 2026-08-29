@@ -94,15 +94,15 @@ export default function MapPage() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 0rem)', backgroundColor: '#f5f3ee', pb: 10 }}>
       {/* Header Controls */}
-      <Box sx={{ borderBottom: '1px solid #e2e0d8', px: 3, py: 2, backgroundColor: '#ffffff', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 2 }}>
+      <Box sx={{ borderBottom: '1px solid #e2dfd7', px: 3, py: 2, backgroundColor: '#ffffff', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <MapPin className="w-5 h-5 text-zinc-950" />
+          <MapPin className="w-5 h-5 text-[#877b5f]" />
           <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#09090b', lineHeight: 1.2 }}>
-              Geospatial Complaint Map
+            <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', lineHeight: 1.2 }}>
+              Geospatial Incident Map
             </Typography>
-            <Typography variant="caption" sx={{ color: '#52525b' }}>
-              Showing <span className="font-bold text-zinc-950">{complaints.length}</span> active PostGIS viewport incident records
+            <Typography variant="caption" sx={{ color: '#6b7280' }}>
+              Showing <span className="font-bold text-[#1f241d]">{complaints.length}</span> active PostGIS viewport incident records
             </Typography>
           </Box>
         </Box>
@@ -129,10 +129,10 @@ export default function MapPage() {
           sx={{
             width: { xs: '100%', md: 320 },
             backgroundColor: '#ffffff',
-            borderColor: '#e2e0d8',
+            borderColor: '#e2dfd7',
             borderRadius: 0,
-            borderRight: { md: '1px solid #e2e0d8' },
-            borderBottom: { xs: '1px solid #e2e0d8', md: 'none' },
+            borderRight: { md: '1px solid #e2dfd7' },
+            borderBottom: { xs: '1px solid #e2dfd7', md: 'none' },
             p: 2.5,
             display: 'flex',
             flexDirection: 'column',
@@ -150,14 +150,14 @@ export default function MapPage() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Search className="w-4 h-4 text-zinc-500" />
+                  <Search className="w-4 h-4 text-[#877b5f]" />
                 </InputAdornment>
               ),
             }}
           />
 
           <Box>
-            <Typography variant="overline" sx={{ color: '#09090b', fontWeight: 900, mb: 1, display: 'block' }}>
+            <Typography variant="overline" sx={{ color: '#877b5f', fontWeight: 700, mb: 1, display: 'block' }}>
               Category
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -165,10 +165,10 @@ export default function MapPage() {
                 <button
                   key={cat}
                   onClick={() => setFilters({ ...filters, category: cat })}
-                  className={`text-[11px] px-2 py-0.5 rounded-none font-bold uppercase tracking-wider transition-colors border ${
+                  className={`text-[11px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider transition-colors border ${
                     filters.category === cat
-                      ? 'bg-zinc-950 text-white border-zinc-950'
-                      : 'bg-zinc-100 text-zinc-700 border-zinc-300 hover:bg-zinc-200 hover:text-zinc-950'
+                      ? 'bg-[#89a577] text-white border-[#89a577]'
+                      : 'bg-[#f5f3ee] text-[#1f241d] border-[#e2dfd7] hover:bg-[#ebe7df] hover:border-[#877b5f]'
                   }`}
                 >
                   {cat}
@@ -178,7 +178,7 @@ export default function MapPage() {
           </Box>
 
           <Box>
-            <Typography variant="overline" sx={{ color: '#09090b', fontWeight: 900, mb: 1, display: 'block' }}>
+            <Typography variant="overline" sx={{ color: '#877b5f', fontWeight: 700, mb: 1, display: 'block' }}>
               Severity Level
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -186,10 +186,10 @@ export default function MapPage() {
                 <button
                   key={sev}
                   onClick={() => setFilters({ ...filters, severity: sev })}
-                  className={`text-[11px] px-2 py-0.5 rounded-none font-bold uppercase tracking-wider transition-colors border ${
+                  className={`text-[11px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider transition-colors border ${
                     filters.severity === sev
-                      ? 'bg-zinc-950 text-white border-zinc-950'
-                      : 'bg-zinc-100 text-zinc-700 border-zinc-300 hover:bg-zinc-200 hover:text-zinc-950'
+                      ? 'bg-[#89a577] text-white border-[#89a577]'
+                      : 'bg-[#f5f3ee] text-[#1f241d] border-[#e2dfd7] hover:bg-[#ebe7df] hover:border-[#877b5f]'
                   }`}
                 >
                   {sev}
@@ -199,7 +199,7 @@ export default function MapPage() {
           </Box>
 
           <Box>
-            <Typography variant="overline" sx={{ color: '#09090b', fontWeight: 900, mb: 1, display: 'block' }}>
+            <Typography variant="overline" sx={{ color: '#877b5f', fontWeight: 700, mb: 1, display: 'block' }}>
               Lifecycle Status
             </Typography>
             <TextField
@@ -243,37 +243,37 @@ export default function MapPage() {
                 width: { md: 360 },
                 zIndex: 30,
                 backgroundColor: '#ffffff',
-                borderColor: '#e2e0d8',
+                borderColor: '#e2dfd7',
                 p: 3,
-                borderRadius: '2px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                borderRadius: '8px',
+                boxShadow: '0 8px 30px rgba(31,36,29,0.08)',
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 1.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.5 }}>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <CategoryBadge category={selectedComplaint.category} size="small" />
                   <SeverityBadge severity={selectedComplaint.severity} size="small" />
                 </Box>
                 <button
                   onClick={() => setSelectedComplaint(null)}
-                  className="p-1 rounded text-zinc-500 hover:text-black hover:bg-zinc-200"
+                  className="p-1 rounded-md text-[#877b5f] hover:text-[#1f241d] hover:bg-[#f5f3ee] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577]"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </Box>
 
-              <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b', fontSize: '1rem', mb: 0.5 }}>
+              <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', fontSize: '1rem', mb: 0.5 }}>
                 {selectedComplaint.title}
               </Typography>
-              <Typography variant="caption" sx={{ color: '#52525b', fontFamily: 'monospace', display: 'block', mb: 1, fontWeight: 700 }}>
+              <Typography variant="caption" sx={{ color: '#877b5f', fontFamily: 'monospace', display: 'block', mb: 1, fontWeight: 700 }}>
                 {selectedComplaint.id}
               </Typography>
 
-              <Typography variant="body2" sx={{ color: '#52525b', fontSize: '0.8125rem', mb: 2 }}>
+              <Typography variant="body2" sx={{ color: '#6b7280', fontSize: '0.8125rem', mb: 2 }}>
                 {selectedComplaint.description}
               </Typography>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', pt: 2, borderTop: '1px solid #e2e0d8' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pt: 2, borderTop: '1px solid #e2dfd7' }}>
                 <StatusBadge status={selectedComplaint.status} size="small" />
                 <Link href={`/complaints/${selectedComplaint.id}`}>
                   <Button size="small" variant="contained" endIcon={<ArrowRight className="w-3.5 h-3.5" />}>
@@ -288,3 +288,4 @@ export default function MapPage() {
     </Box>
   );
 }
+

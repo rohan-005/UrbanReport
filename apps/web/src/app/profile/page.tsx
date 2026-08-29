@@ -124,24 +124,24 @@ export default function ProfilePage() {
           </Box>
 
           {/* Action Header */}
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', mb: 4, pb: 2, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', mb: 4, pb: 2, borderBottom: '1px solid #e2dfd7', gap: 2 }}>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <button
                 onClick={() => setActiveTab('complaints')}
-                className={`text-xs font-black uppercase tracking-wider pb-2 border-b-2 transition-colors ${
+                className={`text-xs font-bold uppercase tracking-wider pb-2 border-b-2 transition-colors ${
                   activeTab === 'complaints'
-                    ? 'border-black text-black'
-                    : 'border-transparent text-zinc-500 hover:text-black'
+                    ? 'border-[#89a577] text-[#1f241d]'
+                    : 'border-transparent text-[#877b5f] hover:text-[#1f241d]'
                 }`}
               >
                 My Reported Dossiers ({complaints.length})
               </button>
               <button
                 onClick={() => setActiveTab('notifications')}
-                className={`text-xs font-black uppercase tracking-wider pb-2 border-b-2 transition-colors ${
+                className={`text-xs font-bold uppercase tracking-wider pb-2 border-b-2 transition-colors ${
                   activeTab === 'notifications'
-                    ? 'border-black text-black'
-                    : 'border-transparent text-zinc-500 hover:text-black'
+                    ? 'border-[#89a577] text-[#1f241d]'
+                    : 'border-transparent text-[#877b5f] hover:text-[#1f241d]'
                 }`}
               >
                 Notification Preferences
@@ -154,7 +154,7 @@ export default function ProfilePage() {
                   Report Issue
                 </Button>
               </Link>
-              <Button variant="outlined" size="small" onClick={handleLogout} startIcon={<LogOut className="w-4 h-4" />}>
+              <Button variant="outlined" size="small" onClick={handleLogout} startIcon={<LogOut className="w-4 h-4 text-[#877b5f]" />}>
                 Sign Out
               </Button>
             </Box>
@@ -164,11 +164,11 @@ export default function ProfilePage() {
           {activeTab === 'complaints' && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {complaints.length === 0 ? (
-                <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', textAlign: 'center' }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#09090b', mb: 0.5 }}>
+                <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', textAlign: 'center' }}>
+                  <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 0.5 }}>
                     No Filed Complaints Yet
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#52525b', mb: 2 }}>
+                  <Typography variant="body2" sx={{ color: '#6b7280', mb: 2 }}>
                     Report a pothole, broken streetlight, or garbage issue to track it here.
                   </Typography>
                   <Link href="/report">
@@ -185,8 +185,8 @@ export default function ProfilePage() {
                     sx={{
                       p: 2.5,
                       backgroundColor: '#ffffff',
-                      borderColor: '#e2e0d8',
-                      borderRadius: '2px',
+                      borderColor: '#e2dfd7',
+                      borderRadius: '8px',
                       display: 'flex',
                       flexDirection: { xs: 'column', sm: 'row' },
                       alignItems: { sm: 'center' },
@@ -198,17 +198,17 @@ export default function ProfilePage() {
                       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                         <CategoryBadge category={item.category} size="small" />
                         <SeverityBadge severity={item.severity} size="small" />
-                        <Typography variant="caption" sx={{ color: '#52525b', fontFamily: 'monospace', fontWeight: 700 }}>
+                        <Typography variant="caption" sx={{ color: '#877b5f', fontFamily: 'monospace', fontWeight: 700 }}>
                           {item.id}
                         </Typography>
                       </Box>
 
-                      <Typography variant="subtitle1" sx={{ fontWeight: 800, color: '#09090b' }}>
+                      <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                         {item.title}
                       </Typography>
 
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#52525b', fontSize: '0.75rem', fontWeight: 600 }}>
-                        <MapPin className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#6b7280', fontSize: '0.75rem', fontWeight: 600 }}>
+                        <MapPin className="w-3.5 h-3.5 text-[#877b5f] shrink-0" />
                         <span>{item.address}</span>
                       </Box>
                     </Box>
@@ -228,16 +228,16 @@ export default function ProfilePage() {
           )}
 
           {activeTab === 'notifications' && (
-            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', maxWidth: 600 }}>
+            <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', maxWidth: 600 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-                <Bell className="w-5 h-5 text-zinc-950" />
-                <Typography variant="h6" sx={{ fontWeight: 800, color: '#09090b' }}>
+                <Bell className="w-5 h-5 text-[#877b5f]" />
+                <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                   Notification Settings & Preferences
                 </Typography>
               </Box>
 
               {saveSuccess && (
-                <Alert icon={<CheckCircle2 className="w-4 h-4 text-green-700" />} severity="success" sx={{ mb: 3, borderRadius: '2px', backgroundColor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0' }}>
+                <Alert icon={<CheckCircle2 className="w-4 h-4 text-[#89a577]" />} severity="success" sx={{ mb: 3, borderRadius: '8px', backgroundColor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0' }}>
                   Notification settings saved to MongoDB user profile.
                 </Alert>
               )}
@@ -261,8 +261,8 @@ export default function ProfilePage() {
                   }
                   label={
                     <Box>
-                      <Typography variant="subtitle2" sx={{ color: '#09090b', fontWeight: 800 }}>Complaint Status Change Alerts</Typography>
-                      <Typography variant="caption" sx={{ color: '#52525b' }}>Receive updates when ward officers change issue status.</Typography>
+                      <Typography variant="subtitle2" sx={{ color: '#1f241d', fontWeight: 700 }}>Complaint Status Change Alerts</Typography>
+                      <Typography variant="caption" sx={{ color: '#6b7280' }}>Receive updates when ward officers change issue status.</Typography>
                     </Box>
                   }
                 />
@@ -285,8 +285,8 @@ export default function ProfilePage() {
                   }
                   label={
                     <Box>
-                      <Typography variant="subtitle2" sx={{ color: '#09090b', fontWeight: 800 }}>Resolution Notifications</Typography>
-                      <Typography variant="caption" sx={{ color: '#52525b' }}>Receive proof of repair when municipal crew resolves work.</Typography>
+                      <Typography variant="subtitle2" sx={{ color: '#1f241d', fontWeight: 700 }}>Resolution Notifications</Typography>
+                      <Typography variant="caption" sx={{ color: '#6b7280' }}>Receive proof of repair when municipal crew resolves work.</Typography>
                     </Box>
                   }
                 />
@@ -309,8 +309,8 @@ export default function ProfilePage() {
                   }
                   label={
                     <Box>
-                      <Typography variant="subtitle2" sx={{ color: '#09090b', fontWeight: 800 }}>Department Assignment Updates</Typography>
-                      <Typography variant="caption" sx={{ color: '#52525b' }}>Notify when assigned to engineering or sanitation units.</Typography>
+                      <Typography variant="subtitle2" sx={{ color: '#1f241d', fontWeight: 700 }}>Department Assignment Updates</Typography>
+                      <Typography variant="caption" sx={{ color: '#6b7280' }}>Notify when assigned to engineering or sanitation units.</Typography>
                     </Box>
                   }
                 />
@@ -322,3 +322,4 @@ export default function ProfilePage() {
     </PageTransition>
   );
 }
+

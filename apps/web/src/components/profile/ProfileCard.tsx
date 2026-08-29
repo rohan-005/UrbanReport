@@ -27,8 +27,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
       sx={{
         p: { xs: 3, sm: 4 },
         backgroundColor: '#ffffff',
-        borderColor: '#e2e0d8',
-        borderRadius: '2px',
+        borderColor: '#e2dfd7',
+        borderRadius: '8px',
         position: 'relative',
         overflow: 'hidden',
       }}
@@ -41,7 +41,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
           left: 0,
           right: 0,
           height: '4px',
-          backgroundColor: '#09090b',
+          backgroundColor: '#89a577',
         }}
       />
 
@@ -54,14 +54,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               sx={{
                 width: { xs: 64, sm: 80 },
                 height: { xs: 64, sm: 80 },
-                borderRadius: '2px',
-                backgroundColor: '#09090b',
-                border: '1px solid #09090b',
+                borderRadius: '8px',
+                backgroundColor: '#1f241d',
+                border: '1px solid #1f241d',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: '1.75rem',
-                fontWeight: 900,
+                fontWeight: 700,
                 color: '#ffffff',
                 shrink: 0,
                 overflow: 'hidden',
@@ -76,19 +76,19 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
             <Box sx={{ flex: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 0.5 }}>
-                <Typography variant="h5" sx={{ fontWeight: 900, color: '#09090b' }}>
+                <Typography variant="h5" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                   {user.name}
                 </Typography>
                 <Box
                   sx={{
-                    px: 1,
+                    px: 1.25,
                     py: 0.25,
                     fontSize: '0.6875rem',
-                    fontWeight: 800,
-                    letterSpacing: '0.08em',
+                    fontWeight: 700,
+                    letterSpacing: '0.04em',
                     textTransform: 'uppercase',
-                    borderRadius: '2px',
-                    backgroundColor: '#09090b',
+                    borderRadius: '9999px',
+                    backgroundColor: '#89a577',
                     color: '#ffffff',
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -100,22 +100,22 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                 </Box>
               </Box>
 
-              <Typography variant="caption" sx={{ color: '#52525b', fontFamily: 'monospace', display: 'block', mb: 1.5, fontWeight: 700 }}>
+              <Typography variant="caption" sx={{ color: '#6b7280', fontFamily: 'monospace', display: 'block', mb: 1.5, fontWeight: 700 }}>
                 CITIZEN ID: {user.id.toUpperCase()}
               </Typography>
 
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, fontSize: '0.75rem', color: '#52525b', fontWeight: 600 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, fontSize: '0.75rem', color: '#6b7280', fontWeight: 600 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                  <Mail className="w-3.5 h-3.5 text-zinc-700" />
+                  <Mail className="w-3.5 h-3.5 text-[#877b5f]" />
                   <span>{user.email}</span>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                  <Phone className="w-3.5 h-3.5 text-zinc-700" />
+                  <Phone className="w-3.5 h-3.5 text-[#877b5f]" />
                   <span>{user.phone}</span>
                 </Box>
                 {user.aadhaarNumber && (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, fontFamily: 'monospace' }}>
-                    <CreditCard className="w-3.5 h-3.5 text-zinc-700" />
+                    <CreditCard className="w-3.5 h-3.5 text-[#877b5f]" />
                     <span>Aadhaar: {user.aadhaarNumber}</span>
                   </Box>
                 )}
@@ -133,14 +133,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                   p: 2,
                   textAlign: 'center',
                   backgroundColor: '#f5f3ee',
-                  border: '1px solid #e2e0d8',
-                  borderRadius: '2px',
+                  border: '1px solid #e2dfd7',
+                  borderRadius: '8px',
                 }}
               >
-                <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b' }}>
+                <Typography variant="h4" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                   {submittedCount}
                 </Typography>
-                <Typography variant="overline" sx={{ color: '#52525b', fontSize: '0.625rem', display: 'block', mt: 0.5, fontWeight: 800 }}>
+                <Typography variant="overline" sx={{ color: '#877b5f', fontSize: '0.625rem', display: 'block', mt: 0.5, fontWeight: 700 }}>
                   Submitted
                 </Typography>
               </Box>
@@ -151,14 +151,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                   p: 2,
                   textAlign: 'center',
                   backgroundColor: '#f5f3ee',
-                  border: '1px solid #e2e0d8',
-                  borderRadius: '2px',
+                  border: '1px solid #e2dfd7',
+                  borderRadius: '8px',
                 }}
               >
-                <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b' }}>
+                <Typography variant="h4" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                   {activeCount}
                 </Typography>
-                <Typography variant="overline" sx={{ color: '#52525b', fontSize: '0.625rem', display: 'block', mt: 0.5, fontWeight: 800 }}>
+                <Typography variant="overline" sx={{ color: '#877b5f', fontSize: '0.625rem', display: 'block', mt: 0.5, fontWeight: 700 }}>
                   Active Work
                 </Typography>
               </Box>
@@ -169,14 +169,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                   p: 2,
                   textAlign: 'center',
                   backgroundColor: '#f5f3ee',
-                  border: '1px solid #e2e0d8',
-                  borderRadius: '2px',
+                  border: '1px solid #e2dfd7',
+                  borderRadius: '8px',
                 }}
               >
-                <Typography variant="h4" sx={{ fontWeight: 900, color: '#09090b' }}>
+                <Typography variant="h4" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#4e6d3c' }}>
                   {resolvedCount}
                 </Typography>
-                <Typography variant="overline" sx={{ color: '#52525b', fontSize: '0.625rem', display: 'block', mt: 0.5, fontWeight: 800 }}>
+                <Typography variant="overline" sx={{ color: '#877b5f', fontSize: '0.625rem', display: 'block', mt: 0.5, fontWeight: 700 }}>
                   Resolved
                 </Typography>
               </Box>
@@ -187,3 +187,4 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
     </Paper>
   );
 };
+

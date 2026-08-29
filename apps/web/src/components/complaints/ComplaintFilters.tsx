@@ -49,8 +49,8 @@ export const ComplaintFiltersBar: React.FC<ComplaintFiltersProps> = ({
       sx={{
         p: 2.5,
         backgroundColor: '#ffffff',
-        borderColor: '#e2e0d8',
-        borderRadius: '2px',
+        borderColor: '#e2dfd7',
+        borderRadius: '8px',
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
@@ -66,7 +66,7 @@ export const ComplaintFiltersBar: React.FC<ComplaintFiltersProps> = ({
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Search className="w-4 h-4 text-zinc-500" />
+                <Search className="w-4 h-4 text-[#877b5f]" />
               </InputAdornment>
             ),
           }}
@@ -122,18 +122,18 @@ export const ComplaintFiltersBar: React.FC<ComplaintFiltersProps> = ({
       </Box>
 
       {/* Category Quick Select Pills */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, overflowX: 'auto', pt: 1.5, borderTop: '1px solid #e2e0d8' }}>
-        <span className="text-[11px] font-black text-zinc-950 uppercase tracking-wider shrink-0 mr-1">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, overflowX: 'auto', pt: 1.5, borderTop: '1px solid #e2dfd7' }}>
+        <span className="text-[11px] font-bold text-[#877b5f] uppercase tracking-wider shrink-0 mr-1">
           Quick Filter:
         </span>
         {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => onChange({ ...filters, category: cat })}
-            className={`text-xs px-2.5 py-1 rounded-none uppercase font-bold tracking-wider whitespace-nowrap transition-colors border ${
+            className={`text-xs px-3 py-1 rounded-full uppercase font-bold tracking-wider whitespace-nowrap transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
               filters.category === cat
-                ? 'bg-zinc-950 text-white border-zinc-950'
-                : 'bg-zinc-100 text-zinc-700 border-zinc-300 hover:bg-zinc-200 hover:text-zinc-950'
+                ? 'bg-[#89a577] text-white border-[#89a577]'
+                : 'bg-[#f5f3ee] text-[#1f241d] border-[#e2dfd7] hover:bg-[#e2dfd7] hover:text-[#1f241d]'
             }`}
           >
             {cat === 'ALL' ? 'All Issues' : cat}
@@ -143,3 +143,4 @@ export const ComplaintFiltersBar: React.FC<ComplaintFiltersProps> = ({
     </Paper>
   );
 };
+

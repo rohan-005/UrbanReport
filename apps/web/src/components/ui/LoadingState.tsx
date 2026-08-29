@@ -19,22 +19,22 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       className={`w-full ${height} flex flex-col items-center justify-center p-8`}
       sx={{
         backgroundColor: '#ffffff',
-        borderColor: '#e2e0d8',
-        borderRadius: '2px',
+        borderColor: '#e2dfd7',
+        borderRadius: '8px',
       }}
     >
-      <Box sx={{ width: '100%', maxWidth: 400, spaceY: 2, textCenter: 'center' }}>
+      <Box sx={{ width: '100%', maxWidth: 400, textAlign: 'center' }}>
         <Skeleton
           variant="rectangular"
           height={6}
-          sx={{ backgroundColor: '#e2e0d8', borderRadius: '2px', mb: 2 }}
+          sx={{ backgroundColor: '#89a577', borderRadius: '4px', mb: 2 }}
         />
         <Typography
           variant="overline"
           sx={{
-            fontWeight: 800,
+            fontWeight: 700,
             letterSpacing: '0.08em',
-            color: '#09090b',
+            color: '#1f241d',
             display: 'block',
           }}
         >
@@ -44,3 +44,4 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
     </Paper>
   );
 };
+

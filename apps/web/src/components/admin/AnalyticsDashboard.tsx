@@ -17,49 +17,49 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
       {/* Metrics Row */}
       <Grid container spacing={2}>
         <Grid item xs={12} sm={6} md={3}>
-          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 1 }}>
-              <Typography variant="overline" sx={{ fontWeight: 800, color: '#52525b' }}>
+          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Typography variant="overline" sx={{ fontWeight: 700, color: '#877b5f' }}>
                 Avg Resolution Time
               </Typography>
-              <Clock className="w-4 h-4 text-zinc-950" />
+              <Clock className="w-4 h-4 text-[#877b5f]" />
             </Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
-              {analytics.avgResolutionTimeDays} <span className="text-base font-semibold text-zinc-500">days</span>
+            <Typography variant="h3" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 0.5 }}>
+              {analytics.avgResolutionTimeDays} <span className="text-base font-medium text-zinc-500">days</span>
             </Typography>
-            <Typography variant="caption" sx={{ color: '#166534', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <CheckCircle2 className="w-3.5 h-3.5 text-green-700" />
-              Derived from verified lifecycle resolution logs
+            <Typography variant="caption" sx={{ color: '#4e6d3c', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#89a577]" />
+              Verified resolution logs
             </Typography>
           </Paper>
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 1 }}>
-              <Typography variant="overline" sx={{ fontWeight: 800, color: '#52525b' }}>
+          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Typography variant="overline" sx={{ fontWeight: 700, color: '#877b5f' }}>
                 Resolved Incidents
               </Typography>
-              <CheckCircle2 className="w-4 h-4 text-green-700" />
+              <CheckCircle2 className="w-4 h-4 text-[#89a577]" />
             </Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#166534', mb: 0.5 }}>
+            <Typography variant="h3" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#4e6d3c', mb: 0.5 }}>
               {analytics.resolvedComplaints}
             </Typography>
-            <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>
+            <Typography variant="caption" sx={{ color: '#6b7280', fontWeight: 600 }}>
               Completed and verified on-site by municipal crew
             </Typography>
           </Paper>
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#fee2e2', borderColor: '#fca5a5', borderRadius: '2px' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 1 }}>
-              <Typography variant="overline" sx={{ fontWeight: 800, color: '#991b1b' }}>
+          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#fef2f2', borderColor: '#fecaca', borderRadius: '8px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Typography variant="overline" sx={{ fontWeight: 700, color: '#991b1b' }}>
                 Critical Emergency Hazards
               </Typography>
-              <Flame className="w-4 h-4 text-red-700 animate-pulse" />
+              <Flame className="w-4 h-4 text-rose-700" />
             </Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#991b1b', mb: 0.5 }}>
+            <Typography variant="h3" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#991b1b', mb: 0.5 }}>
               {analytics.criticalAlertsCount}
             </Typography>
             <Typography variant="caption" sx={{ color: '#b91c1c', fontWeight: 700 }}>
@@ -69,17 +69,17 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
-          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 1 }}>
-              <Typography variant="overline" sx={{ fontWeight: 800, color: '#52525b' }}>
+          <Paper elevation={0} sx={{ p: 2.5, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+              <Typography variant="overline" sx={{ fontWeight: 700, color: '#877b5f' }}>
                 Platform Map Activity
               </Typography>
-              <Activity className="w-4 h-4 text-zinc-950" />
+              <Activity className="w-4 h-4 text-[#877b5f]" />
             </Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
+            <Typography variant="h3" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 0.5 }}>
               {analytics.mapActivity?.totalMapViews || 1420}
             </Typography>
-            <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>
+            <Typography variant="caption" sx={{ color: '#6b7280', fontWeight: 600 }}>
               {analytics.mapActivity?.duplicateChecksCount || 340} duplicate searches performed
             </Typography>
           </Paper>
@@ -90,10 +90,10 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
       <Grid container spacing={3}>
         {/* Categories Distribution */}
         <Grid item xs={12} md={6}>
-          <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', height: '100%' }}>
+          <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', height: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2.5 }}>
-              <BarChart3 className="w-5 h-5 text-zinc-950" />
-              <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b' }}>
+              <BarChart3 className="w-5 h-5 text-[#877b5f]" />
+              <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                 Reports Distribution by Category
               </Typography>
             </Box>
@@ -101,11 +101,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {analytics.categories.map((cat) => (
                 <Box key={cat.category}>
-                  <Box sx={{ display: 'flex', justifyBetween: 'space-between', alignItems: 'center', mb: 0.5 }}>
-                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#09090b' }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700, color: '#1f241d' }}>
                       {cat.category}
                     </Typography>
-                    <Typography variant="caption" sx={{ fontWeight: 800, color: '#52525b' }}>
+                    <Typography variant="caption" sx={{ fontWeight: 700, color: '#6b7280' }}>
                       {cat.count} reports ({cat.percentage}%)
                     </Typography>
                   </Box>
@@ -114,10 +114,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
                     value={cat.percentage}
                     sx={{
                       height: 8,
-                      borderRadius: '2px',
-                      backgroundColor: '#f4f4f5',
+                      borderRadius: '4px',
+                      backgroundColor: '#f5f3ee',
                       '& .MuiLinearProgress-bar': {
-                        backgroundColor: '#09090b',
+                        backgroundColor: '#89a577',
+                        borderRadius: '4px',
                       },
                     }}
                   />
@@ -129,17 +130,17 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
 
         {/* Geographic Hotspots */}
         <Grid item xs={12} md={6}>
-          <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', height: '100%' }}>
+          <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2dfd7', borderRadius: '8px', height: '100%' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2.5 }}>
-              <MapPin className="w-5 h-5 text-zinc-950" />
-              <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b' }}>
+              <MapPin className="w-5 h-5 text-[#877b5f]" />
+              <Typography variant="subtitle1" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d' }}>
                 PostGIS Geographic Incident Hotspots
               </Typography>
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               {analytics.hotspots.length === 0 ? (
-                <Typography variant="body2" sx={{ color: '#71717a' }}>No geospatial clusters detected.</Typography>
+                <Typography variant="body2" sx={{ color: '#6b7280' }}>No geospatial clusters detected.</Typography>
               ) : (
                 analytics.hotspots.map((hs, i) => (
                   <Box
@@ -147,21 +148,22 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
                     sx={{
                       p: 1.5,
                       backgroundColor: '#f5f3ee',
-                      borderLeft: '4px solid #09090b',
+                      borderLeft: '4px solid #89a577',
+                      borderRadius: '0 8px 8px 0',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                     }}
                   >
                     <Box>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#09090b' }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#1f241d' }}>
                         {hs.address}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>
+                      <Typography variant="caption" sx={{ color: '#6b7280', fontWeight: 600 }}>
                         {hs.category} • Coordinates: {hs.lat}, {hs.lng}
                       </Typography>
                     </Box>
-                    <Box sx={{ px: 1.5, py: 0.5, backgroundColor: '#09090b', color: '#ffffff', fontSize: '0.75rem', fontWeight: 900, borderRadius: '2px' }}>
+                    <Box sx={{ px: 1.5, py: 0.5, backgroundColor: '#1f241d', color: '#ffffff', fontSize: '0.75rem', fontWeight: 700, borderRadius: '9999px' }}>
                       {hs.count} Incident(s)
                     </Box>
                   </Box>
@@ -174,3 +176,4 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ analytic
     </Box>
   );
 };
+

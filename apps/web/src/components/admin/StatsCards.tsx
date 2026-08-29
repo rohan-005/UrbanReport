@@ -78,39 +78,40 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
               elevation={0}
               sx={{
                 p: 2,
-                backgroundColor: card.highlight ? '#fee2e2' : '#ffffff',
-                borderColor: card.highlight ? '#fca5a5' : '#e2e0d8',
-                borderRadius: '2px',
+                backgroundColor: card.highlight ? '#fef2f2' : '#ffffff',
+                borderColor: card.highlight ? '#fecaca' : '#e2dfd7',
+                borderRadius: '8px',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                 <Typography
                   variant="overline"
                   sx={{
-                    color: card.highlight ? '#991b1b' : '#52525b',
-                    fontWeight: 800,
+                    color: card.highlight ? '#991b1b' : '#877b5f',
+                    fontWeight: 700,
                     fontSize: '0.625rem',
                     lineHeight: 1.2,
                   }}
                 >
                   {card.title}
                 </Typography>
-                <Icon className={`w-4 h-4 ${card.highlight ? 'text-red-700 animate-pulse' : 'text-zinc-700'}`} />
+                <Icon className={`w-4 h-4 ${card.highlight ? 'text-rose-700' : 'text-[#877b5f]'}`} />
               </Box>
               <Typography
                 variant="h4"
                 sx={{
-                  fontWeight: 900,
-                  color: card.highlight ? '#991b1b' : '#09090b',
+                  fontFamily: 'var(--font-display), Lora, Georgia, serif',
+                  fontWeight: 700,
+                  color: card.highlight ? '#991b1b' : '#1f241d',
                 }}
               >
                 {card.value}
               </Typography>
-              <Typography variant="caption" sx={{ color: card.highlight ? '#b91c1c' : '#71717a', fontSize: '0.6875rem', fontWeight: 600 }}>
+              <Typography variant="caption" sx={{ color: card.highlight ? '#b91c1c' : '#6b7280', fontSize: '0.6875rem', fontWeight: 600 }}>
                 {card.label}
               </Typography>
             </Paper>
@@ -120,3 +121,4 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
     </Grid>
   );
 };
+

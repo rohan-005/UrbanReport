@@ -22,18 +22,18 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
       sx={{
         p: 6,
         textAlign: 'center',
-        backgroundColor: '#fee2e2',
-        borderColor: '#fca5a5',
-        borderRadius: '2px',
+        backgroundColor: '#fef2f2',
+        borderColor: '#fecaca',
+        borderRadius: '8px',
         maxWidth: 500,
         mx: 'auto',
       }}
     >
       <Box
         sx={{
-          w: 12,
-          h: 12,
-          borderRadius: '2px',
+          width: 48,
+          height: 48,
+          borderRadius: '8px',
           backgroundColor: '#dc2626',
           display: 'flex',
           alignItems: 'center',
@@ -46,7 +46,15 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
         <AlertOctagon className="w-6 h-6" />
       </Box>
 
-      <Typography variant="h6" sx={{ fontWeight: 900, color: '#991b1b', mb: 1 }}>
+      <Typography
+        variant="h6"
+        sx={{
+          fontFamily: 'var(--font-display), Lora, Georgia, serif',
+          fontWeight: 700,
+          color: '#991b1b',
+          mb: 1,
+        }}
+      >
         {title}
       </Typography>
 
@@ -63,7 +71,8 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           sx={{
             backgroundColor: '#dc2626',
             color: '#ffffff',
-            fontWeight: 800,
+            fontWeight: 700,
+            borderRadius: '8px',
             '&:hover': { backgroundColor: '#b91c1c' },
           }}
         >
@@ -73,3 +82,4 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
     </Paper>
   );
 };
+

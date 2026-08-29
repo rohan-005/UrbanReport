@@ -30,8 +30,8 @@ export const Modal: React.FC<ModalProps> = ({
     if (isOpen && !isReducedMotion() && contentRef.current) {
       gsap.fromTo(
         contentRef.current,
-        { scale: 0.96, opacity: 0 },
-        { scale: 1, opacity: 1, duration: 0.25, ease: 'power2.out' }
+        { scale: 0.98, opacity: 0 },
+        { scale: 1, opacity: 1, duration: 0.2, ease: 'power2.out' }
       );
     }
   }, [isOpen]);
@@ -45,10 +45,10 @@ export const Modal: React.FC<ModalProps> = ({
       PaperProps={{
         sx: {
           backgroundColor: '#ffffff',
-          borderColor: '#e2e0d8',
-          borderRadius: '2px',
-          p: 1,
-          boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)',
+          borderColor: '#e2dfd7',
+          borderRadius: '8px',
+          p: 0.5,
+          boxShadow: '0 8px 30px rgba(31,36,29,0.08)',
         },
       }}
     >
@@ -59,22 +59,41 @@ export const Modal: React.FC<ModalProps> = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            pb: 1.5,
-            borderBottom: '1px solid #e2e0d8',
+            px: 2.5,
+            py: 2,
+            borderBottom: '1px solid #e2dfd7',
           }}
         >
-          <Typography variant="h6" component="h2" sx={{ fontWeight: 900, color: '#09090b', fontSize: '1.125rem' }}>
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{
+              fontFamily: 'var(--font-display), Lora, Georgia, serif',
+              fontWeight: 700,
+              color: '#1f241d',
+              fontSize: '1.25rem',
+            }}
+          >
             {title}
           </Typography>
-          <IconButton onClick={onClose} size="small" sx={{ color: '#52525b' }} aria-label="Close dialog">
+          <IconButton
+            onClick={onClose}
+            size="small"
+            sx={{
+              color: '#877b5f',
+              '&:hover': { backgroundColor: '#f5f3ee', color: '#1f241d' },
+            }}
+            aria-label="Close dialog"
+          >
             <X className="w-4 h-4" />
           </IconButton>
         </DialogTitle>
 
-        <DialogContent sx={{ pt: 3 }}>
+        <DialogContent sx={{ p: 2.5, pt: 2.5 }}>
           {children}
         </DialogContent>
       </Box>
     </Dialog>
   );
 };
+

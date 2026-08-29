@@ -11,10 +11,10 @@ const severityConfig: Record<
   Severity,
   { label: string; bg: string; text: string; border: string }
 > = {
-  LOW: { label: 'Low', bg: '#f5f3ee', text: '#52525b', border: '#d1d5db' },
-  MEDIUM: { label: 'Medium', bg: '#e2e0d8', text: '#18181b', border: '#9ca3af' },
-  HIGH: { label: 'High', bg: '#18181b', text: '#ffffff', border: '#18181b' },
-  CRITICAL: { label: 'Critical', bg: '#dc2626', text: '#ffffff', border: '#b91c1c' },
+  LOW: { label: 'Low', bg: '#f5f3ee', text: '#6b7280', border: '#e2dfd7' },
+  MEDIUM: { label: 'Medium', bg: '#fef3c7', text: '#92400e', border: '#fcd34d' },
+  HIGH: { label: 'High', bg: '#fff7ed', text: '#c2410c', border: '#ffedd5' },
+  CRITICAL: { label: 'Critical', bg: '#fef2f2', text: '#991b1b', border: '#fecaca' },
 };
 
 export const SeverityBadge: React.FC<SeverityBadgeProps> = ({
@@ -29,13 +29,13 @@ export const SeverityBadge: React.FC<SeverityBadgeProps> = ({
       sx={{
         display: 'inline-flex',
         alignItems: 'center',
-        px: size === 'small' ? 1 : 1.5,
-        py: size === 'small' ? 0.25 : 0.5,
+        px: size === 'small' ? 1.25 : 1.75,
+        py: size === 'small' ? 0.35 : 0.6,
         fontSize: size === 'small' ? '0.6875rem' : '0.75rem',
-        fontWeight: 800,
-        letterSpacing: '0.08em',
+        fontWeight: 700,
+        letterSpacing: '0.04em',
         textTransform: 'uppercase',
-        borderRadius: '2px',
+        borderRadius: '9999px',
         backgroundColor: config.bg,
         color: config.text,
         border: `1px solid ${config.border}`,
@@ -46,3 +46,4 @@ export const SeverityBadge: React.FC<SeverityBadgeProps> = ({
     </Box>
   );
 };
+

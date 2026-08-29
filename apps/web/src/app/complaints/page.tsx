@@ -57,19 +57,19 @@ export default function ComplaintsPage() {
     <Box sx={{ py: { xs: 4, md: 6 }, backgroundColor: '#f5f3ee', flex: 1, pb: { xs: 28, md: 36 } }}>
       <Container maxWidth={false} className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
         {/* Header */}
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2dfd7', gap: 2 }}>
           <Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5, fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem' } }}>
+            <Typography variant="h3" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 0.5, fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem' } }}>
               Civic Incident Catalog
             </Typography>
-            <Typography variant="body2" sx={{ color: '#52525b' }}>
+            <Typography variant="body2" sx={{ color: '#6b7280' }}>
               Editorial issue feed of reported infrastructure & environmental defects.
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Link href="/map">
-              <Button variant="outlined" size="small" startIcon={<Map className="w-4 h-4" />}>
+              <Button variant="outlined" size="small" startIcon={<Map className="w-4 h-4 text-[#877b5f]" />}>
                 Geospatial Map
               </Button>
             </Link>
@@ -141,3 +141,4 @@ export default function ComplaintsPage() {
     </Box>
   );
 }
+

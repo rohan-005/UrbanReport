@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240" fill="none">
+  <!-- Soft background fill matching dark rural canvas -->
+  <rect width="320" height="240" fill="#181a17"/>
+
+  <!-- Subtle grid texture lines -->
+  <path d="M0 60 H320 M0 120 H320 M0 180 H320 M80 0 V240 M160 0 V240 M240 0 V240" stroke="#252a22" stroke-width="0.75" stroke-dasharray="3 6"/>
+
+  <!-- Row 1: Rural Cottage Silhouettes (Top Row) -->
+  <g stroke="#3a4235" stroke-width="1.25" fill="none" opacity="0.65">
+    <!-- House 1: Pitch Roof Cottage with Chimney -->
+    <path d="M15 45 L35 25 L55 45 V65 H15 Z" />
+    <path d="M45 28 V20 H50 V33" />
+    <rect x="27" y="48" width="10" height="17" />
+    <rect x="42" y="48" width="8" height="8" />
+    
+    <!-- Tree 1: Rural Pine / Deciduous -->
+    <path d="M70 65 V35 M70 35 L62 48 M70 35 L78 48 M70 42 L60 55 M70 42 L80 55" />
+    
+    <!-- House 2: Barn Roof / Village Hall -->
+    <path d="M100 65 V40 L125 22 L150 40 V65 H100 Z" />
+    <path d="M115 65 V50 H135 V65" />
+    <circle cx="125" cy="36" r="4" />
+    
+    <!-- Fence & Street Lamp -->
+    <path d="M155 65 V52 M160 65 V52 M165 65 V52 M152 56 H168" />
+    <path d="M180 65 V32 M176 32 H184 L180 26 Z" />
+    
+    <!-- House 3: Slanted Roof Shed / Homestead -->
+    <path d="M200 65 V42 L235 32 V65 H200 Z" />
+    <rect x="210" y="48" width="10" height="10" />
+    
+    <!-- Tree 2: Bush / Canopy -->
+    <path d="M255 65 V45 C245 40 245 30 255 25 C265 20 275 30 275 35 C280 40 270 55 255 65 Z" />
+
+    <!-- House 4: Gable Cottage -->
+    <path d="M285 65 V45 L300 32 L315 45 V65 H285 Z" />
+  </g>
+
+  <!-- Row 2: Village Streetscape & Pathways (Middle Row) -->
+  <g stroke="#454f3f" stroke-width="1.25" fill="none" opacity="0.75">
+    <!-- Winding Rural Cobblestone Path -->
+    <path d="M0 135 C40 130 80 145 120 135 C160 125 200 140 240 135 C280 130 300 140 320 135" stroke-dasharray="2 4"/>
+
+    <!-- House 5: Two-Story Village House -->
+    <path d="M40 185 V145 L65 125 L90 145 V185 H40 Z" />
+    <rect x="52" y="165" width="12" height="20" />
+    <rect x="48" y="150" width="8" height="8" />
+    <rect x="72" y="150" width="8" height="8" />
+
+    <!-- Streetlamp with Soft Glow Circle -->
+    <path d="M110 185 V148 M106 148 H114 L110 142 Z" />
+    <circle cx="110" cy="145" r="8" stroke="#89a577" stroke-dasharray="2 2" opacity="0.5"/>
+
+    <!-- House 6: Double Gable Homestead -->
+    <path d="M140 185 V155 L160 138 L180 155 V185 H140 Z" />
+    <path d="M180 185 V150 L198 135 L215 150 V185 H180 Z" />
+    <rect x="155" y="166" width="10" height="19" />
+    <rect x="190" y="158" width="9" height="9" />
+
+    <!-- Tree 3: Orchard Tree -->
+    <path d="M235 185 V155 C225 150 225 138 235 132 C245 128 255 138 255 142 C260 150 250 160 235 185 Z" />
+
+    <!-- House 7: Cottage & Windmill Blade / Silo Silhouette -->
+    <path d="M270 185 V150 L290 135 L310 150 V185 H270 Z" />
+    <circle cx="290" cy="135" r="3" />
+    <path d="M290 135 L280 125 M290 135 L300 145 M290 135 L300 125 M290 135 L280 145" />
+  </g>
+
+  <!-- Row 3: Horizon Hills & Fence Outlines (Bottom Decorative Accents) -->
+  <g stroke="#323a2e" stroke-width="1" fill="none" opacity="0.5">
+    <path d="M0 215 Q60 200 120 215 T240 215 T320 215" />
+    <path d="M20 240 V225 M28 240 V225 M36 240 V225 M18 230 H38" />
+    <path d="M220 240 V222 M228 240 V222 M236 240 V222 M218 228 H238" />
+  </g>
+</svg>

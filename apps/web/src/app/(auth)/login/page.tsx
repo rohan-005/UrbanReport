@@ -46,54 +46,54 @@ export default function LoginPage() {
 
   return (
     <Box sx={{ minHeight: 'calc(100vh - 4rem)', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f5f3ee', py: { xs: 4, md: 8 }, px: 2 }}>
-      <Box sx={{ width: '100%', maxWidth: '1000px', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1.1fr' }, gap: 0, backgroundColor: '#ffffff', borderRadius: '4px', border: '1px solid #e2e0d8', shadow: '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)', overflow: 'hidden' }}>
+      <Box sx={{ width: '100%', maxWidth: '1000px', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1.1fr' }, gap: 0, backgroundColor: '#ffffff', borderRadius: '8px', border: '1px solid #e2dfd7', boxShadow: '0 8px 30px rgba(31, 36, 29, 0.05)', overflow: 'hidden' }}>
         
         {/* LEFT COLUMN: Civic Branding Showcase */}
-        <Box sx={{ p: { xs: 4, md: 6 }, backgroundColor: '#09090b', color: '#ffffff', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
+        <Box sx={{ p: { xs: 4, md: 6 }, backgroundColor: '#1f241d', color: '#ffffff', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative' }}>
           <Box>
             <Logo size="lg" variant="light" showTagline />
             <Box sx={{ mt: 6, mb: 6 }}>
-              <Typography variant="h4" sx={{ fontWeight: 900, textTransform: 'uppercase', tracking: 'wide', mb: 2, fontSize: { xs: '1.5rem', md: '2rem' }, lineHeight: 1.1 }}>
+              <Typography variant="h4" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, textTransform: 'none', mb: 2, fontSize: { xs: '1.5rem', md: '2rem' }, lineHeight: 1.1 }}>
                 Report. Track. <br />
-                <span className="text-zinc-400">Improve Your City.</span>
+                <span className="text-[#a8c38e]">Improve Your City.</span>
               </Typography>
-              <Typography variant="body2" sx={{ color: '#a1a1aa', leading: 'relaxed', fontSize: '0.875rem' }}>
+              <Typography variant="body2" sx={{ color: '#d2c2ad', leading: 'relaxed', fontSize: '0.875rem' }}>
                 UrbanReports connects citizens and municipal dispatch directly through map-first geospatial issue tracking and transparent infrastructure management.
               </Typography>
             </Box>
 
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 4, borderTop: '1px solid #27272a' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5, pt: 4, borderTop: '1px solid rgba(255,255,255,0.1)' }}>
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                <MapPin className="w-5 h-5 text-zinc-100 shrink-0 mt-0.5" />
+                <MapPin className="w-5 h-5 text-[#a8c38e] shrink-0 mt-0.5" />
                 <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ffffff', fontSize: '0.8125rem' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#ffffff', fontSize: '0.8125rem' }}>
                     Geospatial Pinpointing
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.75rem' }}>
+                  <Typography variant="caption" sx={{ color: '#d2c2ad', fontSize: '0.75rem' }}>
                     Report potholes, streetlights, and drainage issues with exact GPS coordinates.
                   </Typography>
                 </Box>
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                <ShieldCheck className="w-5 h-5 text-zinc-100 shrink-0 mt-0.5" />
+                <ShieldCheck className="w-5 h-5 text-[#a8c38e] shrink-0 mt-0.5" />
                 <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ffffff', fontSize: '0.8125rem' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#ffffff', fontSize: '0.8125rem' }}>
                     Verified Citizen Identity
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.75rem' }}>
+                  <Typography variant="caption" sx={{ color: '#d2c2ad', fontSize: '0.75rem' }}>
                     Secure JWT authentication & Aadhaar verification for trustworthy civic reports.
                   </Typography>
                 </Box>
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                <CheckCircle2 className="w-5 h-5 text-zinc-100 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-5 h-5 text-[#a8c38e] shrink-0 mt-0.5" />
                 <Box>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 800, color: '#ffffff', fontSize: '0.8125rem' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#ffffff', fontSize: '0.8125rem' }}>
                     Transparent Resolution Status
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#a1a1aa', fontSize: '0.75rem' }}>
+                  <Typography variant="caption" sx={{ color: '#d2c2ad', fontSize: '0.75rem' }}>
                     Follow resolution progress in real time from submission to municipal sign-off.
                   </Typography>
                 </Box>
@@ -101,11 +101,11 @@ export default function LoginPage() {
             </Box>
           </Box>
 
-          <Box sx={{ mt: 6, pt: 3, borderTop: '1px solid #27272a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700, letterSpacing: '0.05em' }}>
+          <Box sx={{ mt: 6, pt: 3, borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="caption" sx={{ color: '#a39578', fontWeight: 700, letterSpacing: '0.04em' }}>
               MUNICIPAL DISPATCH v2.4
             </Typography>
-            <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700 }}>
+            <Typography variant="caption" sx={{ color: '#a39578', fontWeight: 700 }}>
               SRID 4326 GIS
             </Typography>
           </Box>
@@ -114,17 +114,17 @@ export default function LoginPage() {
         {/* RIGHT COLUMN: Authentication Form */}
         <Box component="form" onSubmit={handleLogin} sx={{ p: { xs: 4, sm: 6 }, display: 'flex', flexDirection: 'column', justifyContent: 'center', backgroundColor: '#ffffff' }}>
           <Box sx={{ mb: 4 }}>
-            <Typography variant="h5" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5, letterSpacing: '-0.02em' }}>
+            <Typography variant="h5" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', mb: 0.5, letterSpacing: '-0.01em' }}>
               Portal Sign In
             </Typography>
-            <Typography variant="body2" sx={{ color: '#52525b', fontWeight: 500 }}>
+            <Typography variant="body2" sx={{ color: '#6b7280', fontWeight: 500 }}>
               Enter your credentials to access your citizen identity or officer portal.
             </Typography>
           </Box>
 
           {errorMessage && (
-            <Box sx={{ p: 2, mb: 3, borderRadius: '2px', backgroundColor: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: 1.5, fontWeight: 600 }}>
-              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <Box sx={{ p: 2, mb: 3, borderRadius: '8px', backgroundColor: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: 1.5, fontWeight: 600 }}>
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
               <span>{errorMessage}</span>
             </Box>
           )}
@@ -141,7 +141,7 @@ export default function LoginPage() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Mail className="w-4 h-4 text-zinc-400" />
+                    <Mail className="w-4 h-4 text-[#877b5f]" />
                   </InputAdornment>
                 ),
               }}
@@ -158,7 +158,7 @@ export default function LoginPage() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Lock className="w-4 h-4 text-zinc-400" />
+                    <Lock className="w-4 h-4 text-[#877b5f]" />
                   </InputAdornment>
                 ),
                 endAdornment: (
@@ -169,7 +169,7 @@ export default function LoginPage() {
                       edge="end"
                       size="small"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4 text-zinc-500" /> : <Eye className="w-4 h-4 text-zinc-500" />}
+                      {showPassword ? <EyeOff className="w-4 h-4 text-[#877b5f]" /> : <Eye className="w-4 h-4 text-[#877b5f]" />}
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -178,8 +178,8 @@ export default function LoginPage() {
 
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: -0.5 }}>
               <FormControlLabel
-                control={<Checkbox defaultChecked sx={{ color: '#52525b', '&.Mui-checked': { color: '#09090b' } }} />}
-                label={<Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>Remember session</Typography>}
+                control={<Checkbox defaultChecked sx={{ color: '#877b5f', '&.Mui-checked': { color: '#89a577' } }} />}
+                label={<Typography variant="caption" sx={{ color: '#6b7280', fontWeight: 600 }}>Remember session</Typography>}
               />
             </Box>
 
@@ -192,25 +192,26 @@ export default function LoginPage() {
               loadingText="Signing In..."
               startIcon={<LogIn className="w-4 h-4" />}
               sx={{
-                backgroundColor: '#09090b',
+                backgroundColor: '#89a577',
                 color: '#ffffff',
-                fontWeight: 900,
+                fontWeight: 700,
                 py: 1.5,
                 mt: 1,
+                borderRadius: '8px',
                 fontSize: '0.875rem',
-                letterSpacing: '0.05em',
+                letterSpacing: '0.04em',
                 textTransform: 'uppercase',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                '&:hover': { backgroundColor: '#18181b' },
+                boxShadow: '0 4px 6px -1px rgba(31, 36, 29, 0.08)',
+                '&:hover': { backgroundColor: '#6e895d' },
               }}
             >
               Sign In to Portal
             </LoadingButton>
 
-            <Box sx={{ pt: 3, mt: 2, borderTop: '1px solid #e2e0d8', textAlign: 'center' }}>
-              <Typography variant="body2" sx={{ color: '#52525b', fontWeight: 600, fontSize: '0.8125rem' }}>
+            <Box sx={{ pt: 3, mt: 2, borderTop: '1px solid #e2dfd7', textAlign: 'center' }}>
+              <Typography variant="body2" sx={{ color: '#6b7280', fontWeight: 600, fontSize: '0.8125rem' }}>
                 Need a citizen account?{' '}
-                <Link href="/register" className="font-bold text-zinc-950 underline hover:text-black transition-colors">
+                <Link href="/register" className="font-bold text-[#1f241d] underline hover:text-[#89a577] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] rounded-xs">
                   Register Citizen Profile
                 </Link>
               </Typography>
@@ -221,3 +222,4 @@ export default function LoginPage() {
     </Box>
   );
 }
+

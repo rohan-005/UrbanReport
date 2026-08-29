@@ -37,21 +37,22 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
     <Paper
       elevation={0}
       sx={{
-        borderRadius: '2px',
+        borderRadius: '8px',
         backgroundColor: '#ffffff',
-        borderColor: '#e2e0d8',
+        borderColor: '#e2dfd7',
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
         transition: 'all 0.2s ease-in-out',
+        overflow: 'hidden',
         '&:hover': {
-          borderColor: '#09090b',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+          borderColor: '#877b5f',
+          boxShadow: '0 4px 12px rgba(31,36,29,0.06)',
         },
       }}
     >
       {/* Card Image */}
-      <Box sx={{ position: 'relative', height: 180, width: '100%', overflow: 'hidden', backgroundColor: '#09090b' }}>
+      <Box sx={{ position: 'relative', height: 180, width: '100%', overflow: 'hidden', backgroundColor: '#1f241d' }}>
         <img
           src={imageUrl}
           alt={complaint.title}
@@ -61,7 +62,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           sx={{
             position: 'absolute',
             inset: 0,
-            background: 'linear-gradient(to top, rgba(9,9,11,0.85), transparent)',
+            background: 'linear-gradient(to top, rgba(31,36,29,0.85), transparent)',
           }}
         />
 
@@ -90,10 +91,10 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
             sx={{
               fontFamily: 'monospace',
               color: '#ffffff',
-              backgroundColor: 'rgba(9,9,11,0.9)',
+              backgroundColor: 'rgba(31,36,29,0.85)',
               px: 1,
               py: 0.25,
-              borderRadius: '2px',
+              borderRadius: '9999px',
               border: '1px solid rgba(255,255,255,0.2)',
               fontSize: '0.6875rem',
               fontWeight: 700,
@@ -111,8 +112,8 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           <Typography
             variant="subtitle1"
             sx={{
-              fontWeight: 800,
-              color: '#09090b',
+              fontWeight: 700,
+              color: '#1f241d',
               lineHeight: 1.3,
               display: '-webkit-box',
               WebkitLineClamp: 1,
@@ -125,8 +126,8 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           <Typography
             variant="body2"
             sx={{
-              color: '#52525b',
-              mt: 1,
+              color: '#6b7280',
+              mt: 0.75,
               fontSize: '0.8125rem',
               lineHeight: 1.5,
               display: '-webkit-box',
@@ -139,20 +140,20 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           </Typography>
         </Box>
 
-        <Box sx={{ pt: 1.5, borderTop: '1px solid #e2e0d8', mt: 'auto' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#3f3f46', fontSize: '0.75rem', mb: 1 }}>
-            <MapPin className="w-3.5 h-3.5 text-zinc-600 shrink-0" />
+        <Box sx={{ pt: 1.5, borderTop: '1px solid #e2dfd7', mt: 'auto' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#6b7280', fontSize: '0.75rem', mb: 1 }}>
+            <MapPin className="w-3.5 h-3.5 text-[#877b5f] shrink-0" />
             <span className="truncate font-medium">{complaint.address}</span>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', color: '#71717a', fontSize: '0.75rem', pt: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#6b7280', fontSize: '0.75rem', pt: 0.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-              <User className="w-3.5 h-3.5 text-zinc-500" />
-              <span className="font-semibold text-zinc-800">{complaint.reporter.name}</span>
+              <User className="w-3.5 h-3.5 text-[#877b5f]" />
+              <span className="font-semibold text-[#1f241d]">{complaint.reporter.name}</span>
             </Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-              <Calendar className="w-3.5 h-3.5 text-zinc-500" />
-              <span className="font-mono text-zinc-600">{formattedDate}</span>
+              <Calendar className="w-3.5 h-3.5 text-[#877b5f]" />
+              <span className="font-mono text-[#6b7280]">{formattedDate}</span>
             </Box>
           </Box>
         </Box>
@@ -164,7 +165,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             pt: 1.5,
-            borderTop: '1px solid #e2e0d8',
+            borderTop: '1px solid #e2dfd7',
           }}
         >
           <button
@@ -172,19 +173,19 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
               e.preventDefault();
               if (onUpvote) onUpvote(complaint.id);
             }}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3 h-8 rounded-md text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
               isUpvoted
-                ? 'bg-zinc-950 text-white border border-zinc-950'
-                : 'bg-zinc-100 text-zinc-800 border border-zinc-300 hover:bg-zinc-200'
+                ? 'bg-[#89a577] text-white border border-[#89a577]'
+                : 'bg-[#f5f3ee] text-[#1f241d] border border-[#e2dfd7] hover:bg-[#e2dfd7]'
             }`}
           >
-            <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? 'fill-white text-white' : ''}`} />
+            <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? 'fill-white text-white' : 'text-[#877b5f]'}`} />
             <span>{complaint.upvotesCount} UPVOTES</span>
           </button>
 
           <Link
             href={`/complaints/${complaint.id}`}
-            className="flex items-center gap-1 text-xs font-extrabold uppercase tracking-wider text-zinc-950 hover:text-black transition-colors"
+            className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-[#1f241d] hover:text-[#89a577] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] rounded-xs px-1"
           >
             <span>DOSSIER</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -194,3 +195,4 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
     </Paper>
   );
 };
+
