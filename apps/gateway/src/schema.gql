@@ -1,0 +1,90 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ComplaintMediaItemType {
+  id: ID!
+  url: String!
+  type: String!
+  caption: String
+}
+
+type ComplaintType {
+  id: ID!
+  category: String!
+  title: String!
+  description: String!
+  severity: String!
+  status: String!
+  latitude: Float!
+  longitude: Float!
+  address: String!
+  upvotesCount: Int!
+  createdAt: String!
+  updatedAt: String!
+  media: [ComplaintMediaItemType!]!
+}
+
+type UserType {
+  id: ID!
+  name: String!
+  email: String!
+  phone: String!
+  role: String!
+  aadhaarNumber: String
+  createdAt: String
+}
+
+type AuthPayloadType {
+  accessToken: String!
+  user: UserType!
+}
+
+type PlaceResultType {
+  id: ID!
+  placeName: String!
+  address: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+type ReverseGeocodeType {
+  address: String!
+  placeName: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+type Query {
+  complaints(category: String, severity: String, status: String, search: String): [ComplaintType!]!
+  complaint(id: String!): ComplaintType
+  viewportComplaints(minLat: Float!, minLng: Float!, maxLat: Float!, maxLng: Float!, category: String, severity: String, status: String): [ComplaintType!]!
+  nearbyComplaints(lat: Float!, lng: Float!, radius: Int): [ComplaintType!]!
+  searchPlaces(q: String!): [PlaceResultType!]!
+  reverseGeocode(lat: Float!, lng: Float!): ReverseGeocodeType!
+}
+
+type Mutation {
+  login(email: String!, password: String): AuthPayloadType!
+  register(input: RegisterInput!): AuthPayloadType!
+  createComplaint(input: CreateComplaintInput!): ComplaintType!
+}
+
+input RegisterInput {
+  name: String!
+  email: String!
+  phone: String!
+  password: String!
+  aadhaarNumber: String!
+}
+
+input CreateComplaintInput {
+  category: String!
+  title: String!
+  description: String!
+  severity: String!
+  latitude: Float!
+  longitude: Float!
+  address: String!
+  mediaIds: [String]
+}
