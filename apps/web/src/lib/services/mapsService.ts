@@ -43,10 +43,14 @@ export class MapsService {
     }
   }
 
+  /**
+   * High-accuracy device GPS position provider
+   * Disables stale cached locations (maximumAge: 0) and sets 15s timeout
+   */
   public static async getCurrentLocation(): Promise<{ lat: number; lng: number; accuracy: number }> {
     return new Promise((resolve, reject) => {
-      if (!navigator.geolocation) {
-        reject(new Error('Browser geolocation is not supported on your device.'));
+      if (typeof navigator === 'undefined' || !navigator.geolocation) {
+        reject(new Error('Browser geolocation is not supported on your device or environment.'));
         return;
       }
 
@@ -63,13 +67,13 @@ export class MapsService {
           if (error.code === error.PERMISSION_DENIED) {
             msg = 'Location access denied. Please grant location permissions in your browser settings.';
           } else if (error.code === error.POSITION_UNAVAILABLE) {
-            msg = 'GPS location signal is currently unavailable.';
+            msg = 'GPS location signal is currently unavailable on your device.';
           } else if (error.code === error.TIMEOUT) {
             msg = 'GPS location request timed out. Please try again.';
           }
           reject(new Error(msg));
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
       );
     });
   }
