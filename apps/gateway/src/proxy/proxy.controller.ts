@@ -84,7 +84,11 @@ export class ProxyController {
 
   @Post('complaints')
   async createComplaint(@Body() body: any, @Req() req: Request) {
-    return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints`, body, this.getPassHeaders(req));
+    const formattedBody = {
+      ...body,
+      category: body?.category ? body.category.replace(/\s+/g, '_').toUpperCase() : undefined,
+    };
+    return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints`, formattedBody, this.getPassHeaders(req));
   }
 
   @Patch('complaints/:id/status')

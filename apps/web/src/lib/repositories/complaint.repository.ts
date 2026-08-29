@@ -317,7 +317,7 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify({
-        category: payload.category.toUpperCase(),
+        category: payload.category ? payload.category.replace(/\s+/g, '_').toUpperCase() : 'OTHER',
         title: payload.title,
         description: payload.description,
         severity: payload.severity,

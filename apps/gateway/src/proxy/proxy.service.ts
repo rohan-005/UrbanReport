@@ -117,8 +117,8 @@ export class ProxyService {
         headers: this.buildHeaders(headers),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new HttpException(err.message || 'Downstream GET service error', res.status);
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        throw new HttpException(err, res.status);
       }
       return await res.json();
     } catch (err: any) {
@@ -136,8 +136,8 @@ export class ProxyService {
         body: JSON.stringify(body),
       });
       if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new HttpException(err.message || 'Downstream POST service error', res.status);
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        throw new HttpException(err, res.status);
       }
       return await res.json();
     } catch (err: any) {
