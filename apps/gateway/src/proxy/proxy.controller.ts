@@ -145,6 +145,9 @@ export class ProxyController {
       const targetUrl = `${this.getMediaUrl()}/media`;
       const passHeaders = { ...this.getPassHeaders(req) };
       delete passHeaders['host'];
+      if (req.headers['content-type']) {
+        passHeaders['content-type'] = req.headers['content-type'] as string;
+      }
 
       const response = await fetch(targetUrl, {
         method: 'POST',
