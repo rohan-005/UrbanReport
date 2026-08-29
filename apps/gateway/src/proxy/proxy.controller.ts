@@ -192,6 +192,11 @@ export class ProxyController {
     return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints/${id}/status`, body, this.getPassHeaders(req));
   }
 
+  @Delete('complaints/:id')
+  async deleteComplaint(@Param('id') id: string, @Req() req: Request) {
+    return this.proxyService.forwardDelete(`${this.getComplaintsUrl()}/complaints/${id}`, this.getPassHeaders(req));
+  }
+
 
   // --- MAPS PROXY ---
   @Get('maps/search')

@@ -55,6 +55,7 @@ export interface IComplaintRepository {
   confirmComplaint(complaintId: string): Promise<{ complaintId: string; confirmationsCount: number; hasUserConfirmed: boolean }>;
   getConfirmationCount(complaintId: string): Promise<number>;
   getAnalyticsOverview(): Promise<AnalyticsOverview>;
+  deleteComplaint(id: string): Promise<boolean>;
   subscribe(listener: () => void): () => void;
 }
 
@@ -219,6 +220,16 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
     this.complaints[index] = updated;
     this.persist();
     return updated;
+  }
+
+  public async deleteComplaint(id: string): Promise<boolean> {
+    const initialLen = this.complaints.length;
+    this.complaints = this.complaints.filter((c) => c.id.toLowerCase() !== id.toLowerCase());
+    const deleted = this.complaints.length < initialLen;
+    if (deleted) {
+      this.persist();
+    }
+    return deleted;
   }
 
   public async getStats() {
@@ -528,6 +539,28 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
 
   public async upvoteComplaint(id: string, userId: string): Promise<Complaint | null> {
     return this.fallbackMock.upvoteComplaint(id, userId);
+  }
+
+  public async deleteComplaint(id: string): Promise<boolean> {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
+      const res = await fetch(`${API_BASE}/complaints/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+
+      if (!res.ok) {
+        return this.fallbackMock.deleteComplaint(id);
+      }
+      const data = await res.json().catch(() => ({ success: true }));
+      this.fallbackMock.deleteComplaint(id);
+      return data.success !== false;
+    } catch {
+      return this.fallbackMock.deleteComplaint(id);
+    }
   }
 
   public async getStats() {

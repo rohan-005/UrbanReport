@@ -747,6 +747,26 @@ export class ComplaintsRepository {
     }
   }
 
+  async delete(id: string, actorUserId: string = 'admin-001'): Promise<boolean> {
+    try {
+      return await this.db.withTransaction(async (client) => {
+        await client.query(`DELETE FROM status_history WHERE complaint_id = $1;`, [id]);
+        await client.query(`DELETE FROM assignments WHERE complaint_id = $1;`, [id]);
+        await client.query(`DELETE FROM complaint_media WHERE complaint_id = $1;`, [id]);
+        await client.query(`DELETE FROM complaint_confirmations WHERE complaint_id = $1;`, [id]);
+        await client.query(`DELETE FROM audit_events WHERE resource_id = $1;`, [id]);
+        const res = await client.query(`DELETE FROM complaints WHERE id = $1 RETURNING id;`, [id]);
+        this.fallbackStore.delete(id);
+        return res.rows.length > 0;
+      });
+    } catch {
+      const existed = this.fallbackStore.has(id);
+      this.fallbackStore.delete(id);
+      return existed;
+    }
+  }
+
+
   private async attachMediaToComplaints(items: any[]): Promise<any[]> {
     if (!items || items.length === 0) return items;
     const complaintIds = items.map((i) => i.id);

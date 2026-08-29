@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -150,6 +151,13 @@ export class ComplaintsController {
   ) {
     const actorUserId = req.user?.userId || 'admin-desk-001';
     return this.complaintsService.updateStatus(id, dto, actorUserId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deleteComplaint(@Request() req: any, @Param('id') id: string) {
+    const actorUserId = req.user?.userId || 'admin-desk-001';
+    return this.complaintsService.deleteComplaint(id, actorUserId);
   }
 }
 

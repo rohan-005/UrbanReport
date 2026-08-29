@@ -111,6 +111,16 @@ export class ComplaintsService {
     return updated;
   }
 
+  async deleteComplaint(id: string, actorUserId: string = 'admin-001') {
+    const complaint = await this.repo.findById(id);
+    const deleted = await this.repo.delete(id, actorUserId);
+    if (deleted && complaint) {
+      this.publishNotificationEvent('ComplaintDeleted', complaint, actorUserId, 'Complaint record deleted by administrator');
+    }
+    return { success: deleted, id };
+  }
+
+
   private async publishNotificationEvent(eventType: string, complaint: any, actorUserId?: string, notes?: string) {
     const notificationsUrl = process.env.NOTIFICATIONS_SERVICE_URL || 'http://localhost:5005';
     const eventPayload = {

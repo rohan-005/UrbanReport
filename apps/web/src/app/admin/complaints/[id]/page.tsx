@@ -39,7 +39,8 @@ import {
   Upload,
   Image as ImageIcon,
   History,
-  AlertTriangle
+  AlertTriangle,
+  Trash2
 } from 'lucide-react';
 
 const REJECTION_REASONS = [
@@ -70,6 +71,7 @@ export default function AdminComplaintDetailPage({
   const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
   const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
   const [isReopenModalOpen, setIsReopenModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Form Inputs
   const [resolutionNotesInput, setResolutionNotesInput] = useState('');
@@ -202,6 +204,25 @@ export default function AdminComplaintDetailPage({
     await handleUpdateStatus('REOPENED', noteText);
   };
 
+  const handleConfirmDelete = async () => {
+    if (!complaint) return;
+    setActionLoading(true);
+    setStatusError(null);
+    try {
+      const success = await complaintRepository.deleteComplaint(complaint.id);
+      if (success) {
+        setIsDeleteModalOpen(false);
+        router.push('/admin/complaints');
+      } else {
+        setStatusError('Failed to delete complaint record.');
+      }
+    } catch (err: any) {
+      setStatusError(err.message || 'Deletion failed.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleAssignment = async (assignment: Assignment) => {
     if (!complaint) return;
     setActionLoading(true);
@@ -328,12 +349,25 @@ export default function AdminComplaintDetailPage({
             Current Status: <span className="font-mono text-[#1f241d]">{complaint.status}</span> — Authorized Transition Actions
           </Typography>
 
-          {allowedNextStates.length === 0 ? (
+          {allowedNextStates.length === 0 && complaint.status !== 'RESOLVED' ? (
             <Alert severity="info" sx={{ borderRadius: '8px' }}>
               No further state transitions allowed from <strong>{complaint.status}</strong>.
             </Alert>
           ) : (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+              {complaint.assignment && complaint.status === 'RESOLVED' && (
+                <Button
+                  variant="contained"
+                  color="error"
+                  size="small"
+                  disabled={actionLoading}
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  startIcon={<Trash2 className="w-4 h-4" />}
+                  sx={{ fontWeight: 700, borderRadius: '8px' }}
+                >
+                  Delete Completed Work Record
+                </Button>
+              )}
               {allowedNextStates.includes('UNDER_REVIEW') && (
                 <Button
                   variant="outlined"
@@ -496,6 +530,8 @@ export default function AdminComplaintDetailPage({
               <AssignmentPanel
                 currentAssignment={complaint.assignment}
                 onAssign={handleAssignment}
+                onDelete={() => setIsDeleteModalOpen(true)}
+                isCompleted={complaint.status === 'RESOLVED'}
                 isLoading={actionLoading}
               />
 
@@ -708,6 +744,51 @@ export default function AdminComplaintDetailPage({
                 sx={{ backgroundColor: '#89a577', color: '#ffffff', borderRadius: '8px', '&:hover': { backgroundColor: '#6e895d' } }}
               >
                 Confirm Reopen
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
+
+        {/* --- DELETE COMPLETED WORK MODAL --- */}
+        <Modal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          title="Delete Completed Department Work Record"
+        >
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+            <Typography variant="body2" sx={{ color: '#4b5563' }}>
+              Are you sure you want to delete this completed work entry? This complaint was assigned to <strong>{complaint?.assignment?.department || 'Department Work'}</strong> and marked as completed.
+            </Typography>
+
+            <Paper elevation={0} sx={{ p: 2, backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px' }}>
+              <Typography variant="caption" sx={{ fontFamily: 'monospace', fontWeight: 700, color: '#374151', display: 'block' }}>
+                ID: {complaint?.id}
+              </Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#111827', mt: 0.5 }}>
+                {complaint?.title}
+              </Typography>
+              <Typography variant="caption" sx={{ color: '#6b7280', display: 'block', mt: 0.5 }}>
+                Department: {complaint?.assignment?.department || 'Unassigned'}
+              </Typography>
+            </Paper>
+
+            <Typography variant="caption" sx={{ color: '#dc2626', fontWeight: 600 }}>
+              Warning: This operation will permanently remove this record from the administrative database.
+            </Typography>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1.5, pt: 1 }}>
+              <Button variant="outlined" onClick={() => setIsDeleteModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="error"
+                disabled={actionLoading}
+                onClick={handleConfirmDelete}
+                startIcon={<Trash2 className="w-4 h-4" />}
+                sx={{ fontWeight: 700, borderRadius: '8px' }}
+              >
+                {actionLoading ? 'Deleting...' : 'Confirm Delete'}
               </Button>
             </Box>
           </Box>

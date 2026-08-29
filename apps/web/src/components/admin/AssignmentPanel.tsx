@@ -9,11 +9,13 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import { Building2, UserCheck } from 'lucide-react';
+import { Building2, UserCheck, Trash2 } from 'lucide-react';
 
 interface AssignmentPanelProps {
   currentAssignment?: Assignment;
   onAssign: (assignment: Assignment) => void;
+  onDelete?: () => void;
+  isCompleted?: boolean;
   isLoading?: boolean;
 }
 
@@ -42,6 +44,8 @@ const mockOfficers: Record<string, string[]> = {
 export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
   currentAssignment,
   onAssign,
+  onDelete,
+  isCompleted = false,
   isLoading = false,
 }) => {
   const [deptList, setDeptList] = useState<string[]>(departments);
@@ -91,11 +95,18 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
         gap: 2,
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pb: 1.5, borderBottom: '1px solid #e2dfd7' }}>
-        <Building2 className="w-5 h-5 text-[#877b5f]" />
-        <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', fontSize: '1rem' }}>
-          Department Assignment Desk
-        </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1.5, borderBottom: '1px solid #e2dfd7' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Building2 className="w-5 h-5 text-[#877b5f]" />
+          <Typography variant="h6" sx={{ fontFamily: 'var(--font-display), Lora, Georgia, serif', fontWeight: 700, color: '#1f241d', fontSize: '1rem' }}>
+            Department Assignment Desk
+          </Typography>
+        </Box>
+        {isCompleted && (
+          <Typography variant="caption" sx={{ color: '#166534', fontWeight: 700, backgroundColor: '#f0fdf4', px: 1, py: 0.25, borderRadius: '4px', border: '1px solid #bbf7d0' }}>
+            Work Done
+          </Typography>
+        )}
       </Box>
 
       <TextField
@@ -162,6 +173,25 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
       >
         {currentAssignment ? 'Update Assignment' : 'Dispatch Assignment'}
       </Button>
+
+      {currentAssignment && isCompleted && onDelete && (
+        <Button
+          type="button"
+          variant="outlined"
+          color="error"
+          fullWidth
+          disabled={isLoading}
+          onClick={onDelete}
+          startIcon={<Trash2 className="w-4 h-4" />}
+          sx={{
+            mt: 0.5,
+            fontWeight: 700,
+            borderRadius: '8px',
+          }}
+        >
+          Delete Completed Work Record
+        </Button>
+      )}
     </Paper>
   );
 };
