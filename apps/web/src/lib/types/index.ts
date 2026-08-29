@@ -92,6 +92,9 @@ export interface Complaint {
   upvotesCount: number;
   upvotedByUserIds?: string[];
   resolutionNotes?: string;
+  rejectionReason?: string;
+  resolutionMedia?: MediaItem[];
+  auditEvents?: any[];
 }
 
 export interface ComplaintFilters {

@@ -20,6 +20,16 @@ import { NearbyQueryDto, ViewportQueryDto } from './dto/geo-query.dto';
 export class ComplaintsController {
   constructor(private readonly complaintsService: ComplaintsService) {}
 
+  @Get('stats')
+  async getStats() {
+    return this.complaintsService.getStats();
+  }
+
+  @Get('departments')
+  async getDepartments() {
+    return this.complaintsService.getDepartments();
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post()
   async createComplaint(@Request() req: any, @Body() dto: CreateComplaintDto) {
@@ -54,9 +64,53 @@ export class ComplaintsController {
     return this.complaintsService.getComplaintById(id);
   }
 
+  @Get(':id/audit')
+  async getAuditEvents(@Param('id') id: string) {
+    return this.complaintsService.getAuditEvents(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/assign')
+  async assignDepartment(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Body() body: { departmentId: string; officerId?: string; notes?: string },
+  ) {
+    const actorUserId = req.user?.userId || 'admin-desk-001';
+    return this.complaintsService.assignDepartment(
+      id,
+      body.departmentId,
+      body.officerId,
+      body.notes,
+      actorUserId,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/resolution-evidence')
+  async addResolutionEvidence(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Body() body: { mediaId: string },
+  ) {
+    const actorUserId = req.user?.userId || 'admin-desk-001';
+    return this.complaintsService.addResolutionEvidence(id, body.mediaId, actorUserId);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Patch(':id/status')
-  async updateStatus(
+  async updateStatusPatch(
+    @Request() req: any,
+    @Param('id') id: string,
+    @Body() dto: UpdateStatusDto,
+  ) {
+    const actorUserId = req.user?.userId || 'admin-desk-001';
+    return this.complaintsService.updateStatus(id, dto, actorUserId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/status')
+  async updateStatusPost(
     @Request() req: any,
     @Param('id') id: string,
     @Body() dto: UpdateStatusDto,
@@ -65,3 +119,4 @@ export class ComplaintsController {
     return this.complaintsService.updateStatus(id, dto, actorUserId);
   }
 }
+

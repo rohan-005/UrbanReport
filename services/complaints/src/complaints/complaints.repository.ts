@@ -146,11 +146,43 @@ export class ComplaintsRepository {
         [id],
       );
 
+      const assignRes = await this.db.query(
+        `
+        SELECT a.id, a.department_id, d.name as department_name, a.officer_id, a.notes, a.assigned_at
+        FROM assignments a
+        LEFT JOIN departments d ON d.id = a.department_id
+        WHERE a.complaint_id = $1
+        ORDER BY a.assigned_at DESC
+        LIMIT 1;
+        `,
+        [id],
+      );
+
+      const auditRes = await this.db.query(
+        `
+        SELECT id, actor_id, action, resource, resource_id, metadata, created_at
+        FROM audit_events
+        WHERE resource_id = $1
+        ORDER BY created_at DESC;
+        `,
+        [id],
+      );
+
       const [withMedia] = await this.attachMediaToComplaints([complaint]);
+
+      const assignment = assignRes.rows.length > 0 ? {
+        departmentId: assignRes.rows[0].department_id,
+        department: assignRes.rows[0].department_name || assignRes.rows[0].department_id,
+        assignedOfficer: assignRes.rows[0].officer_id,
+        notes: assignRes.rows[0].notes,
+        assignedAt: assignRes.rows[0].assigned_at,
+      } : (this.fallbackStore.get(id)?.assignment || null);
 
       return {
         ...withMedia,
         statusHistory: historyRes.rows,
+        assignment,
+        auditEvents: auditRes.rows,
       };
     } catch {
       return this.fallbackStore.get(id) || null;
@@ -304,12 +336,202 @@ export class ComplaintsRepository {
     }
   }
 
+  async getStats(): Promise<any> {
+    try {
+      const res = await this.db.query(`
+        SELECT 
+          COUNT(*)::int as total,
+          COUNT(*) FILTER (WHERE status = 'SUBMITTED')::int as submitted,
+          COUNT(*) FILTER (WHERE status = 'UNDER_REVIEW')::int as "underReview",
+          COUNT(*) FILTER (WHERE status = 'VERIFIED')::int as verified,
+          COUNT(*) FILTER (WHERE status = 'ASSIGNED')::int as assigned,
+          COUNT(*) FILTER (WHERE status = 'IN_PROGRESS')::int as "inProgress",
+          COUNT(*) FILTER (WHERE status = 'RESOLVED')::int as resolved,
+          COUNT(*) FILTER (WHERE status = 'REOPENED')::int as reopened,
+          COUNT(*) FILTER (WHERE status = 'REJECTED')::int as rejected,
+          COUNT(*) FILTER (WHERE severity = 'CRITICAL')::int as critical
+        FROM complaints;
+      `);
+      return res.rows[0];
+    } catch {
+      const all = Array.from(this.fallbackStore.values());
+      return {
+        total: all.length,
+        submitted: all.filter((c) => c.status === 'SUBMITTED').length,
+        underReview: all.filter((c) => c.status === 'UNDER_REVIEW').length,
+        verified: all.filter((c) => c.status === 'VERIFIED').length,
+        assigned: all.filter((c) => c.status === 'ASSIGNED').length,
+        inProgress: all.filter((c) => c.status === 'IN_PROGRESS').length,
+        resolved: all.filter((c) => c.status === 'RESOLVED').length,
+        reopened: all.filter((c) => c.status === 'REOPENED').length,
+        rejected: all.filter((c) => c.status === 'REJECTED').length,
+        critical: all.filter((c) => c.severity === 'CRITICAL').length,
+      };
+    }
+  }
+
+  async getDepartments(): Promise<any[]> {
+    try {
+      const res = await this.db.query(`
+        SELECT id, name, service_area, active, created_at
+        FROM departments
+        ORDER BY name ASC;
+      `);
+      if (res.rows.length > 0) return res.rows;
+    } catch {}
+
+    return [
+      { id: 'dept-roads', name: 'Roads & Infrastructure Department', service_area: 'Central Zone', active: true },
+      { id: 'dept-sanitation', name: 'Solid Waste & Sanitation Department', service_area: 'North & West Wards', active: true },
+      { id: 'dept-lighting', name: 'Electrical & Street Lighting Unit', service_area: 'City Metro Grid', active: true },
+      { id: 'dept-water', name: 'Water Supply & Sewage Board', service_area: 'Metropolitan Basin', active: true },
+      { id: 'dept-traffic', name: 'Traffic Signals & Safety Authority', service_area: 'Urban Transit Grid', active: true },
+    ];
+  }
+
+  async assignDepartment(
+    complaintId: string,
+    departmentId: string,
+    officerId?: string,
+    notes?: string,
+    actorUserId: string = 'admin-001',
+  ): Promise<any> {
+    try {
+      return await this.db.withTransaction(async (client) => {
+        const compRes = await client.query(`SELECT status FROM complaints WHERE id = $1;`, [complaintId]);
+        if (compRes.rows.length === 0) throw new NotFoundException(`Complaint ${complaintId} not found.`);
+
+        const currentStatus = compRes.rows[0].status;
+        const nextStatus = (currentStatus === 'SUBMITTED' || currentStatus === 'UNDER_REVIEW' || currentStatus === 'VERIFIED') ? 'ASSIGNED' : currentStatus;
+
+        await client.query(
+          `
+          INSERT INTO assignments (complaint_id, department_id, officer_id, notes)
+          VALUES ($1, $2, $3, $4);
+          `,
+          [complaintId, departmentId, officerId || null, notes || null],
+        );
+
+        await client.query(
+          `
+          UPDATE complaints
+          SET status = $1, updated_at = NOW()
+          WHERE id = $2;
+          `,
+          [nextStatus, complaintId],
+        );
+
+        await client.query(
+          `
+          INSERT INTO status_history (complaint_id, from_status, to_status, actor_user_id, note)
+          VALUES ($1, $2, $3, $4, $5);
+          `,
+          [complaintId, currentStatus, nextStatus, actorUserId, notes || `Assigned to department ${departmentId}`],
+        );
+
+        await client.query(
+          `
+          INSERT INTO audit_events (actor_id, action, resource, resource_id, metadata)
+          VALUES ($1, 'ASSIGN_DEPARTMENT', 'complaint', $2, $3);
+          `,
+          [actorUserId, complaintId, JSON.stringify({ departmentId, officerId, notes })],
+        );
+
+        return this.findById(complaintId);
+      });
+    } catch {
+      const existing = this.fallbackStore.get(complaintId);
+      if (existing) {
+        existing.status = 'ASSIGNED';
+        existing.assignment = {
+          departmentId,
+          department: departmentId,
+          assignedOfficer: officerId,
+          notes,
+          assignedAt: new Date().toISOString(),
+        };
+        this.fallbackStore.set(complaintId, existing);
+        return existing;
+      }
+      throw new NotFoundException(`Complaint ${complaintId} not found.`);
+    }
+  }
+
+  async addResolutionEvidence(
+    complaintId: string,
+    mediaId: string,
+    actorUserId: string = 'admin-001',
+  ): Promise<any> {
+    try {
+      await this.db.query(
+        `
+        INSERT INTO complaint_media (complaint_id, media_id, type, caption, url)
+        VALUES ($1, $2, 'resolution', 'Resolution evidence photo', $3);
+        `,
+        [complaintId, mediaId, `/media/${mediaId}`],
+      );
+
+      await this.db.query(
+        `
+        INSERT INTO audit_events (actor_id, action, resource, resource_id, metadata)
+        VALUES ($1, 'UPLOAD_RESOLUTION_EVIDENCE', 'complaint', $2, $3);
+        `,
+        [actorUserId, complaintId, JSON.stringify({ mediaId })],
+      );
+
+      return this.findById(complaintId);
+    } catch {
+      const existing = this.fallbackStore.get(complaintId);
+      if (existing) {
+        if (!existing.media) existing.media = [];
+        existing.media.push({
+          id: mediaId,
+          mediaId: mediaId,
+          type: 'resolution',
+          caption: 'Resolution evidence photo',
+          url: `/media/${mediaId}`,
+          createdAt: new Date().toISOString(),
+        });
+        return existing;
+      }
+      throw new NotFoundException(`Complaint ${complaintId} not found.`);
+    }
+  }
+
+  async getAuditEvents(complaintId: string): Promise<any[]> {
+    try {
+      const res = await this.db.query(
+        `
+        SELECT id, actor_id, action, resource, resource_id, metadata, created_at
+        FROM audit_events
+        WHERE resource_id = $1
+        ORDER BY created_at DESC;
+        `,
+        [complaintId],
+      );
+      return res.rows;
+    } catch {
+      return [
+        {
+          id: `audit-${Date.now()}`,
+          actor_id: 'admin-001',
+          action: 'VIEW_COMPLAINT',
+          resource: 'complaint',
+          resource_id: complaintId,
+          metadata: {},
+          created_at: new Date().toISOString(),
+        },
+      ];
+    }
+  }
+
   async updateStatus(
     id: string,
     fromStatus: ComplaintStatus,
     toStatus: ComplaintStatus,
     actorUserId: string,
     note?: string,
+    resolutionMediaIds?: string[],
   ): Promise<any> {
     try {
       return await this.db.withTransaction(async (client) => {
@@ -330,6 +552,18 @@ export class ComplaintsRepository {
 
         const updated = updateRes.rows[0];
 
+        if (resolutionMediaIds && resolutionMediaIds.length > 0) {
+          for (const mId of resolutionMediaIds) {
+            await client.query(
+              `
+              INSERT INTO complaint_media (complaint_id, media_id, type, caption, url)
+              VALUES ($1, $2, 'resolution', 'Resolution photo evidence', $3);
+              `,
+              [id, mId, `/media/${mId}`],
+            );
+          }
+        }
+
         await client.query(
           `
           INSERT INTO status_history (complaint_id, from_status, to_status, actor_user_id, note)
@@ -343,7 +577,7 @@ export class ComplaintsRepository {
           INSERT INTO audit_events (actor_id, action, resource, resource_id, metadata)
           VALUES ($1, 'UPDATE_STATUS', 'complaint', $2, $3);
           `,
-          [actorUserId, id, JSON.stringify({ fromStatus, toStatus, note })],
+          [actorUserId, id, JSON.stringify({ fromStatus, toStatus, note, resolutionMediaIds })],
         );
 
         const [withMedia] = await this.attachMediaToComplaints([updated]);
@@ -355,6 +589,19 @@ export class ComplaintsRepository {
       if (!existing) throw new NotFoundException(`Complaint ${id} not found.`);
       existing.status = toStatus;
       existing.updated_at = new Date().toISOString();
+      if (resolutionMediaIds && resolutionMediaIds.length > 0) {
+        if (!existing.media) existing.media = [];
+        for (const mId of resolutionMediaIds) {
+          existing.media.push({
+            id: mId,
+            mediaId: mId,
+            type: 'resolution',
+            caption: 'Resolution photo evidence',
+            url: `/media/${mId}`,
+            createdAt: new Date().toISOString(),
+          });
+        }
+      }
       this.fallbackStore.set(id, existing);
       return existing;
     }

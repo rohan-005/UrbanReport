@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Complaint, ComplaintFilters, Severity, ComplaintStatus } from '@/lib/types';
 import { AdminComplaintTable } from '@/components/admin/AdminComplaintTable';
@@ -18,6 +20,9 @@ import Button from '@mui/material/Button';
 import { Search, RefreshCw } from 'lucide-react';
 
 export default function AdminComplaintsPage() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,6 +33,14 @@ export default function AdminComplaintsPage() {
     searchQuery: '',
     sortBy: 'severity',
   });
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!isAuthenticated || (user?.role !== 'ADMIN' && user?.role !== 'OFFICER' && user?.role !== 'AUTHORITY')) {
+        router.push('/admin/login');
+      }
+    }
+  }, [authLoading, isAuthenticated, user, router]);
 
   const loadData = async () => {
     setLoading(true);

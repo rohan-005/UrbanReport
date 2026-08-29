@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Assignment } from '@/lib/types';
+import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -43,11 +44,22 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
   onAssign,
   isLoading = false,
 }) => {
+  const [deptList, setDeptList] = useState<string[]>(departments);
+
+  useEffect(() => {
+    complaintRepository.getDepartments().then((res) => {
+      if (Array.isArray(res) && res.length > 0) {
+        const names = res.map((d: any) => d.name || d.id);
+        setDeptList(names);
+      }
+    });
+  }, []);
+
   const [department, setDepartment] = useState(
-    currentAssignment?.department || departments[0]
+    currentAssignment?.department || deptList[0] || departments[0]
   );
 
-  const availableOfficers = mockOfficers[department] || ['Field Officer Unassigned'];
+  const availableOfficers = mockOfficers[department] || ['Field Officer Unassigned', 'Inspector Rajesh K.'];
 
   const [assignedOfficer, setAssignedOfficer] = useState(
     currentAssignment?.assignedOfficer || availableOfficers[0]
@@ -98,7 +110,7 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
           setAssignedOfficer(mockOfficers[newDept]?.[0] || 'Unassigned Officer');
         }}
       >
-        {departments.map((dept) => (
+        {deptList.map((dept) => (
           <MenuItem key={dept} value={dept}>
             {dept}
           </MenuItem>

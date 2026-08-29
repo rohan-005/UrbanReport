@@ -41,9 +41,44 @@ export class ComplaintsService {
     return this.repo.findViewport(dto);
   }
 
+  async getStats() {
+    return this.repo.getStats();
+  }
+
+  async getDepartments() {
+    return this.repo.getDepartments();
+  }
+
+  async assignDepartment(
+    complaintId: string,
+    departmentId: string,
+    officerId?: string,
+    notes?: string,
+    actorUserId: string = 'admin-001',
+  ) {
+    return this.repo.assignDepartment(complaintId, departmentId, officerId, notes, actorUserId);
+  }
+
+  async addResolutionEvidence(complaintId: string, mediaId: string, actorUserId: string = 'admin-001') {
+    return this.repo.addResolutionEvidence(complaintId, mediaId, actorUserId);
+  }
+
+  async getAuditEvents(complaintId: string) {
+    return this.repo.getAuditEvents(complaintId);
+  }
+
   async updateStatus(id: string, dto: UpdateStatusDto, actorUserId: string) {
     const current = await this.getComplaintById(id);
     this.lifecycle.validateTransition(current.status, dto.nextStatus);
-    return this.repo.updateStatus(id, current.status, dto.nextStatus, actorUserId, dto.note);
+    const noteText = dto.note || dto.rejectionReason;
+    return this.repo.updateStatus(
+      id,
+      current.status,
+      dto.nextStatus,
+      actorUserId,
+      noteText,
+      dto.resolutionMediaIds,
+    );
   }
 }
+

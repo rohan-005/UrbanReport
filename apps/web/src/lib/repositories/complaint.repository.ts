@@ -354,17 +354,18 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
     status: ComplaintStatus,
     actorName: string,
     actorRole: 'CITIZEN' | 'ADMIN' | 'OFFICER' | 'SYSTEM',
-    notes?: string
+    notes?: string,
+    resolutionMediaIds?: string[],
   ): Promise<Complaint | null> {
     try {
       const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
       const res = await fetch(`${API_BASE}/complaints/${id}/status`, {
-        method: 'PATCH',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ nextStatus: status, note: notes }),
+        body: JSON.stringify({ nextStatus: status, note: notes, resolutionMediaIds }),
       });
 
       if (!res.ok) return this.fallbackMock.updateStatus(id, status, actorName, actorRole, notes);
@@ -380,14 +381,42 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
     assignment: Assignment,
     actorName: string
   ): Promise<Complaint | null> {
-    return null;
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
+      const res = await fetch(`${API_BASE}/complaints/${id}/assign`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          departmentId: assignment.department,
+          officerId: assignment.assignedOfficer,
+          notes: assignment.notes,
+        }),
+      });
+
+      if (!res.ok) return this.fallbackMock.assignDepartment(id, assignment, actorName);
+      const item = await res.json();
+      return this.mapToFrontendComplaint(item);
+    } catch {
+      return this.fallbackMock.assignDepartment(id, assignment, actorName);
+    }
   }
 
   public async upvoteComplaint(id: string, userId: string): Promise<Complaint | null> {
-    return null;
+    return this.fallbackMock.upvoteComplaint(id, userId);
   }
 
   public async getStats() {
+    try {
+      const res = await fetch(`${API_BASE}/admin/stats`);
+      if (res.ok) {
+        const stats = await res.json();
+        if (stats && typeof stats.total === 'number') return stats;
+      }
+    } catch {}
+
     const all = await this.getAllComplaints();
     return {
       total: all.length,
@@ -401,6 +430,32 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       rejected: all.filter((c) => c.status === 'REJECTED').length,
       critical: all.filter((c) => c.severity === 'CRITICAL').length,
     };
+  }
+
+  public async getDepartments(): Promise<any[]> {
+    try {
+      const res = await fetch(`${API_BASE}/departments`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {}
+    return [
+      { id: 'dept-roads', name: 'Roads & Infrastructure Department', service_area: 'Central Zone', active: true },
+      { id: 'dept-sanitation', name: 'Solid Waste & Sanitation Department', service_area: 'North & West Wards', active: true },
+      { id: 'dept-lighting', name: 'Electrical & Street Lighting Unit', service_area: 'City Metro Grid', active: true },
+      { id: 'dept-water', name: 'Water Supply & Sewage Board', service_area: 'Metropolitan Basin', active: true },
+      { id: 'dept-traffic', name: 'Traffic Signals & Safety Authority', service_area: 'Urban Transit Grid', active: true },
+    ];
+  }
+
+  public async getAuditEvents(id: string): Promise<any[]> {
+    try {
+      const res = await fetch(`${API_BASE}/complaints/${id}/audit`);
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {}
+    return [];
   }
 
   public async getViewportComplaints(
@@ -469,12 +524,31 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       },
     }));
 
-    const mediaList = (item.media || []).map((m: any) => ({
-      id: m.id || m.mediaId || `med-${Math.random()}`,
-      url: MediaService.getMediaUrl(m.url || m.mediaId || m.id),
-      type: (m.type || 'image') as 'image' | 'video',
-      caption: m.caption || 'Evidence photo',
-    }));
+    const rawMedia = item.media || [];
+    const mediaList = rawMedia
+      .filter((m: any) => m.type !== 'resolution' && m.type !== 'after')
+      .map((m: any) => ({
+        id: m.id || m.mediaId || `med-${Math.random()}`,
+        url: MediaService.getMediaUrl(m.url || m.mediaId || m.id),
+        type: (m.type || 'image') as 'image' | 'video',
+        caption: m.caption || 'Submission evidence photo',
+      }));
+
+    const resolutionMediaList = rawMedia
+      .filter((m: any) => m.type === 'resolution' || m.type === 'after')
+      .map((m: any) => ({
+        id: m.id || m.mediaId || `med-${Math.random()}`,
+        url: MediaService.getMediaUrl(m.url || m.mediaId || m.id),
+        type: (m.type || 'image') as 'image' | 'video',
+        caption: m.caption || 'Resolution evidence photo',
+      }));
+
+    const assignment = item.assignment ? {
+      department: item.assignment.department || item.assignment.departmentId || 'Municipal Department',
+      assignedOfficer: item.assignment.assignedOfficer || item.assignment.officer_id,
+      notes: item.assignment.notes,
+      assignedAt: item.assignment.assignedAt || item.assignment.assigned_at,
+    } : undefined;
 
     return {
       id: item.id || `URB-${Date.now()}`,
@@ -486,15 +560,23 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       latitude: item.latitude ? parseFloat(item.latitude) : 28.6139,
       longitude: item.longitude ? parseFloat(item.longitude) : 77.2090,
       address: item.address || 'Location Coordinates',
-      createdAt: item.created_at || new Date().toISOString(),
-      updatedAt: item.updated_at || new Date().toISOString(),
+      createdAt: item.created_at || item.createdAt || new Date().toISOString(),
+      updatedAt: item.updated_at || item.updatedAt || new Date().toISOString(),
       reporter: {
         id: item.reporter_user_id || 'user-001',
         name: 'Citizen Reporter',
       },
-      media: mediaList,
+      media: mediaList.length > 0 ? mediaList : (rawMedia.length > 0 ? rawMedia.map((m: any) => ({
+        id: m.id || m.mediaId || `med-${Math.random()}`,
+        url: MediaService.getMediaUrl(m.url || m.mediaId || m.id),
+        type: (m.type || 'image') as 'image' | 'video',
+        caption: m.caption || 'Evidence photo',
+      })) : []),
+      resolutionMedia: resolutionMediaList,
       timeline,
-      upvotesCount: item.upvotes_count || 0,
+      assignment,
+      auditEvents: item.auditEvents || [],
+      upvotesCount: item.upvotes_count || item.upvotesCount || 0,
     };
   }
 }

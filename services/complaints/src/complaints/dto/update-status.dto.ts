@@ -21,4 +21,20 @@ export class UpdateStatusDto {
   @IsOptional()
   @IsString()
   note?: string;
+
+  @IsOptional()
+  @IsString()
+  rejectionReason?: string;
+
+  @IsOptional()
+  @IsString()
+  departmentId?: string;
+
+  @IsOptional()
+  @IsString()
+  officerId?: string;
+
+  @IsOptional()
+  resolutionMediaIds?: string[];
 }
+

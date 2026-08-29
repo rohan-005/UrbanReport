@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Complaint } from '@/lib/types';
 import { StatsCards } from '@/components/admin/StatsCards';
@@ -16,9 +18,20 @@ import Button from '@mui/material/Button';
 import { ShieldCheck, ListFilter, AlertTriangle, RefreshCw } from 'lucide-react';
 
 export default function AdminDashboardPage() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authLoading) {
+      if (!isAuthenticated || (user?.role !== 'ADMIN' && user?.role !== 'OFFICER' && user?.role !== 'AUTHORITY')) {
+        router.push('/admin/login');
+      }
+    }
+  }, [authLoading, isAuthenticated, user, router]);
 
   const loadData = async () => {
     setLoading(true);

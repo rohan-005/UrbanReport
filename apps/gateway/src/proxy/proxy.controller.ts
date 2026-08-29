@@ -64,6 +64,16 @@ export class ProxyController {
   }
 
   // --- COMPLAINTS PROXY ---
+  @Get('admin/stats')
+  async getAdminStats(@Req() req: Request) {
+    return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints/stats`, this.getPassHeaders(req));
+  }
+
+  @Get('departments')
+  async getDepartments(@Req() req: Request) {
+    return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints/departments`, this.getPassHeaders(req));
+  }
+
   @Get('complaints/viewport')
   async getViewportComplaints(@Query() query: any, @Req() req: Request) {
     const qp = new URLSearchParams(query).toString();
@@ -85,6 +95,21 @@ export class ProxyController {
   @Get('complaints/:id')
   async getComplaintById(@Param('id') id: string, @Req() req: Request) {
     return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints/${id}`, this.getPassHeaders(req));
+  }
+
+  @Get('complaints/:id/audit')
+  async getComplaintAudit(@Param('id') id: string, @Req() req: Request) {
+    return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints/${id}/audit`, this.getPassHeaders(req));
+  }
+
+  @Post('complaints/:id/assign')
+  async assignComplaintDepartment(@Param('id') id: string, @Body() body: any, @Req() req: Request) {
+    return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints/${id}/assign`, body, this.getPassHeaders(req));
+  }
+
+  @Post('complaints/:id/resolution-evidence')
+  async addResolutionEvidence(@Param('id') id: string, @Body() body: any, @Req() req: Request) {
+    return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints/${id}/resolution-evidence`, body, this.getPassHeaders(req));
   }
 
   @Post('complaints')
@@ -123,9 +148,15 @@ export class ProxyController {
   }
 
   @Patch('complaints/:id/status')
-  async updateComplaintStatus(@Param('id') id: string, @Body() body: UpdateStatusDto, @Req() req: Request) {
+  async updateComplaintStatusPatch(@Param('id') id: string, @Body() body: UpdateStatusDto, @Req() req: Request) {
     return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints/${id}/status`, body, this.getPassHeaders(req));
   }
+
+  @Post('complaints/:id/status')
+  async updateComplaintStatusPost(@Param('id') id: string, @Body() body: UpdateStatusDto, @Req() req: Request) {
+    return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints/${id}/status`, body, this.getPassHeaders(req));
+  }
+
 
   // --- MAPS PROXY ---
   @Get('maps/search')

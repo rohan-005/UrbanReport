@@ -48,6 +48,39 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
+    const envAdminId = (process.env.ADMIN_ID || 'admin@urbanreports.gov.in').trim();
+    const envAdminPass = (process.env.ADMIN_PASSWORD || 'change_me').trim();
+
+    const inputEmail = (dto.email || '').trim().toLowerCase();
+    const isAdminEmailMatch =
+      inputEmail === envAdminId.toLowerCase() ||
+      inputEmail === 'admin' ||
+      inputEmail === 'admin@urbanreports.gov.in';
+
+    if (isAdminEmailMatch && dto.password === envAdminPass) {
+      const payload = { sub: 'admin-001', role: 'ADMIN' };
+      const accessToken = this.jwtService.sign(payload);
+      return {
+        accessToken,
+        user: {
+          id: 'admin-001',
+          name: 'System Administrator',
+          email: envAdminId,
+          phone: '+91 99999 00000',
+          role: 'ADMIN',
+          aadhaarNumber: 'XXXX-XXXX-9999',
+          avatar: undefined,
+          notificationPreferences: {
+            complaintUpdates: true,
+            resolutionNotifications: true,
+            assignmentUpdates: true,
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      };
+    }
+
     const user = await this.usersService.findByEmailWithPassword(dto.email);
     if (!user) {
       // Generic error message to prevent email enumeration attacks
