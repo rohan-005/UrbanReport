@@ -40,15 +40,31 @@ export const FloatingBottomNav: React.FC = () => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion || !navContainerRef.current) return;
 
-    gsap.fromTo(
-      navContainerRef.current,
-      { y: 35, opacity: 0, scale: 0.98 },
-      { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'power3.out', delay: 0.1 }
-    );
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        navContainerRef.current,
+        { y: 35, opacity: 0, scale: 0.98 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.4,
+          ease: 'power3.out',
+          delay: 0.1,
+          onComplete: () => {
+            if (navContainerRef.current) {
+              gsap.set(navContainerRef.current, { clearProps: 'transform,opacity' });
+            }
+          },
+        }
+      );
+    }, navContainerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
-    <div className="fixed bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[calc(100vw-1rem)] sm:max-w-max pointer-events-auto pb-[env(safe-area-inset-bottom)] transition-all duration-200">
+    <div className="fixed bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-auto max-w-[calc(100vw-1rem)] sm:max-w-max pointer-events-auto pb-[env(safe-area-inset-bottom)] transition-all duration-200">
       <nav
         ref={navContainerRef}
         className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-md bg-[#1f241d]/95 border border-[#877b5f]/40 shadow-xl backdrop-blur-xl ring-1 ring-white/10"

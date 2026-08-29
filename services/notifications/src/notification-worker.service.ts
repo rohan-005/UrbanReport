@@ -37,11 +37,12 @@ export class NotificationWorkerService implements OnModuleInit {
     this.processedEvents.add(event.eventId);
 
     // 2. Resolve User Email & Notification Preferences
-    const recipient = await this.resolveRecipient(event.reporterUserId);
+    const recipient = await this.resolveRecipient(event.reporterUserId, event.metadata);
     if (!recipient || !recipient.email) {
       this.logger.warn(`Could not resolve recipient email for user ID ${event.reporterUserId}. Skipping email.`);
       return;
     }
+
 
     // 3. Evaluate User Notification Preferences
     const prefs = recipient.notificationPreferences || {
@@ -114,7 +115,23 @@ export class NotificationWorkerService implements OnModuleInit {
     this.logger.error(`[Worker Delivery Permanently Failed] Max retries (${maxRetries}) reached for ${to}. Complaint status unaffected.`);
   }
 
-  private async resolveRecipient(userId: string): Promise<{ name?: string; email: string; notificationPreferences?: any } | null> {
+  private async resolveRecipient(userId: string, metadata?: any): Promise<{ name?: string; email: string; notificationPreferences?: any } | null> {
+    if (metadata?.reporterEmail || metadata?.email) {
+      return {
+        name: metadata?.reporterName || 'Citizen Reporter',
+        email: metadata?.reporterEmail || metadata?.email,
+        notificationPreferences: { complaintUpdates: true, resolutionNotifications: true, assignmentUpdates: true },
+      };
+    }
+
+    if (userId && userId.includes('@')) {
+      return {
+        name: 'Citizen Reporter',
+        email: userId,
+        notificationPreferences: { complaintUpdates: true, resolutionNotifications: true, assignmentUpdates: true },
+      };
+    }
+
     if (userId === 'admin-001' || userId === 'admin@urbanreports.gov.in') {
       return {
         name: 'Municipal Administrator',
@@ -139,10 +156,10 @@ export class NotificationWorkerService implements OnModuleInit {
       this.logger.warn(`User Service lookup for ${userId} failed: ${err.message}`);
     }
 
-    // Default fallback recipient for demo
+    // Default fallback recipient to configured DEFAULT_NOTIFICATION_EMAIL or active user email
     return {
       name: 'Citizen Reporter',
-      email: 'citizen@urbanreports.gov.in',
+      email: process.env.DEFAULT_NOTIFICATION_EMAIL || 'rokumar005@gmail.com',
       notificationPreferences: { complaintUpdates: true, resolutionNotifications: true, assignmentUpdates: true },
     };
   }

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState, use, useCallback } from 'react';
+
 import Link from 'next/link';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Complaint } from '@/lib/types';
@@ -39,7 +40,7 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
   const [loading, setLoading] = useState(true);
   const [isUpvoted, setIsUpvoted] = useState(false);
 
-  const loadComplaint = async () => {
+  const loadComplaint = useCallback(async () => {
     setLoading(true);
     const data = await complaintRepository.getComplaintById(complaintId);
     setComplaint(data);
@@ -47,13 +48,13 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
       setIsUpvoted(data.upvotedByUserIds?.includes('user-001') || false);
     }
     setLoading(false);
-  };
+  }, [complaintId]);
 
   useEffect(() => {
     loadComplaint();
     const unsubscribe = complaintRepository.subscribe(() => loadComplaint());
     return () => unsubscribe();
-  }, [complaintId]);
+  }, [loadComplaint]);
 
   const handleUpvote = async () => {
     if (!complaint) return;

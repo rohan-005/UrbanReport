@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState, use, useCallback } from 'react';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -90,7 +91,7 @@ export default function AdminComplaintDetailPage({
     }
   }, [authLoading, isAuthenticated, user, router]);
 
-  const loadComplaint = async () => {
+  const loadComplaint = useCallback(async () => {
     setLoading(true);
     const data = await complaintRepository.getComplaintById(complaintId);
     setComplaint(data);
@@ -99,13 +100,13 @@ export default function AdminComplaintDetailPage({
       setAuditEvents(audits);
     }
     setLoading(false);
-  };
+  }, [complaintId]);
 
   useEffect(() => {
     loadComplaint();
     const unsubscribe = complaintRepository.subscribe(() => loadComplaint());
     return () => unsubscribe();
-  }, [complaintId]);
+  }, [loadComplaint]);
 
   // State Machine helper
   const getAllowedTransitions = (status: ComplaintStatus): ComplaintStatus[] => {

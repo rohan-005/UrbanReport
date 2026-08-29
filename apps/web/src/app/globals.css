@@ -75,11 +75,20 @@ body {
   background: #877b5f;
 }
 
-/* Accessible focus ring default override */
-*:focus-visible {
+/* Accessible focus ring default override — exclude form input controls to prevent double border collisions with MUI fieldsets */
+*:focus-visible:not(input):not(textarea):not(select):not(.MuiInputBase-input):not(.MuiSelect-select) {
   outline: 2px solid #89a577 !important;
   outline-offset: 2px !important;
 }
+
+/* Ensure MUI OutlinedInput components render clean notched borders without secondary focus boxes */
+.MuiInputBase-root,
+.MuiInputBase-input,
+.MuiOutlinedInput-root,
+.MuiOutlinedInput-notchedOutline {
+  outline: none !important;
+}
+
 
 /* Maplibre Popup Custom Overrides */
 .maplibregl-popup-content {

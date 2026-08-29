@@ -84,6 +84,7 @@ export interface Complaint {
   reporter: {
     id: string;
     name: string;
+    email?: string;
     isAnonymous?: boolean;
   };
   media: MediaItem[];

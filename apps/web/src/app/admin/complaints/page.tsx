@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
@@ -42,18 +43,18 @@ export default function AdminComplaintsPage() {
     }
   }, [authLoading, isAuthenticated, user, router]);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     const data = await complaintRepository.getAllComplaints(filters);
     setComplaints(data);
     setLoading(false);
-  };
+  }, [filters]);
 
   useEffect(() => {
     loadData();
     const unsubscribe = complaintRepository.subscribe(() => loadData());
     return () => unsubscribe();
-  }, [filters]);
+  }, [loadData]);
 
   return (
     <PageTransition>

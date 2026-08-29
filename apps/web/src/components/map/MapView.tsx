@@ -25,10 +25,10 @@ interface MapViewProps {
 }
 
 const severityColors: Record<Severity, string> = {
-  CRITICAL: '#ef4444',
-  HIGH: '#f8fafc',
-  MEDIUM: '#a1a1aa',
-  LOW: '#52525b',
+  CRITICAL: '#dc2626',
+  HIGH: '#ea580c',
+  MEDIUM: '#d97706',
+  LOW: '#65a30d',
 };
 
 export const MapView: React.FC<MapViewProps> = ({
@@ -190,6 +190,20 @@ export const MapView: React.FC<MapViewProps> = ({
 
           markersRef.current.set(complaint.id, marker);
         });
+
+        if (complaints.length > 0 && mapRef.current) {
+          const bounds = new maplibregl.LngLatBounds();
+          let validCount = 0;
+          complaints.forEach((c) => {
+            if (typeof c.longitude === 'number' && typeof c.latitude === 'number' && !isNaN(c.longitude) && !isNaN(c.latitude)) {
+              bounds.extend([c.longitude, c.latitude]);
+              validCount++;
+            }
+          });
+          if (validCount > 0 && !bounds.isEmpty()) {
+            mapRef.current.fitBounds(bounds, { padding: { top: 80, bottom: 120, left: 80, right: 80 }, maxZoom: 14 });
+          }
+        }
       } catch (err) {
         console.error('Failed to update map markers:', err);
       }

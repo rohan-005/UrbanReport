@@ -34,6 +34,10 @@ export const Modal: React.FC<ModalProps> = ({
         { scale: 1, opacity: 1, duration: 0.2, ease: 'power2.out' }
       );
     }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.pointerEvents = '';
+    };
   }, [isOpen]);
 
   return (

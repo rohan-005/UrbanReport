@@ -56,14 +56,9 @@ export default function MapPage() {
     searchQuery: '',
   });
 
-  const loadData = useCallback(async (bounds: MapBounds | null, currentFilters: ComplaintFilters) => {
+  const loadData = useCallback(async (currentFilters: ComplaintFilters) => {
     setLoading(true);
-    let data: Complaint[] = [];
-    if (bounds) {
-      data = await complaintRepository.getViewportComplaints(bounds, currentFilters);
-    } else {
-      data = await complaintRepository.getAllComplaints(currentFilters);
-    }
+    let data: Complaint[] = await complaintRepository.getAllComplaints(currentFilters);
 
     if (currentFilters.searchQuery?.trim()) {
       const q = currentFilters.searchQuery.toLowerCase().trim();
@@ -82,14 +77,14 @@ export default function MapPage() {
 
   const handleViewportChange = useCallback((bounds: MapBounds) => {
     setViewportBounds(bounds);
-    loadData(bounds, filters);
-  }, [filters, loadData]);
+  }, []);
 
   useEffect(() => {
-    loadData(viewportBounds, filters);
-    const unsubscribe = complaintRepository.subscribe(() => loadData(viewportBounds, filters));
+    loadData(filters);
+    const unsubscribe = complaintRepository.subscribe(() => loadData(filters));
     return () => unsubscribe();
-  }, [filters, viewportBounds, loadData]);
+  }, [filters, loadData]);
+
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 0rem)', backgroundColor: '#f5f3ee', pb: 10 }}>

@@ -129,6 +129,7 @@ export class ComplaintsService {
         category: complaint.category,
         status: complaint.status || eventType.replace('Complaint', '').toUpperCase(),
         address: complaint.address,
+        reporterEmail: complaint.reporter?.email || complaint.reporter_email || 'rokumar005@gmail.com',
         notes,
         rejectionReason: notes,
       },

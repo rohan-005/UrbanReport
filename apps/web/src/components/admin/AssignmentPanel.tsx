@@ -45,25 +45,33 @@ export const AssignmentPanel: React.FC<AssignmentPanelProps> = ({
   isLoading = false,
 }) => {
   const [deptList, setDeptList] = useState<string[]>(departments);
+  const [department, setDepartment] = useState(
+    currentAssignment?.department || departments[0]
+  );
 
   useEffect(() => {
     complaintRepository.getDepartments().then((res) => {
       if (Array.isArray(res) && res.length > 0) {
         const names = res.map((d: any) => d.name || d.id);
         setDeptList(names);
+        if (!names.includes(department)) {
+          setDepartment(names[0]);
+        }
       }
     });
   }, []);
-
-  const [department, setDepartment] = useState(
-    currentAssignment?.department || deptList[0] || departments[0]
-  );
 
   const availableOfficers = mockOfficers[department] || ['Field Officer Unassigned', 'Inspector Rajesh K.'];
 
   const [assignedOfficer, setAssignedOfficer] = useState(
     currentAssignment?.assignedOfficer || availableOfficers[0]
   );
+
+  useEffect(() => {
+    if (!availableOfficers.includes(assignedOfficer)) {
+      setAssignedOfficer(availableOfficers[0]);
+    }
+  }, [department, availableOfficers]);
 
   const [notes, setNotes] = useState(currentAssignment?.notes || '');
 

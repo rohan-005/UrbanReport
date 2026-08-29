@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
+
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
 import { Complaint, ComplaintFilters } from '@/lib/types';
 import { ComplaintCard } from '@/components/complaints/ComplaintCard';
@@ -29,18 +30,18 @@ export default function ComplaintsPage() {
     sortBy: 'newest',
   });
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     const data = await complaintRepository.getAllComplaints(filters);
     setComplaints(data);
     setLoading(false);
-  };
+  }, [filters]);
 
   useEffect(() => {
     loadData();
     const unsubscribe = complaintRepository.subscribe(() => loadData());
     return () => unsubscribe();
-  }, [filters]);
+  }, [loadData]);
 
   const handleUpvote = async (id: string) => {
     await complaintRepository.upvoteComplaint(id, 'user-001');
