@@ -189,7 +189,6 @@ export class ProxyController {
     const headers: Record<string, string> = {};
     if (req.headers.authorization) headers['authorization'] = req.headers.authorization as string;
     if (req.headers['x-request-id']) headers['x-request-id'] = req.headers['x-request-id'] as string;
-    if (req.headers['content-type']) headers['content-type'] = req.headers['content-type'] as string;
 
     const user = (req as any).user;
     if (user) {

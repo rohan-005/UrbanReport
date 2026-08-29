@@ -74,4 +74,19 @@ export class CreateComplaintDto {
   @IsArray()
   @IsOptional()
   media?: any[];
+
+  @IsOptional()
+  status?: any;
+
+  @IsOptional()
+  reporter?: any;
+
+  @IsOptional()
+  id?: any;
+
+  @IsOptional()
+  createdAt?: any;
+
+  @IsOptional()
+  updatedAt?: any;
 }
