@@ -22,7 +22,7 @@ services:
     name: civic-gateway
     env: node
     buildCommand: pnpm install && pnpm --filter @urbanreports/gateway build
-    startCommand: pnpm --filter @urbanreports/gateway start
+    startCommand: pnpm --filter @urbanreports/gateway start:prod
     envVars:
       - key: PORT
         value: "4001"

@@ -1,5 +1,5 @@
-const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:4001';
-const MEDIA_API_BASE = `${GATEWAY_URL}/api`;
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+const MEDIA_API_BASE = `${GATEWAY_URL.replace(/\/+$/, '')}/api`;
 
 export interface UploadedMediaResponse {
   id: string;

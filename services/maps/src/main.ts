@@ -30,7 +30,7 @@ async function bootstrap() {
     }),
   );
 
-  const port = process.env.PORT || 5004;
+  const port = Number(process.env.PORT) || 5004;
   await app.listen(port, '0.0.0.0');
   logger.log(`UrbanReports Maps Service running on port ${port}`);
 }

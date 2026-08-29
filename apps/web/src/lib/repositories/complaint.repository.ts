@@ -12,8 +12,8 @@ import {
 } from '../types';
 import { MediaService } from '../services/mediaService';
 
-const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:4001';
-const API_BASE = `${GATEWAY_URL}/api`;
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+const API_BASE = `${GATEWAY_URL.replace(/\/+$/, '')}/api`;
 
 export interface IComplaintRepository {
   getAllComplaints(filters?: ComplaintFilters): Promise<Complaint[]>;

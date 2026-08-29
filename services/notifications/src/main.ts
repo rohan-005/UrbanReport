@@ -5,7 +5,7 @@ import { Logger } from '@nestjs/common';
 async function bootstrap() {
   const logger = new Logger('NotificationsWorkerMain');
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 5005;
+  const port = Number(process.env.PORT) || 5005;
   app.enableCors();
   app.use((req: any, res: any, next: () => void) => {
     const start = Date.now();
@@ -16,7 +16,7 @@ async function bootstrap() {
     });
     next();
   });
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   logger.log(`UrbanReports Notifications Worker Service listening on port ${port}`);
 }
 

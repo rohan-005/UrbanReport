@@ -30,7 +30,7 @@ async function bootstrap() {
     }),
   );
 
-  const port = process.env.PORT || 5002;
+  const port = Number(process.env.PORT) || 5002;
   await app.listen(port, '0.0.0.0');
   logger.log(`UrbanReports Complaints Service running on port ${port}`);
 }

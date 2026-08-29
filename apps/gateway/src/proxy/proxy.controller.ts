@@ -213,10 +213,6 @@ export class ProxyController {
   @Post('media')
   async uploadMedia(@Req() req: Request, @Res() res: Response) {
     try {
-      const origin = (req.headers.origin as string) || '*';
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-
       const targetUrl = `${this.getMediaUrl()}/media`;
       const passHeaders = { ...this.getPassHeaders(req) };
       delete passHeaders['host'];
@@ -246,10 +242,6 @@ export class ProxyController {
   @Get('media/:id')
   async streamMedia(@Param('id') id: string, @Req() req: Request, @Res() res: Response) {
     try {
-      const origin = (req.headers.origin as string) || '*';
-      res.setHeader('Access-Control-Allow-Origin', origin);
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-
       const targetUrl = `${this.getMediaUrl()}/media/${id}`;
       const response = await fetch(targetUrl, {
         method: 'GET',
