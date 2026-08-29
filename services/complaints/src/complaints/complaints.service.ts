@@ -112,7 +112,7 @@ export class ComplaintsService {
   }
 
   private async publishNotificationEvent(eventType: string, complaint: any, actorUserId?: string, notes?: string) {
-    const notificationsUrl = process.env.NOTIFICATIONS_SERVICE_URL || 'http://localhost:3006';
+    const notificationsUrl = process.env.NOTIFICATIONS_SERVICE_URL || 'http://localhost:5005';
     const eventPayload = {
       eventId: `evt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       eventType,

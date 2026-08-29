@@ -9,14 +9,14 @@ import { DomainNotificationEvent } from './redis-stream.service';
 export class NotificationWorkerService implements OnModuleInit {
   private readonly logger = new Logger(NotificationWorkerService.name);
   private processedEvents = new Set<string>();
-  private usersServiceUrl: string = 'http://localhost:3001';
+  private usersServiceUrl: string = 'http://localhost:5001';
 
   constructor(
     private readonly configService: ConfigService,
     private readonly emailService: EmailService,
     private readonly templateService: TemplateService,
   ) {
-    this.usersServiceUrl = this.configService.get<string>('USERS_SERVICE_URL', 'http://localhost:3001');
+    this.usersServiceUrl = this.configService.get<string>('USERS_SERVICE_URL', 'http://localhost:5001');
   }
 
   onModuleInit() {

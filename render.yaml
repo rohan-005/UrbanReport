@@ -25,7 +25,7 @@ services:
     startCommand: pnpm --filter @urbanreports/gateway start
     envVars:
       - key: PORT
-        value: "3005"
+        value: "4001"
       - key: USERS_SERVICE_URL
         fromService:
           type: pserv
@@ -57,7 +57,7 @@ services:
     startCommand: pnpm --filter @urbanreports/users start:prod
     envVars:
       - key: PORT
-        value: "3001"
+        value: "5001"
       - key: MONGODB_URI
         sync: false
       - key: JWT_SECRET
@@ -71,7 +71,7 @@ services:
     startCommand: pnpm --filter @urbanreports/complaints start:prod
     envVars:
       - key: PORT
-        value: "3002"
+        value: "5002"
       - key: DATABASE_URL
         sync: false
       - key: DUPLICATE_SEARCH_RADIUS_METERS
@@ -90,7 +90,7 @@ services:
     startCommand: pnpm --filter @urbanreports/maps start:prod
     envVars:
       - key: PORT
-        value: "3004"
+        value: "5004"
       - key: MAPTILER_API_KEY
         sync: false
 
@@ -102,7 +102,7 @@ services:
     startCommand: pnpm --filter @urbanreports/media start:prod
     envVars:
       - key: PORT
-        value: "3003"
+        value: "5003"
       - key: MONGODB_URI
         sync: false
 
@@ -114,7 +114,7 @@ services:
     startCommand: pnpm --filter @urbanreports/complaints start:prod
     envVars:
       - key: PORT
-        value: "3007"
+        value: "5006"
       - key: DATABASE_URL
         sync: false
 
@@ -126,7 +126,7 @@ services:
     startCommand: pnpm --filter @urbanreports/notifications start
     envVars:
       - key: PORT
-        value: "3006"
+        value: "5005"
       - key: REDIS_URL
         sync: false
       - key: REDIS_NOTIFICATION_STREAM

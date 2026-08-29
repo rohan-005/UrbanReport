@@ -7,6 +7,15 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT || 3006;
   app.enableCors();
+  app.use((req: any, res: any, next: () => void) => {
+    const start = Date.now();
+    const { method, originalUrl } = req;
+    res.on('finish', () => {
+      const duration = Date.now() - start;
+      console.log(`[NOTIFICATIONS SERVICE] ${method} ${originalUrl} -> Status ${res.statusCode} (${duration}ms)`);
+    });
+    next();
+  });
   await app.listen(port);
   logger.log(`UrbanReports Notifications Worker Service listening on port ${port}`);
 }

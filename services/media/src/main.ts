@@ -12,6 +12,16 @@ async function bootstrap() {
     credentials: true,
   });
 
+  app.use((req: any, res: any, next: () => void) => {
+    const start = Date.now();
+    const { method, originalUrl } = req;
+    res.on('finish', () => {
+      const duration = Date.now() - start;
+      console.log(`[MEDIA SERVICE] ${method} ${originalUrl} -> Status ${res.statusCode} (${duration}ms)`);
+    });
+    next();
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

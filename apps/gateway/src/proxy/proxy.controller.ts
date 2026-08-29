@@ -27,19 +27,19 @@ export class ProxyController {
   ) {}
 
   private getUsersUrl(): string {
-    return this.configService.get<string>('USERS_SERVICE_URL') || 'http://localhost:3001';
+    return this.configService.get<string>('USERS_SERVICE_URL') || 'http://localhost:5001';
   }
 
   private getComplaintsUrl(): string {
-    return this.configService.get<string>('COMPLAINTS_SERVICE_URL') || 'http://localhost:3002';
+    return this.configService.get<string>('COMPLAINTS_SERVICE_URL') || 'http://localhost:5002';
   }
 
   private getMediaUrl(): string {
-    return this.configService.get<string>('MEDIA_SERVICE_URL') || 'http://localhost:3003';
+    return this.configService.get<string>('MEDIA_SERVICE_URL') || 'http://localhost:5003';
   }
 
   private getMapsUrl(): string {
-    return this.configService.get<string>('MAPS_SERVICE_URL') || 'http://localhost:3004';
+    return this.configService.get<string>('MAPS_SERVICE_URL') || 'http://localhost:5004';
   }
 
   // --- AUTH & USERS PROXY ---
@@ -60,7 +60,7 @@ export class ProxyController {
 
   @Patch('users/me')
   async updateProfile(@Body() body: UpdateUserDto, @Req() req: Request) {
-    return this.proxyService.forwardPost(`${this.getUsersUrl()}/users/me`, body, this.getPassHeaders(req));
+    return this.proxyService.forwardPatch(`${this.getUsersUrl()}/users/me`, body, this.getPassHeaders(req));
   }
 
   @Get('users/me/notification-preferences')
@@ -70,7 +70,7 @@ export class ProxyController {
 
   @Patch('users/me/notification-preferences')
   async updateNotificationPreferences(@Body() body: any, @Req() req: Request) {
-    return this.proxyService.forwardPost(`${this.getUsersUrl()}/users/me/notification-preferences`, body, this.getPassHeaders(req));
+    return this.proxyService.forwardPatch(`${this.getUsersUrl()}/users/me/notification-preferences`, body, this.getPassHeaders(req));
   }
 
   // --- COMPLAINTS PROXY ---

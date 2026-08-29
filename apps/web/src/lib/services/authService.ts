@@ -1,6 +1,6 @@
 import { User } from '../types';
 
-const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:3005';
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:4001';
 const API_BASE = `${GATEWAY_URL}/api`;
 
 class AuthServiceAPI {
@@ -82,6 +82,7 @@ class AuthServiceAPI {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        signal: AbortSignal.timeout(3000),
       });
 
       if (!res.ok) {

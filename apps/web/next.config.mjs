@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: [],
+  experimental: {
+    optimizePackageImports: ['@mui/material', '@mui/icons-material', 'lucide-react', 'gsap'],
+  },
 };
 
 export default nextConfig;

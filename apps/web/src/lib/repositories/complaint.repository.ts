@@ -12,7 +12,7 @@ import {
 } from '../types';
 import { MediaService } from '../services/mediaService';
 
-const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:3005';
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:4001';
 const API_BASE = `${GATEWAY_URL}/api`;
 
 export interface IComplaintRepository {

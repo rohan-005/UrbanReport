@@ -14,19 +14,19 @@ export class ProxyService {
   constructor(private readonly configService: ConfigService) {}
 
   private getUsersServiceUrl(): string {
-    return this.configService.get<string>('USERS_SERVICE_URL') || 'http://localhost:3001';
+    return this.configService.get<string>('USERS_SERVICE_URL') || 'http://localhost:5001';
   }
 
   private getComplaintsServiceUrl(): string {
-    return this.configService.get<string>('COMPLAINTS_SERVICE_URL') || 'http://localhost:3002';
+    return this.configService.get<string>('COMPLAINTS_SERVICE_URL') || 'http://localhost:5002';
   }
 
   private getMediaServiceUrl(): string {
-    return this.configService.get<string>('MEDIA_SERVICE_URL') || 'http://localhost:3003';
+    return this.configService.get<string>('MEDIA_SERVICE_URL') || 'http://localhost:5003';
   }
 
   private getMapsServiceUrl(): string {
-    return this.configService.get<string>('MAPS_SERVICE_URL') || 'http://localhost:3004';
+    return this.configService.get<string>('MAPS_SERVICE_URL') || 'http://localhost:5004';
   }
 
   private buildHeaders(extraHeaders?: Record<string, string>): Record<string, string> {
@@ -146,6 +146,25 @@ export class ProxyService {
     } catch (err: any) {
       if (err instanceof HttpException) throw err;
       this.logger.error(`Forward GET failed (${url}): ${err.message}`);
+      throw new ServiceUnavailableException(`Downstream service at ${url} unavailable.`);
+    }
+  }
+
+  async forwardPatch(url: string, body: any, headers?: Record<string, string>): Promise<any> {
+    try {
+      const res = await fetch(url, {
+        method: 'PATCH',
+        headers: this.buildHeaders(headers),
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        throw new HttpException(err, res.status);
+      }
+      return await res.json();
+    } catch (err: any) {
+      if (err instanceof HttpException) throw err;
+      this.logger.error(`Forward PATCH failed (${url}): ${err.message}`);
       throw new ServiceUnavailableException(`Downstream service at ${url} unavailable.`);
     }
   }
