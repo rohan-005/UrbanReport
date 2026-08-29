@@ -63,10 +63,30 @@ export class ProxyController {
     return this.proxyService.forwardPost(`${this.getUsersUrl()}/users/me`, body, this.getPassHeaders(req));
   }
 
+  @Get('users/me/notification-preferences')
+  async getNotificationPreferences(@Req() req: Request) {
+    return this.proxyService.forwardGet(`${this.getUsersUrl()}/users/me/notification-preferences`, this.getPassHeaders(req));
+  }
+
+  @Patch('users/me/notification-preferences')
+  async updateNotificationPreferences(@Body() body: any, @Req() req: Request) {
+    return this.proxyService.forwardPost(`${this.getUsersUrl()}/users/me/notification-preferences`, body, this.getPassHeaders(req));
+  }
+
   // --- COMPLAINTS PROXY ---
   @Get('admin/stats')
   async getAdminStats(@Req() req: Request) {
     return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints/stats`, this.getPassHeaders(req));
+  }
+
+  @Get('admin/analytics/overview')
+  async getAdminAnalyticsOverview(@Req() req: Request) {
+    return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints/analytics/overview`, this.getPassHeaders(req));
+  }
+
+  @Get('admin/analytics/hotspots')
+  async getAdminAnalyticsHotspots(@Req() req: Request) {
+    return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints/analytics/hotspots`, this.getPassHeaders(req));
   }
 
   @Get('departments')

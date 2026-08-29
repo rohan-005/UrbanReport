@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ComplaintsService } from './complaints.service';
+import { AnalyticsService } from './analytics.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { ComplaintQueryDto } from './dto/query-complaint.dto';
@@ -18,7 +19,21 @@ import { NearbyQueryDto, ViewportQueryDto } from './dto/geo-query.dto';
 
 @Controller('complaints')
 export class ComplaintsController {
-  constructor(private readonly complaintsService: ComplaintsService) {}
+  constructor(
+    private readonly complaintsService: ComplaintsService,
+    private readonly analyticsService: AnalyticsService,
+  ) {}
+
+  @Get('analytics/overview')
+  async getAnalyticsOverview() {
+    return this.analyticsService.getAnalyticsOverview();
+  }
+
+  @Get('analytics/hotspots')
+  async getHotspots() {
+    const data = await this.analyticsService.getAnalyticsOverview();
+    return data.hotspots;
+  }
 
   @Get('stats')
   async getStats() {

@@ -8,6 +8,7 @@ import {
   Assignment,
   DuplicateCandidate,
   DuplicateCheckInput,
+  AnalyticsOverview,
 } from '../types';
 import { MOCK_COMPLAINTS } from '../data/mock-complaints';
 import { MediaService } from '../services/mediaService';
@@ -54,6 +55,7 @@ export interface IComplaintRepository {
   findDuplicateCandidates(input: DuplicateCheckInput): Promise<DuplicateCandidate[]>;
   confirmComplaint(complaintId: string): Promise<{ complaintId: string; confirmationsCount: number; hasUserConfirmed: boolean }>;
   getConfirmationCount(complaintId: string): Promise<number>;
+  getAnalyticsOverview(): Promise<AnalyticsOverview>;
   subscribe(listener: () => void): () => void;
 }
 
@@ -320,6 +322,66 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
   public async getConfirmationCount(complaintId: string): Promise<number> {
     const complaint = this.complaints.find((c) => c.id.toLowerCase() === complaintId.toLowerCase());
     return complaint?.confirmationsCount || complaint?.upvotesCount || 0;
+  }
+
+  public async getAnalyticsOverview(): Promise<AnalyticsOverview> {
+    const total = this.complaints.length;
+    const resolved = this.complaints.filter((c) => c.status === 'RESOLVED').length;
+    const reopened = this.complaints.filter((c) => c.status === 'REOPENED').length;
+    const critical = this.complaints.filter((c) => c.severity === 'CRITICAL').length;
+
+    const catsMap = new Map<string, number>();
+    const statusMap = new Map<string, number>();
+    const sevMap = new Map<string, number>();
+
+    for (const c of this.complaints) {
+      catsMap.set(c.category, (catsMap.get(c.category) || 0) + 1);
+      statusMap.set(c.status, (statusMap.get(c.status) || 0) + 1);
+      sevMap.set(c.severity, (sevMap.get(c.severity) || 0) + 1);
+    }
+
+    const categories = Array.from(catsMap.entries()).map(([category, count]) => ({
+      category,
+      count,
+      percentage: Math.round((count / Math.max(1, total)) * 100),
+    }));
+
+    const statuses = Array.from(statusMap.entries()).map(([status, count]) => ({
+      status,
+      count,
+      percentage: Math.round((count / Math.max(1, total)) * 100),
+    }));
+
+    const severities = Array.from(sevMap.entries()).map(([severity, count]) => ({
+      severity,
+      count,
+      percentage: Math.round((count / Math.max(1, total)) * 100),
+    }));
+
+    const hotspots = this.complaints.slice(0, 5).map((c) => ({
+      lat: c.latitude,
+      lng: c.longitude,
+      count: c.upvotesCount + 1,
+      category: c.category,
+      address: c.address,
+    }));
+
+    return {
+      totalComplaints: total,
+      resolvedComplaints: resolved,
+      reopenedComplaints: reopened,
+      criticalAlertsCount: critical,
+      avgResolutionTimeDays: 3.8,
+      categories,
+      statuses,
+      severities,
+      hotspots,
+      mapActivity: {
+        totalMapViews: 1420,
+        nearbySearches: 850,
+        duplicateChecksCount: 340,
+      },
+    };
   }
 }
 
@@ -602,6 +664,21 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       }
     } catch {}
     return this.fallbackMock.getConfirmationCount(complaintId);
+  }
+
+  public async getAnalyticsOverview(): Promise<AnalyticsOverview> {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
+      const res = await fetch(`${API_BASE}/admin/analytics/overview`, {
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch {}
+    return this.fallbackMock.getAnalyticsOverview();
   }
 
   private mapToFrontendComplaint(item: any): Complaint {

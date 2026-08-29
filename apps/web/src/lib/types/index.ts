@@ -132,3 +132,46 @@ export interface ComplaintFilters {
   searchQuery?: string;
   sortBy?: 'newest' | 'oldest' | 'upvotes' | 'severity';
 }
+
+export interface CategoryStat {
+  category: string;
+  count: number;
+  percentage: number;
+}
+
+export interface SeverityStat {
+  severity: string;
+  count: number;
+  percentage: number;
+}
+
+export interface StatusStat {
+  status: string;
+  count: number;
+  percentage: number;
+}
+
+export interface HotspotPoint {
+  lat: number;
+  lng: number;
+  count: number;
+  category: string;
+  address: string;
+}
+
+export interface AnalyticsOverview {
+  totalComplaints: number;
+  resolvedComplaints: number;
+  reopenedComplaints: number;
+  criticalAlertsCount: number;
+  avgResolutionTimeDays: number;
+  categories: CategoryStat[];
+  statuses: StatusStat[];
+  severities: SeverityStat[];
+  hotspots: HotspotPoint[];
+  mapActivity?: {
+    totalMapViews: number;
+    nearbySearches: number;
+    duplicateChecksCount: number;
+  };
+}

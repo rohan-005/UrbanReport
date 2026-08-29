@@ -112,6 +112,16 @@ export class ProxyService {
     return this.forwardPost(url, {}, headers);
   }
 
+  async getAdminAnalyticsOverview(headers?: Record<string, string>): Promise<any> {
+    const url = `${this.getComplaintsServiceUrl()}/complaints/analytics/overview`;
+    return this.forwardGet(url, headers);
+  }
+
+  async getGeographicHotspots(headers?: Record<string, string>): Promise<any> {
+    const url = `${this.getComplaintsServiceUrl()}/complaints/analytics/hotspots`;
+    return this.forwardGet(url, headers);
+  }
+
   async searchPlaces(q: string): Promise<any> {
     const url = `${this.getMapsServiceUrl()}/maps/search?q=${encodeURIComponent(q)}`;
     return this.forwardGet(url);

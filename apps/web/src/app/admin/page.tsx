@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
-import { Complaint } from '@/lib/types';
+import { Complaint, AnalyticsOverview } from '@/lib/types';
 import { StatsCards } from '@/components/admin/StatsCards';
 import { AdminComplaintTable } from '@/components/admin/AdminComplaintTable';
+import { AnalyticsDashboard } from '@/components/admin/AnalyticsDashboard';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { PageTransition } from '@/components/motion/PageTransition';
 import Container from '@mui/material/Container';
@@ -15,7 +16,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { ShieldCheck, ListFilter, AlertTriangle, RefreshCw } from 'lucide-react';
+import { ShieldCheck, ListFilter, AlertTriangle, RefreshCw, BarChart2 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function AdminDashboardPage() {
 
   const [complaints, setComplaints] = useState<Complaint[]>([]);
   const [stats, setStats] = useState<any>(null);
+  const [analytics, setAnalytics] = useState<AnalyticsOverview | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,8 +39,10 @@ export default function AdminDashboardPage() {
     setLoading(true);
     const data = await complaintRepository.getAllComplaints();
     const statsData = await complaintRepository.getStats();
+    const analyticsData = await complaintRepository.getAnalyticsOverview();
     setComplaints(data);
     setStats(statsData);
+    setAnalytics(analyticsData);
     setLoading(false);
   };
 
@@ -82,6 +86,18 @@ export default function AdminDashboardPage() {
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <StatsCards stats={stats} />
+
+              {analytics && (
+                <Box sx={{ mt: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                    <BarChart2 className="w-5 h-5 text-zinc-950" />
+                    <Typography variant="h6" sx={{ fontWeight: 900, color: '#09090b' }}>
+                      Platform Analytics & Geospatial Hotspots
+                    </Typography>
+                  </Box>
+                  <AnalyticsDashboard analytics={analytics} />
+                </Box>
+              )}
 
               {criticalComplaints.length > 0 && (
                 <Paper

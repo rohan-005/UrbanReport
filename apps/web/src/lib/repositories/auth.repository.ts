@@ -13,6 +13,11 @@ export interface IAuthRepository {
     confirmPassword?: string;
   }): Promise<User>;
   logout(): Promise<void>;
+  updateNotificationPreferences(prefs: {
+    complaintUpdates?: boolean;
+    resolutionNotifications?: boolean;
+    assignmentUpdates?: boolean;
+  }): Promise<any>;
   subscribe(listener: () => void): () => void;
 }
 
@@ -45,6 +50,16 @@ export class AuthRepository implements IAuthRepository {
   async logout(): Promise<void> {
     authService.logout();
     this.notify();
+  }
+
+  async updateNotificationPreferences(prefs: {
+    complaintUpdates?: boolean;
+    resolutionNotifications?: boolean;
+    assignmentUpdates?: boolean;
+  }): Promise<any> {
+    const res = await authService.updateNotificationPreferences(prefs);
+    this.notify();
+    return res;
   }
 
   subscribe(listener: () => void): () => void {

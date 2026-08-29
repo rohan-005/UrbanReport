@@ -77,9 +77,49 @@ type ReverseGeocodeType {
   longitude: Float!
 }
 
+type CategoryStatType {
+  category: String!
+  count: Int!
+  percentage: Int!
+}
+
+type StatusStatType {
+  status: String!
+  count: Int!
+  percentage: Int!
+}
+
+type SeverityStatType {
+  severity: String!
+  count: Int!
+  percentage: Int!
+}
+
+type HotspotPointType {
+  lat: Float!
+  lng: Float!
+  count: Int!
+  category: String!
+  address: String!
+}
+
+type AnalyticsOverviewType {
+  totalComplaints: Int!
+  resolvedComplaints: Int!
+  reopenedComplaints: Int!
+  criticalAlertsCount: Int!
+  avgResolutionTimeDays: Float!
+  categories: [CategoryStatType!]!
+  statuses: [StatusStatType!]!
+  severities: [SeverityStatType!]!
+  hotspots: [HotspotPointType!]!
+}
+
 type Query {
   complaints(category: String, severity: String, status: String, search: String): [ComplaintType!]!
   complaint(id: String!): ComplaintType
+  adminAnalyticsOverview: AnalyticsOverviewType!
+  geographicHotspots: [HotspotPointType!]!
   findDuplicateComplaints(input: DuplicateCheckInput!): [DuplicateCandidateType!]!
   viewportComplaints(minLat: Float!, minLng: Float!, maxLat: Float!, maxLng: Float!, category: String, severity: String, status: String): [ComplaintType!]!
   nearbyComplaints(lat: Float!, lng: Float!, radius: Int): [ComplaintType!]!

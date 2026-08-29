@@ -158,3 +158,87 @@ export class ConfirmComplaintPayloadType {
   @Field()
   hasUserConfirmed: boolean;
 }
+
+@ObjectType()
+export class CategoryStatType {
+  @Field()
+  category: string;
+
+  @Field(() => Int)
+  count: number;
+
+  @Field(() => Int)
+  percentage: number;
+}
+
+@ObjectType()
+export class StatusStatType {
+  @Field()
+  status: string;
+
+  @Field(() => Int)
+  count: number;
+
+  @Field(() => Int)
+  percentage: number;
+}
+
+@ObjectType()
+export class SeverityStatType {
+  @Field()
+  severity: string;
+
+  @Field(() => Int)
+  count: number;
+
+  @Field(() => Int)
+  percentage: number;
+}
+
+@ObjectType()
+export class HotspotPointType {
+  @Field(() => Float)
+  lat: number;
+
+  @Field(() => Float)
+  lng: number;
+
+  @Field(() => Int)
+  count: number;
+
+  @Field()
+  category: string;
+
+  @Field()
+  address: string;
+}
+
+@ObjectType()
+export class AnalyticsOverviewType {
+  @Field(() => Int)
+  totalComplaints: number;
+
+  @Field(() => Int)
+  resolvedComplaints: number;
+
+  @Field(() => Int)
+  reopenedComplaints: number;
+
+  @Field(() => Int)
+  criticalAlertsCount: number;
+
+  @Field(() => Float)
+  avgResolutionTimeDays: number;
+
+  @Field(() => [CategoryStatType])
+  categories: CategoryStatType[];
+
+  @Field(() => [StatusStatType])
+  statuses: StatusStatType[];
+
+  @Field(() => [SeverityStatType])
+  severities: SeverityStatType[];
+
+  @Field(() => [HotspotPointType])
+  hotspots: HotspotPointType[];
+}

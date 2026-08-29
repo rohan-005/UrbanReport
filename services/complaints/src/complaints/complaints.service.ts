@@ -14,7 +14,9 @@ export class ComplaintsService {
   ) {}
 
   async createComplaint(dto: CreateComplaintDto, reporterUserId: string) {
-    return this.repo.create(dto, reporterUserId);
+    const created = await this.repo.create(dto, reporterUserId);
+    this.publishNotificationEvent('ComplaintCreated', created, reporterUserId);
+    return created;
   }
 
   async getComplaintById(id: string) {
@@ -56,7 +58,9 @@ export class ComplaintsService {
     notes?: string,
     actorUserId: string = 'admin-001',
   ) {
-    return this.repo.assignDepartment(complaintId, departmentId, officerId, notes, actorUserId);
+    const updated = await this.repo.assignDepartment(complaintId, departmentId, officerId, notes, actorUserId);
+    this.publishNotificationEvent('ComplaintAssigned', updated || { id: complaintId }, actorUserId, notes);
+    return updated;
   }
 
   async addResolutionEvidence(complaintId: string, mediaId: string, actorUserId: string = 'admin-001') {
@@ -83,7 +87,7 @@ export class ComplaintsService {
     const current = await this.getComplaintById(id);
     this.lifecycle.validateTransition(current.status, dto.nextStatus);
     const noteText = dto.note || dto.rejectionReason;
-    return this.repo.updateStatus(
+    const updated = await this.repo.updateStatus(
       id,
       current.status,
       dto.nextStatus,
@@ -91,6 +95,49 @@ export class ComplaintsService {
       noteText,
       dto.resolutionMediaIds,
     );
+
+    const eventTypeMap: Record<string, string> = {
+      UNDER_REVIEW: 'ComplaintUnderReview',
+      VERIFIED: 'ComplaintVerified',
+      REJECTED: 'ComplaintRejected',
+      ASSIGNED: 'ComplaintAssigned',
+      IN_PROGRESS: 'ComplaintInProgress',
+      RESOLVED: 'ComplaintResolved',
+      REOPENED: 'ComplaintReopened',
+    };
+
+    const eventName = eventTypeMap[dto.nextStatus] || 'ComplaintUpdated';
+    this.publishNotificationEvent(eventName, updated || current, actorUserId, noteText);
+    return updated;
+  }
+
+  private async publishNotificationEvent(eventType: string, complaint: any, actorUserId?: string, notes?: string) {
+    const notificationsUrl = process.env.NOTIFICATIONS_SERVICE_URL || 'http://localhost:3006';
+    const eventPayload = {
+      eventId: `evt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      eventType,
+      occurredAt: new Date().toISOString(),
+      complaintId: complaint.id,
+      reporterUserId: complaint.reporter_user_id || complaint.reporter?.id || 'citizen-anon-001',
+      actorUserId,
+      metadata: {
+        title: complaint.title,
+        category: complaint.category,
+        status: complaint.status || eventType.replace('Complaint', '').toUpperCase(),
+        address: complaint.address,
+        notes,
+        rejectionReason: notes,
+      },
+    };
+
+    // Non-blocking fire-and-forget async call
+    fetch(`${notificationsUrl}/events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(eventPayload),
+    }).catch(() => {
+      // Intentionally swallow errors so API response speed is unaffected
+    });
   }
 }
 

@@ -1,5 +1,13 @@
 import { Resolver, Query, Mutation, Args, Float, Int, Context } from '@nestjs/graphql';
-import { ComplaintType, CreateComplaintInput, DuplicateCandidateType, DuplicateCheckInput, ConfirmComplaintPayloadType } from './types/complaint.type';
+import {
+  ComplaintType,
+  CreateComplaintInput,
+  DuplicateCandidateType,
+  DuplicateCheckInput,
+  ConfirmComplaintPayloadType,
+  AnalyticsOverviewType,
+  HotspotPointType,
+} from './types/complaint.type';
 import { AuthPayloadType, RegisterInput, UserType } from './types/user.type';
 import { PlaceResultType, ReverseGeocodeType } from './types/maps.type';
 import { ProxyService } from '../proxy/proxy.service';
@@ -21,6 +29,22 @@ export class GatewayResolver {
   @Query(() => ComplaintType, { nullable: true })
   async complaint(@Args('id') id: string) {
     return this.proxyService.getComplaintById(id);
+  }
+
+  @Query(() => AnalyticsOverviewType)
+  async adminAnalyticsOverview(@Context() context: any) {
+    const authHeader = context?.req?.headers?.authorization;
+    return this.proxyService.getAdminAnalyticsOverview(
+      authHeader ? { authorization: authHeader } : undefined,
+    );
+  }
+
+  @Query(() => [HotspotPointType])
+  async geographicHotspots(@Context() context: any) {
+    const authHeader = context?.req?.headers?.authorization;
+    return this.proxyService.getGeographicHotspots(
+      authHeader ? { authorization: authHeader } : undefined,
+    );
   }
 
   @Query(() => [DuplicateCandidateType])
