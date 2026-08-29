@@ -88,23 +88,36 @@ export class ProxyController {
   }
 
   @Post('complaints')
-  async createComplaint(@Body() body: CreateComplaintDto, @Req() req: Request) {
-    const mediaIds = Array.isArray(body?.mediaIds) && body.mediaIds.length > 0
-      ? body.mediaIds
-      : Array.isArray(body?.media)
-      ? body.media.map((m: any) => m.id || m.mediaId).filter(Boolean)
+  async createComplaint(@Body() body: any, @Req() req: Request) {
+    const raw = (body && Object.keys(body).length > 0) ? body : ((req as any).body || {});
+
+    const mediaIds = Array.isArray(raw.mediaIds) && raw.mediaIds.length > 0
+      ? raw.mediaIds
+      : Array.isArray(raw.media)
+      ? raw.media.map((m: any) => m.id || m.mediaId).filter(Boolean)
       : undefined;
 
-    const payload = {
-      category: body?.category ? String(body.category).replace(/\s+/g, '_').toUpperCase() : undefined,
-      title: body?.title ? String(body.title).trim() : undefined,
-      description: body?.description ? String(body.description).trim() : undefined,
-      severity: body?.severity ? String(body.severity).toUpperCase() : undefined,
-      latitude: body?.latitude !== undefined && body?.latitude !== null ? Number(body.latitude) : undefined,
-      longitude: body?.longitude !== undefined && body?.longitude !== null ? Number(body.longitude) : undefined,
-      address: body?.address ? String(body.address).trim() : undefined,
-      mediaIds,
+    const rawCategory = raw.category || raw.categoryName || raw.type || 'OTHER';
+    const rawTitle = raw.title || raw.complaintTitle || '';
+    const rawDesc = raw.description || raw.details || '';
+    const rawSeverity = raw.severity || raw.priority || 'MEDIUM';
+    const rawLat = raw.latitude ?? raw.lat;
+    const rawLng = raw.longitude ?? raw.lng;
+    const rawAddress = raw.address || raw.location || '';
+
+    const payload: any = {
+      category: String(rawCategory).replace(/\s+/g, '_').toUpperCase(),
+      title: String(rawTitle).trim(),
+      description: String(rawDesc).trim(),
+      severity: String(rawSeverity).toUpperCase(),
+      latitude: rawLat !== undefined && rawLat !== null && !isNaN(Number(rawLat)) ? Number(rawLat) : undefined,
+      longitude: rawLng !== undefined && rawLng !== null && !isNaN(Number(rawLng)) ? Number(rawLng) : undefined,
+      address: String(rawAddress).trim(),
     };
+
+    if (mediaIds) {
+      payload.mediaIds = mediaIds;
+    }
 
     return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints`, payload, this.getPassHeaders(req));
   }

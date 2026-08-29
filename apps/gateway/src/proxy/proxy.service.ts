@@ -34,6 +34,8 @@ export class ProxyService {
       'Content-Type': 'application/json',
       ...extraHeaders,
     };
+    headers['Content-Type'] = 'application/json';
+    delete headers['content-type'];
     return headers;
   }
 
