@@ -111,6 +111,10 @@ export class ComplaintsService {
     return updated;
   }
 
+  async deleteAllComplaints() {
+    return this.repo.deleteAll();
+  }
+
   private async publishNotificationEvent(eventType: string, complaint: any, actorUserId?: string, notes?: string) {
     const notificationsUrl = process.env.NOTIFICATIONS_SERVICE_URL || 'http://localhost:5005';
     const eventPayload = {

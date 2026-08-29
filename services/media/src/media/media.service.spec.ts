@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
 import { MediaService } from './media.service';
-import { GridFsService } from './gridfs.service';
+import { CloudinaryService } from './cloudinary.service';
 import { Media, ProcessingStatus } from './schemas/media.schema';
 import {
   BadRequestException,
@@ -13,11 +13,11 @@ import {
 
 describe('MediaService', () => {
   let service: MediaService;
-  let mockGridFsService: any;
+  let mockCloudinaryService: any;
   let mockMediaModel: any;
   let mockConfigService: any;
 
-  // 1x1 GIF / PNG magic header sample buffer
+  // 1x1 PNG magic header sample buffer
   const samplePngBuffer = Buffer.from([
     0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49,
     0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06,
@@ -25,10 +25,19 @@ describe('MediaService', () => {
   ]);
 
   beforeEach(async () => {
-    mockGridFsService = {
-      uploadFile: jest.fn().mockResolvedValue('60f7b1b2e4b0a1a2b3c4d5e6'),
-      downloadStream: jest.fn(),
-      deleteFile: jest.fn().mockResolvedValue(undefined),
+    mockCloudinaryService = {
+      isConfigured: jest.fn().mockReturnValue(true),
+      uploadImage: jest.fn().mockImplementation((buf, mediaId) =>
+        Promise.resolve({
+          publicId: `urbanreports/complaints/${mediaId}`,
+          secureUrl: `https://res.cloudinary.com/demo/image/upload/v1/urbanreports/complaints/${mediaId}.png`,
+          format: 'png',
+          bytes: buf.length,
+          width: 1,
+          height: 1,
+        }),
+      ),
+      deleteImage: jest.fn().mockResolvedValue({ result: 'ok' }),
     };
 
     mockMediaModel = {
@@ -40,7 +49,6 @@ describe('MediaService', () => {
     mockConfigService = {
       get: jest.fn((key: string) => {
         if (key === 'MAX_IMAGE_SIZE') return '10485760';
-        if (key === 'GRIDFS_BUCKET') return 'complaint_media';
         return null;
       }),
     };
@@ -48,7 +56,7 @@ describe('MediaService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MediaService,
-        { provide: GridFsService, useValue: mockGridFsService },
+        { provide: CloudinaryService, useValue: mockCloudinaryService },
         { provide: getModelToken(Media.name), useValue: mockMediaModel },
         { provide: ConfigService, useValue: mockConfigService },
       ],
@@ -118,7 +126,7 @@ describe('MediaService', () => {
   });
 
   describe('uploadMedia', () => {
-    it('should successfully process upload and return record', async () => {
+    it('should successfully process Cloudinary upload and return record', async () => {
       const mockFile = {
         buffer: samplePngBuffer,
         size: samplePngBuffer.length,
@@ -130,7 +138,8 @@ describe('MediaService', () => {
       expect(record.mediaId).toMatch(/^med_/);
       expect(record.owner).toBe('user-123');
       expect(record.processingStatus).toBe(ProcessingStatus.READY);
-      expect(mockGridFsService.uploadFile).toHaveBeenCalled();
+      expect(record.cloudinaryUrl).toContain('res.cloudinary.com');
+      expect(mockCloudinaryService.uploadImage).toHaveBeenCalled();
       expect(mockMediaModel.create).toHaveBeenCalled();
     });
   });
@@ -141,7 +150,7 @@ describe('MediaService', () => {
         exec: jest.fn().mockResolvedValue({
           mediaId: 'med_001',
           owner: 'user-owner',
-          gridFsFileId: '60f7b1b2e4b0a1a2b3c4d5e6',
+          cloudinaryPublicId: 'urbanreports/complaints/med_001',
         }),
       });
 

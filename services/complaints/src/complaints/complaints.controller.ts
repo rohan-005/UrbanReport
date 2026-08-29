@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -23,6 +24,11 @@ export class ComplaintsController {
     private readonly complaintsService: ComplaintsService,
     private readonly analyticsService: AnalyticsService,
   ) {}
+
+  @Delete()
+  async deleteAllComplaints() {
+    return this.complaintsService.deleteAllComplaints();
+  }
 
   @Get('analytics/overview')
   async getAnalyticsOverview() {

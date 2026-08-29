@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Media, MediaSchema } from './schemas/media.schema';
 import { MediaService } from './media.service';
 import { MediaController } from './media.controller';
-import { GridFsService } from './gridfs.service';
+import { CloudinaryService } from './cloudinary.service';
 import { JwtStrategy } from '../auth/jwt.strategy';
 
 @Module({
@@ -25,7 +25,7 @@ import { JwtStrategy } from '../auth/jwt.strategy';
     }),
   ],
   controllers: [MediaController],
-  providers: [MediaService, GridFsService, JwtStrategy],
-  exports: [MediaService, GridFsService],
+  providers: [MediaService, CloudinaryService, JwtStrategy],
+  exports: [MediaService, CloudinaryService],
 })
 export class MediaModule {}

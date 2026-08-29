@@ -8,6 +8,7 @@
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
     "db:seed": "ts-node src/database/seed.ts",
+    "db:clear": "ts-node src/database/clear-complaints.ts",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {

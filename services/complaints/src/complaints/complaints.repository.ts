@@ -744,6 +744,18 @@ export class ComplaintsRepository {
     }
   }
 
+  async deleteAll(): Promise<{ deleted: boolean }> {
+    this.fallbackStore.clear();
+    try {
+      await this.db.query(
+        `TRUNCATE TABLE complaints, complaint_media, status_history, assignments, audit_events, complaint_confirmations CASCADE;`,
+      );
+    } catch {
+      // In case TRUNCATE fails or DB is in fallback mode
+    }
+    return { deleted: true };
+  }
+
   private async attachMediaToComplaints(items: any[]): Promise<any[]> {
     if (!items || items.length === 0) return items;
     const complaintIds = items.map((i) => i.id);

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document } from 'mongoose';
 
 export type MediaDocument = Media & Document;
 
@@ -21,8 +21,14 @@ export class Media {
   @Prop({ required: false, index: true, default: null })
   complaintId?: string;
 
-  @Prop({ required: true, type: MongooseSchema.Types.ObjectId })
-  gridFsFileId: MongooseSchema.Types.ObjectId;
+  @Prop({ required: true })
+  cloudinaryPublicId: string;
+
+  @Prop({ required: true })
+  cloudinaryUrl: string;
+
+  @Prop({ required: false, type: String })
+  fileData?: string;
 
   @Prop({ required: true })
   mimeType: string;

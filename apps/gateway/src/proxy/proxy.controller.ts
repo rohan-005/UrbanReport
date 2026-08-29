@@ -192,6 +192,11 @@ export class ProxyController {
     return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints/${id}/status`, body, this.getPassHeaders(req));
   }
 
+  @Delete('complaints')
+  async deleteAllComplaints(@Req() req: Request) {
+    return this.proxyService.forwardDelete(`${this.getComplaintsUrl()}/complaints`, this.getPassHeaders(req));
+  }
+
 
   // --- MAPS PROXY ---
   @Get('maps/search')
@@ -249,10 +254,18 @@ export class ProxyController {
       const response = await fetch(targetUrl, {
         method: 'GET',
         headers: this.getPassHeaders(req),
+        redirect: 'manual',
       });
 
+      if (response.status === 302 || response.status === 301 || response.status === 307) {
+        const location = response.headers.get('location');
+        if (location) {
+          return res.redirect(response.status, location);
+        }
+      }
+
       if (!response.ok) {
-        res.status(response.status).json({ statusCode: response.status, message: 'Media binary stream error' });
+        res.status(response.status).json({ statusCode: response.status, message: 'Media resource unavailable' });
         return;
       }
 

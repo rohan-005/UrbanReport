@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { UploadCloud, Image as ImageIcon, X, AlertCircle, CheckCircle2, RefreshCw, Loader2 } from 'lucide-react';
 import { MediaService, UploadedMediaResponse } from '@/lib/services/mediaService';
 
@@ -30,12 +30,12 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const [isUploadingGlobal, setIsUploadingGlobal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const notifyParent = (currentAttachments: ImageAttachment[]) => {
-    const successfulMediaIds = currentAttachments
-      .filter((a) => a.status === 'success' && a.mediaId)
+  useEffect(() => {
+    const successfulMediaIds = attachments
+      .filter((a) => a.status === 'success' && Boolean(a.mediaId))
       .map((a) => a.mediaId!);
 
-    const mainPreview = currentAttachments.length > 0 ? currentAttachments[0].previewUrl : null;
+    const mainPreview = attachments.length > 0 ? attachments[0].previewUrl : null;
 
     if (onMediaChanged) {
       onMediaChanged(successfulMediaIds, mainPreview);
@@ -43,7 +43,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     if (onImageSelected) {
       onImageSelected(mainPreview);
     }
-  };
+  }, [attachments, onMediaChanged, onImageSelected]);
 
   const uploadFileAttachment = async (attachment: ImageAttachment, file: File) => {
     setAttachments((prev) =>
@@ -53,9 +53,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     try {
       const uploaded: UploadedMediaResponse = await MediaService.uploadImage(file);
 
-      let nextAttachments: ImageAttachment[] = [];
-      setAttachments((prev) => {
-        nextAttachments = prev.map((a) =>
+      setAttachments((prev) =>
+        prev.map((a) =>
           a.id === attachment.id
             ? {
                 ...a,
@@ -64,15 +63,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 previewUrl: uploaded.url || a.previewUrl,
               }
             : a
-        );
-        return nextAttachments;
-      });
-
-      notifyParent(nextAttachments);
+        )
+      );
     } catch (err: any) {
-      let nextAttachments: ImageAttachment[] = [];
-      setAttachments((prev) => {
-        nextAttachments = prev.map((a) =>
+      setAttachments((prev) =>
+        prev.map((a) =>
           a.id === attachment.id
             ? {
                 ...a,
@@ -80,11 +75,8 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 errorMessage: err.message || 'Image upload failed.',
               }
             : a
-        );
-        return nextAttachments;
-      });
-
-      notifyParent(nextAttachments);
+        )
+      );
     }
   };
 
@@ -154,7 +146,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     const updated = attachments.filter((a) => a.id !== id);
     setAttachments(updated);
-    notifyParent(updated);
   };
 
   const handleRetry = (attachment: ImageAttachment) => {

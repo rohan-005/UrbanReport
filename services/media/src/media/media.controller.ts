@@ -36,7 +36,6 @@ export class MediaController {
     const ownerUserId = req.user?.userId || 'citizen-anon-001';
     const record = await this.mediaService.uploadMedia(file, ownerUserId);
 
-    const baseUrl = process.env.PUBLIC_MEDIA_URL || '';
     return {
       id: record.mediaId,
       mediaId: record.mediaId,
@@ -47,7 +46,7 @@ export class MediaController {
       size: record.size,
       dimensions: record.dimensions,
       checksum: record.checksum,
-      url: `${baseUrl}/media/${record.mediaId}`,
+      url: record.cloudinaryUrl,
       createdAt: record.createdAt,
     };
   }
@@ -57,20 +56,31 @@ export class MediaController {
     @Param('id') id: string,
     @Response() res: ExpressResponse,
   ) {
-    const { stream, record } = await this.mediaService.getMediaStream(id);
+    try {
+      const resource = await this.mediaService.getMediaResource(id);
+      if (resource.redirectUrl) {
+        return res.redirect(302, resource.redirectUrl);
+      }
 
-    res.setHeader('Content-Type', record.mimeType || 'image/jpeg');
-    res.setHeader('Content-Length', record.size);
-    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-    res.setHeader('Content-Disposition', `inline; filename="${record.fileName}"`);
+      if (resource.buffer) {
+        res.setHeader('Content-Type', resource.mimeType || 'image/jpeg');
+        res.setHeader('Content-Length', resource.buffer.length);
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        return res.end(resource.buffer);
+      }
+    } catch {
+      // Fall back to clean SVG placeholder image when requested media resource is missing or unresolvable
+    }
 
-    stream.pipe(res);
+    const fallbackSvg = this.mediaService.generateFallbackSvg(id);
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'no-cache');
+    return res.end(fallbackSvg);
   }
 
   @Get(':id/metadata')
   async getMetadata(@Param('id') id: string) {
     const record = await this.mediaService.getMediaMetadata(id);
-    const baseUrl = process.env.PUBLIC_MEDIA_URL || '';
     return {
       id: record.mediaId,
       mediaId: record.mediaId,
@@ -82,7 +92,7 @@ export class MediaController {
       size: record.size,
       dimensions: record.dimensions,
       checksum: record.checksum,
-      url: `${baseUrl}/media/${record.mediaId}`,
+      url: record.cloudinaryUrl,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
     };
@@ -101,6 +111,7 @@ export class MediaController {
       mediaId: updated.mediaId,
       complaintId: updated.complaintId,
       status: updated.processingStatus,
+      url: updated.cloudinaryUrl,
     };
   }
 

@@ -1,21 +1,20 @@
 import { Controller, Get, Res, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
-import { GridFsService } from '../media/gridfs.service';
+import { CloudinaryService } from '../media/cloudinary.service';
 
 @Controller('health')
 export class HealthController {
-  constructor(private readonly gridFsService: GridFsService) {}
+  constructor(private readonly cloudinaryService: CloudinaryService) {}
 
   @Get()
   getHealth(@Res() res: Response) {
-    const isReady = this.gridFsService.isReady();
-    const status = isReady ? 'healthy' : 'unhealthy';
-    const statusCode = isReady ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
+    const isCloudinaryConfigured = this.cloudinaryService.isConfigured();
 
-    return res.status(statusCode).json({
-      status,
+    return res.status(HttpStatus.OK).json({
+      status: 'healthy',
       service: 'urbanreports-media-service',
-      storage: isReady ? 'connected' : 'disconnected',
+      storageProvider: 'Cloudinary',
+      cloudinaryConfigured: isCloudinaryConfigured,
       timestamp: new Date().toISOString(),
     });
   }

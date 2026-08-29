@@ -10,7 +10,8 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
-    "db:seed": "pnpm --filter @urbanreports/complaints db:seed"
+    "db:seed": "pnpm --filter @urbanreports/complaints db:seed",
+    "db:clear": "pnpm --filter @urbanreports/complaints db:clear"
   },
   "devDependencies": {
     "concurrently": "^10.0.5",
