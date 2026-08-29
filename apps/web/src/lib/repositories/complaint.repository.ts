@@ -330,7 +330,10 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
 
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.message || 'Failed to submit complaint to server.');
+      const msg = Array.isArray(errData.message)
+        ? errData.message.join(' | ')
+        : errData.message || 'Failed to submit complaint to server.';
+      throw new Error(msg);
     }
 
     const item = await res.json();

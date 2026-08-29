@@ -9,9 +9,15 @@ import {
   Min,
   MinLength,
 } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 import { Category, Severity } from '../types/complaint.types';
 
 export class CreateComplaintDto {
+  @Transform(({ value }) =>
+    typeof value === 'string'
+      ? value.replace(/\s+/g, '_').toUpperCase()
+      : value,
+  )
   @IsEnum(
     [
       'POTHOLE',
@@ -37,16 +43,21 @@ export class CreateComplaintDto {
   @MinLength(10, { message: 'Description must be at least 10 characters long' })
   description: string;
 
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.toUpperCase() : value,
+  )
   @IsEnum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'], {
     message: 'Invalid severity choice',
   })
   severity: Severity;
 
+  @Type(() => Number)
   @IsNumber()
   @Min(-90)
   @Max(90)
   latitude: number;
 
+  @Type(() => Number)
   @IsNumber()
   @Min(-180)
   @Max(180)

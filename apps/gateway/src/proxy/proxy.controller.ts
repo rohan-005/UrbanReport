@@ -84,11 +84,24 @@ export class ProxyController {
 
   @Post('complaints')
   async createComplaint(@Body() body: any, @Req() req: Request) {
-    const formattedBody = {
-      ...body,
-      category: body?.category ? body.category.replace(/\s+/g, '_').toUpperCase() : undefined,
+    const mediaIds = Array.isArray(body?.mediaIds)
+      ? body.mediaIds
+      : Array.isArray(body?.media)
+      ? body.media.map((m: any) => m.id || m.mediaId).filter(Boolean)
+      : undefined;
+
+    const payload = {
+      category: body?.category ? String(body.category).replace(/\s+/g, '_').toUpperCase() : undefined,
+      title: body?.title ? String(body.title).trim() : undefined,
+      description: body?.description ? String(body.description).trim() : undefined,
+      severity: body?.severity ? String(body.severity).toUpperCase() : undefined,
+      latitude: body?.latitude !== undefined && body?.latitude !== null ? Number(body.latitude) : undefined,
+      longitude: body?.longitude !== undefined && body?.longitude !== null ? Number(body.longitude) : undefined,
+      address: body?.address ? String(body.address).trim() : undefined,
+      mediaIds,
     };
-    return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints`, formattedBody, this.getPassHeaders(req));
+
+    return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints`, payload, this.getPassHeaders(req));
   }
 
   @Patch('complaints/:id/status')
