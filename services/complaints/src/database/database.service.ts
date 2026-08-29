@@ -140,7 +140,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         );
       `);
 
-      // Complaint Media references table (Phase 4 media service hook)
+      // Complaint Media references table
       await client.query(`
         CREATE TABLE IF NOT EXISTS complaint_media (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -153,7 +153,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         );
       `);
 
-      // Complaint Confirmations table (Phase 8 community validation hook)
+      // Complaint Confirmations table (community validation hook)
       await client.query(`
         CREATE TABLE IF NOT EXISTS complaint_confirmations (
           complaint_id UUID NOT NULL REFERENCES complaints(id) ON DELETE CASCADE,

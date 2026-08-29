@@ -47,36 +47,6 @@ type ConfirmComplaintPayloadType {
   hasUserConfirmed: Boolean!
 }
 
-type UserType {
-  id: ID!
-  name: String!
-  email: String!
-  phone: String!
-  role: String!
-  aadhaarNumber: String
-  createdAt: String
-}
-
-type AuthPayloadType {
-  accessToken: String!
-  user: UserType!
-}
-
-type PlaceResultType {
-  id: ID!
-  placeName: String!
-  address: String!
-  latitude: Float!
-  longitude: Float!
-}
-
-type ReverseGeocodeType {
-  address: String!
-  placeName: String!
-  latitude: Float!
-  longitude: Float!
-}
-
 type CategoryStatType {
   category: String!
   count: Int!
@@ -113,6 +83,36 @@ type AnalyticsOverviewType {
   statuses: [StatusStatType!]!
   severities: [SeverityStatType!]!
   hotspots: [HotspotPointType!]!
+}
+
+type UserType {
+  id: ID!
+  name: String!
+  email: String!
+  phone: String!
+  role: String!
+  aadhaarNumber: String
+  createdAt: String
+}
+
+type AuthPayloadType {
+  accessToken: String!
+  user: UserType!
+}
+
+type PlaceResultType {
+  id: ID!
+  placeName: String!
+  address: String!
+  latitude: Float!
+  longitude: Float!
+}
+
+type ReverseGeocodeType {
+  address: String!
+  placeName: String!
+  latitude: Float!
+  longitude: Float!
 }
 
 type Query {

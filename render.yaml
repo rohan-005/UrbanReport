@@ -1,0 +1,158 @@
+# UrbanReports Render Blueprint Topology
+# Configures all 9 services & workers for production deployment on Render
+
+services:
+  # 1. Frontend Web App (Next.js)
+  - type: web
+    name: civic-web
+    env: node
+    buildCommand: pnpm install && pnpm --filter @urbanreports/web build
+    startCommand: pnpm --filter @urbanreports/web start
+    envVars:
+      - key: NEXT_PUBLIC_GATEWAY_URL
+        fromService:
+          type: web
+          name: civic-gateway
+          property: url
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
+
+  # 2. Public API Gateway (GraphQL & REST Proxy)
+  - type: web
+    name: civic-gateway
+    env: node
+    buildCommand: pnpm install && pnpm --filter @urbanreports/gateway build
+    startCommand: pnpm --filter @urbanreports/gateway start
+    envVars:
+      - key: PORT
+        value: "3005"
+      - key: USERS_SERVICE_URL
+        fromService:
+          type: pserv
+          name: civic-users
+          property: hostport
+      - key: COMPLAINTS_SERVICE_URL
+        fromService:
+          type: pserv
+          name: civic-complaints
+          property: hostport
+      - key: MEDIA_SERVICE_URL
+        fromService:
+          type: pserv
+          name: civic-media
+          property: hostport
+      - key: MAPS_SERVICE_URL
+        fromService:
+          type: pserv
+          name: civic-maps
+          property: hostport
+      - key: JWT_SECRET
+        sync: false
+
+  # 3. Users Microservice (MongoDB Auth & Profiles)
+  - type: pserv
+    name: civic-users
+    env: node
+    buildCommand: pnpm install && pnpm --filter @urbanreports/users build
+    startCommand: pnpm --filter @urbanreports/users start:prod
+    envVars:
+      - key: PORT
+        value: "3001"
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+
+  # 4. Complaints Microservice (PostgreSQL + PostGIS & Analytics)
+  - type: pserv
+    name: civic-complaints
+    env: node
+    buildCommand: pnpm install && pnpm --filter @urbanreports/complaints build
+    startCommand: pnpm --filter @urbanreports/complaints start:prod
+    envVars:
+      - key: PORT
+        value: "3002"
+      - key: DATABASE_URL
+        sync: false
+      - key: DUPLICATE_SEARCH_RADIUS_METERS
+        value: "250"
+      - key: NOTIFICATIONS_SERVICE_URL
+        fromService:
+          type: worker
+          name: civic-notifications
+          property: hostport
+
+  # 5. Maps Microservice (MapTiler Integration)
+  - type: pserv
+    name: civic-maps
+    env: node
+    buildCommand: pnpm install && pnpm --filter @urbanreports/maps build
+    startCommand: pnpm --filter @urbanreports/maps start:prod
+    envVars:
+      - key: PORT
+        value: "3004"
+      - key: MAPTILER_API_KEY
+        sync: false
+
+  # 6. Media Microservice (MongoDB GridFS Storage)
+  - type: pserv
+    name: civic-media
+    env: node
+    buildCommand: pnpm install && pnpm --filter @urbanreports/media build
+    startCommand: pnpm --filter @urbanreports/media start:prod
+    envVars:
+      - key: PORT
+        value: "3003"
+      - key: MONGODB_URI
+        sync: false
+
+  # 7. Admin Service (Authority Workflow Control)
+  - type: pserv
+    name: civic-admin
+    env: node
+    buildCommand: pnpm install && pnpm --filter @urbanreports/complaints build
+    startCommand: pnpm --filter @urbanreports/complaints start:prod
+    envVars:
+      - key: PORT
+        value: "3007"
+      - key: DATABASE_URL
+        sync: false
+
+  # 8. Notifications Worker (Redis Cloud & Nodemailer SMTP)
+  - type: worker
+    name: civic-notifications
+    env: node
+    buildCommand: pnpm install && pnpm --filter @urbanreports/notifications build
+    startCommand: pnpm --filter @urbanreports/notifications start
+    envVars:
+      - key: PORT
+        value: "3006"
+      - key: REDIS_URL
+        sync: false
+      - key: REDIS_NOTIFICATION_STREAM
+        value: "urbanreports.notifications"
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        value: "no-reply@urbanreports.gov.in"
+      - key: USERS_SERVICE_URL
+        fromService:
+          type: pserv
+          name: civic-users
+          property: hostport
+
+  # 9. Background Job Worker
+  - type: worker
+    name: civic-worker
+    env: node
+    buildCommand: pnpm install && pnpm --filter @urbanreports/notifications build
+    startCommand: pnpm --filter @urbanreports/notifications start
+    envVars:
+      - key: REDIS_URL
+        sync: false

@@ -30,13 +30,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const [isUploadingGlobal, setIsUploadingGlobal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const sampleEvidenceImages = [
-    { label: 'Sample Pothole', url: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Sample Garbage', url: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Sample Streetlight', url: 'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Sample Drainage', url: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=800&q=80' },
-  ];
-
   const notifyParent = (currentAttachments: ImageAttachment[]) => {
     const successfulMediaIds = currentAttachments
       .filter((a) => a.status === 'success' && a.mediaId)
@@ -170,59 +163,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
-  const handleSelectSample = async (sampleUrl: string, sampleLabel: string) => {
-    if (attachments.length >= maxImages) return;
-
-    const tempId = `att-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
-    const newAtt: ImageAttachment = {
-      id: tempId,
-      previewUrl: sampleUrl,
-      fileName: `${sampleLabel}.jpg`,
-      status: 'uploading',
-    };
-
-    setAttachments((prev) => [...prev, newAtt]);
-    setIsUploadingGlobal(true);
-
-    try {
-      const uploaded = await MediaService.uploadSampleUrl(sampleUrl, sampleLabel);
-      let nextAttachments: ImageAttachment[] = [];
-      setAttachments((prev) => {
-        nextAttachments = prev.map((a) =>
-          a.id === tempId
-            ? {
-                ...a,
-                status: 'success' as const,
-                mediaId: uploaded.mediaId,
-                previewUrl: uploaded.url,
-              }
-            : a
-        );
-        return nextAttachments;
-      });
-
-      notifyParent(nextAttachments);
-    } catch (err: any) {
-      let nextAttachments: ImageAttachment[] = [];
-      setAttachments((prev) => {
-        nextAttachments = prev.map((a) =>
-          a.id === tempId
-            ? {
-                ...a,
-                status: 'error' as const,
-                errorMessage: err.message || 'Sample upload failed.',
-              }
-            : a
-        );
-        return nextAttachments;
-      });
-
-      notifyParent(nextAttachments);
-    } finally {
-      setIsUploadingGlobal(false);
-    }
-  };
-
   return (
     <div className="space-y-4">
       <input
@@ -309,35 +249,11 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                     <CheckCircle2 className="w-3.5 h-3.5" /> Ready
                   </span>
                 )}
-                {att.status === 'uploading' && (
-                  <span className="text-zinc-500 font-bold">Uploading...</span>
-                )}
               </div>
             </div>
           ))}
         </div>
       )}
-
-      {/* Quick Sample Selector for Testing */}
-      <div className="pt-3 border-t border-zinc-200">
-        <span className="text-xs text-zinc-500 block mb-2 font-bold uppercase tracking-wider">
-          Quick test samples (uploads live to MongoDB GridFS):
-        </span>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {sampleEvidenceImages.map((sample) => (
-            <button
-              key={sample.label}
-              type="button"
-              disabled={isUploadingGlobal || attachments.length >= maxImages}
-              onClick={() => handleSelectSample(sample.url, sample.label)}
-              className="flex items-center gap-2 p-2 rounded border border-zinc-200 bg-zinc-50 hover:bg-zinc-100 disabled:opacity-50 text-xs text-zinc-900 transition-colors text-left font-medium"
-            >
-              <img src={sample.url} className="w-6 h-6 rounded object-cover shrink-0" alt="" />
-              <span className="truncate text-[11px] font-bold">{sample.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 };

@@ -72,7 +72,7 @@ export default function ReportPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploadedMediaIds, setUploadedMediaIds] = useState<string[]>([]);
 
-  // Phase 8: Duplicate Detection & Community Confirmation State
+  // Duplicate Detection & Community Confirmation State
   const [duplicates, setDuplicates] = useState<DuplicateCandidate[]>([]);
   const [checkingDuplicates, setCheckingDuplicates] = useState(false);
   const [duplicateCheckDismissed, setDuplicateCheckDismissed] = useState(false);
@@ -385,7 +385,7 @@ export default function ReportPage() {
                 </Box>
               </Paper>
 
-              {/* PHASE 8: DUPLICATE CANDIDATES DETECTION PANEL */}
+              {/* DUPLICATE CANDIDATES DETECTION PANEL */}
               {checkingDuplicates ? (
                 <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', alignItems: 'center', gap: 2 }}>
                   <CircularProgress size={20} sx={{ color: '#09090b' }} />

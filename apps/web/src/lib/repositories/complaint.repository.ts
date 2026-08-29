@@ -10,7 +10,6 @@ import {
   DuplicateCheckInput,
   AnalyticsOverview,
 } from '../types';
-import { MOCK_COMPLAINTS } from '../data/mock-complaints';
 import { MediaService } from '../services/mediaService';
 
 const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:3005';
@@ -80,7 +79,7 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
         }
       }
     }
-    this.complaints = [...MOCK_COMPLAINTS];
+    this.complaints = [];
   }
 
   private persist() {
