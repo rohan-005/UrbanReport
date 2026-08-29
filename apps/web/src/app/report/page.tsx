@@ -70,6 +70,10 @@ export default function ReportPage() {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
+    if (!category) {
+      newErrors.category = 'Please select an issue category.';
+    }
+
     if (!title.trim()) {
       newErrors.title = 'Title is required.';
     } else if (title.trim().length < 5) {
@@ -78,11 +82,25 @@ export default function ReportPage() {
 
     if (!description.trim()) {
       newErrors.description = 'Problem description is required.';
-    } else if (description.trim().length < 15) {
-      newErrors.description = 'Please provide a detailed description (at least 15 characters).';
+    } else if (description.trim().length < 10) {
+      newErrors.description = 'Description must be at least 10 characters long.';
     }
 
-    if (!address.trim()) {
+    if (!severity) {
+      newErrors.severity = 'Please select a severity level.';
+    }
+
+    const latNum = Number(latitude);
+    if (latitude === undefined || latitude === null || !Number.isFinite(latNum) || latNum < -90 || latNum > 90) {
+      newErrors.address = 'Please select a valid location with latitude between -90 and 90.';
+    }
+
+    const lngNum = Number(longitude);
+    if (longitude === undefined || longitude === null || !Number.isFinite(lngNum) || lngNum < -180 || lngNum > 180) {
+      newErrors.address = 'Please select a valid location with longitude between -180 and 180.';
+    }
+
+    if (!address || !address.trim()) {
       newErrors.address = 'Location address is required.';
     }
 
@@ -93,9 +111,12 @@ export default function ReportPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (submitting) return;
+
     if (!validateForm()) return;
 
     setSubmitting(true);
+    setErrors({});
 
     try {
       const mediaList = uploadedMediaIds.length > 0
@@ -115,8 +136,8 @@ export default function ReportPage() {
         description: description.trim(),
         severity,
         status: 'SUBMITTED',
-        latitude,
-        longitude,
+        latitude: Number(latitude),
+        longitude: Number(longitude),
         address: address.trim(),
         reporter: {
           id: 'user-001',

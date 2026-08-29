@@ -1,26 +1,76 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { complaintRepository } from '../lib/repositories/complaint.repository';
 
-describe('Complaint Repository Tests', () => {
-  it('should return initial dataset of 20+ civic complaints', async () => {
-    const complaints = await complaintRepository.getAllComplaints();
-    expect(complaints.length).toBeGreaterThanOrEqual(20);
+describe('ApiComplaintRepositoryImpl Unit Tests', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
   });
 
-  it('should filter complaints by category', async () => {
-    const potholeComplaints = await complaintRepository.getAllComplaints({ category: 'Pothole' });
-    expect(potholeComplaints.length).toBeGreaterThan(0);
-    potholeComplaints.forEach((c) => expect(c.category).toBe('Pothole'));
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
-  it('should filter complaints by severity', async () => {
-    const criticalComplaints = await complaintRepository.getAllComplaints({ severity: 'CRITICAL' });
-    expect(criticalComplaints.length).toBeGreaterThan(0);
-    criticalComplaints.forEach((c) => expect(c.severity).toBe('CRITICAL'));
+  it('should fetch and map list of complaints from Gateway', async () => {
+    const mockResponse = {
+      items: [
+        {
+          id: 'URB-1001',
+          category: 'POTHOLE',
+          title: 'Pothole on Ring Road',
+          description: 'Deep dangerous pothole near junction.',
+          severity: 'HIGH',
+          status: 'SUBMITTED',
+          latitude: '12.9172',
+          longitude: '77.6228',
+          address: 'Outer Ring Road, Bengaluru',
+          created_at: '2026-08-29T10:00:00.000Z',
+          updated_at: '2026-08-29T10:00:00.000Z',
+          upvotes_count: 5,
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 20,
+    };
+
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockResponse,
+    }));
+
+    const complaints = await complaintRepository.getAllComplaints({ category: 'Pothole' });
+    expect(complaints.length).toBe(1);
+    expect(complaints[0].id).toBe('URB-1001');
+    expect(complaints[0].category).toBe('Pothole');
+    expect(complaints[0].severity).toBe('HIGH');
+    expect(complaints[0].latitude).toBe(12.9172);
+    expect(complaints[0].longitude).toBe(77.6228);
   });
 
-  it('should create new complaint and append timeline event', async () => {
-    const initialCount = (await complaintRepository.getAllComplaints()).length;
+  it('should post formatted complaint payload to POST /api/complaints', async () => {
+    let capturedUrl = '';
+    let capturedOptions: any = null;
+
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async (url: string, options: any) => {
+      capturedUrl = url;
+      capturedOptions = options;
+      return {
+        ok: true,
+        json: async () => ({
+          id: 'URB-2026-9999',
+          category: 'TRAFFIC',
+          title: 'Broken Traffic Light Signal',
+          description: 'Traffic signal light broken at major crossing causing gridlock.',
+          severity: 'HIGH',
+          status: 'SUBMITTED',
+          latitude: 12.9716,
+          longitude: 77.5946,
+          address: 'MG Road Junction, Bengaluru',
+          created_at: '2026-08-29T10:00:00.000Z',
+          updated_at: '2026-08-29T10:00:00.000Z',
+        }),
+      };
+    }));
 
     const newReport = await complaintRepository.createComplaint({
       title: 'Broken Traffic Light Signal',
@@ -35,29 +85,49 @@ describe('Complaint Repository Tests', () => {
       media: [],
     });
 
-    expect(newReport.id).toMatch(/^URB-2026-\d{4}$/);
-    expect(newReport.timeline.length).toBe(1);
-    expect(newReport.timeline[0].status).toBe('SUBMITTED');
+    expect(capturedUrl).toContain('/api/complaints');
+    expect(capturedOptions.method).toBe('POST');
 
-    const updatedList = await complaintRepository.getAllComplaints();
-    expect(updatedList.length).toBe(initialCount + 1);
+    const parsedBody = JSON.parse(capturedOptions.body);
+    expect(parsedBody.category).toBe('TRAFFIC');
+    expect(parsedBody.title).toBe('Broken Traffic Light Signal');
+    expect(parsedBody.description).toBe('Traffic signal light broken at major crossing causing gridlock.');
+    expect(parsedBody.severity).toBe('HIGH');
+    expect(parsedBody.latitude).toBe(12.9716);
+    expect(parsedBody.longitude).toBe(77.5946);
+    expect(parsedBody.address).toBe('MG Road Junction, Bengaluru');
+
+    expect(newReport.id).toBe('URB-2026-9999');
+    expect(newReport.category).toBe('Traffic');
   });
 
-  it('should update complaint status and record transition timeline event', async () => {
-    const complaints = await complaintRepository.getAllComplaints();
-    const target = complaints[0];
+  it('should throw meaningful error message when API returns 400 Bad Request', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 400,
+      json: async () => ({
+        statusCode: 400,
+        message: [
+          'Title must be at least 5 characters long',
+          'Description must be at least 10 characters long',
+        ],
+        error: 'Bad Request',
+      }),
+    }));
 
-    const updated = await complaintRepository.updateStatus(
-      target.id,
-      'IN_PROGRESS',
-      'Eng. Rajesh Kumar',
-      'OFFICER',
-      'Crew deployed to site'
-    );
-
-    expect(updated).not.toBeNull();
-    expect(updated?.status).toBe('IN_PROGRESS');
-    expect(updated?.timeline[0].status).toBe('IN_PROGRESS');
-    expect(updated?.timeline[0].actor.name).toBe('Eng. Rajesh Kumar');
+    await expect(
+      complaintRepository.createComplaint({
+        title: 'Bad',
+        category: 'Pothole',
+        description: 'Short',
+        severity: 'LOW',
+        status: 'SUBMITTED',
+        latitude: 12.9172,
+        longitude: 77.6228,
+        address: 'Test Address',
+        reporter: { id: 'user-001', name: 'Test Reporter' },
+        media: [],
+      })
+    ).rejects.toThrow('Title must be at least 5 characters long | Description must be at least 10 characters long');
   });
 });

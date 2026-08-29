@@ -13,6 +13,11 @@ import {
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { ProxyService } from './proxy.service';
+import { CreateComplaintDto } from './dto/create-complaint.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('api')
 export class ProxyController {
@@ -39,12 +44,12 @@ export class ProxyController {
 
   // --- AUTH & USERS PROXY ---
   @Post('auth/login')
-  async login(@Body() body: any, @Req() req: Request) {
+  async login(@Body() body: LoginDto, @Req() req: Request) {
     return this.proxyService.forwardPost(`${this.getUsersUrl()}/auth/login`, body, this.getPassHeaders(req));
   }
 
   @Post('auth/register')
-  async register(@Body() body: any, @Req() req: Request) {
+  async register(@Body() body: RegisterDto, @Req() req: Request) {
     return this.proxyService.forwardPost(`${this.getUsersUrl()}/auth/register`, body, this.getPassHeaders(req));
   }
 
@@ -54,7 +59,7 @@ export class ProxyController {
   }
 
   @Patch('users/me')
-  async updateProfile(@Body() body: any, @Req() req: Request) {
+  async updateProfile(@Body() body: UpdateUserDto, @Req() req: Request) {
     return this.proxyService.forwardPost(`${this.getUsersUrl()}/users/me`, body, this.getPassHeaders(req));
   }
 
@@ -83,8 +88,8 @@ export class ProxyController {
   }
 
   @Post('complaints')
-  async createComplaint(@Body() body: any, @Req() req: Request) {
-    const mediaIds = Array.isArray(body?.mediaIds)
+  async createComplaint(@Body() body: CreateComplaintDto, @Req() req: Request) {
+    const mediaIds = Array.isArray(body?.mediaIds) && body.mediaIds.length > 0
       ? body.mediaIds
       : Array.isArray(body?.media)
       ? body.media.map((m: any) => m.id || m.mediaId).filter(Boolean)
@@ -105,7 +110,7 @@ export class ProxyController {
   }
 
   @Patch('complaints/:id/status')
-  async updateComplaintStatus(@Param('id') id: string, @Body() body: any, @Req() req: Request) {
+  async updateComplaintStatus(@Param('id') id: string, @Body() body: UpdateStatusDto, @Req() req: Request) {
     return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints/${id}/status`, body, this.getPassHeaders(req));
   }
 

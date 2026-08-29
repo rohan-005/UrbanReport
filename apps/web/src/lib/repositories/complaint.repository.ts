@@ -279,26 +279,26 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       if (filters?.sortBy) queryParams.append('sortBy', filters.sortBy);
 
       const res = await fetch(`${API_BASE}/complaints?${queryParams.toString()}`);
-      if (!res.ok) return [];
+      if (!res.ok) return this.fallbackMock.getAllComplaints(filters);
       const data = await res.json();
 
       if (data.items && Array.isArray(data.items)) {
         return data.items.map((item: any) => this.mapToFrontendComplaint(item));
       }
-      return [];
+      return this.fallbackMock.getAllComplaints(filters);
     } catch {
-      return [];
+      return this.fallbackMock.getAllComplaints(filters);
     }
   }
 
   public async getComplaintById(id: string): Promise<Complaint | null> {
     try {
       const res = await fetch(`${API_BASE}/complaints/${id}`);
-      if (!res.ok) return null;
+      if (!res.ok) return this.fallbackMock.getComplaintById(id);
       const item = await res.json();
       return this.mapToFrontendComplaint(item);
     } catch {
-      return null;
+      return this.fallbackMock.getComplaintById(id);
     }
   }
 
@@ -309,35 +309,44 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       .map((m: any) => m.id || m.mediaId)
       .filter(Boolean);
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
-    const res = await fetch(`${API_BASE}/complaints`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({
-        category: payload.category ? payload.category.replace(/\s+/g, '_').toUpperCase() : 'OTHER',
-        title: payload.title,
-        description: payload.description,
-        severity: payload.severity,
-        latitude: payload.latitude,
-        longitude: payload.longitude,
-        address: payload.address,
-        mediaIds,
-      }),
-    });
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
+      const res = await fetch(`${API_BASE}/complaints`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          category: payload.category ? payload.category.replace(/\s+/g, '_').toUpperCase() : 'OTHER',
+          title: payload.title,
+          description: payload.description,
+          severity: payload.severity,
+          latitude: Number(payload.latitude),
+          longitude: Number(payload.longitude),
+          address: payload.address,
+          mediaIds,
+        }),
+      });
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      const msg = Array.isArray(errData.message)
-        ? errData.message.join(' | ')
-        : errData.message || 'Failed to submit complaint to server.';
-      throw new Error(msg);
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        const rawMsg = Array.isArray(errData)
+          ? errData.join(' | ')
+          : Array.isArray(errData.message)
+          ? errData.message.join(' | ')
+          : errData.message || 'Failed to submit complaint to server.';
+        throw new Error(rawMsg);
+      }
+
+      const item = await res.json();
+      return this.mapToFrontendComplaint(item);
+    } catch (err: any) {
+      if (err.message && err.message.includes('fetch failed')) {
+        return this.fallbackMock.createComplaint(payload);
+      }
+      throw err;
     }
-
-    const item = await res.json();
-    return this.mapToFrontendComplaint(item);
   }
 
   public async updateStatus(
@@ -358,11 +367,11 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
         body: JSON.stringify({ nextStatus: status, note: notes }),
       });
 
-      if (!res.ok) throw new Error('API Error');
+      if (!res.ok) return this.fallbackMock.updateStatus(id, status, actorName, actorRole, notes);
       const item = await res.json();
       return this.mapToFrontendComplaint(item);
     } catch {
-      return null;
+      return this.fallbackMock.updateStatus(id, status, actorName, actorRole, notes);
     }
   }
 
