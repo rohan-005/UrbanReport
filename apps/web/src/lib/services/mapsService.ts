@@ -1,4 +1,4 @@
-const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:4001';
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:3005';
 const MAPS_API_BASE = `${GATEWAY_URL}/api`;
 
 export interface PlaceSearchResult {

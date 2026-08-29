@@ -122,8 +122,34 @@ export class MaptilerService {
           }
         }
       } catch (err: any) {
-        this.logger.warn(`MapTiler search request error: ${err.message}. Falling back to sample geocoding dataset.`);
+        this.logger.warn(`MapTiler search request error: ${err.message}.`);
       }
+    }
+
+    // Secondary Fallback: Try free public OpenStreetMap Nominatim geocoding API
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query.trim())}&format=json&limit=5`;
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'UrbanReport-App/1.0 (contact: admin@urbanreports.gov.in)' }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          return data.map((item: any) => {
+            const lat = parseFloat(item.lat);
+            const lng = parseFloat(item.lon);
+            return {
+              id: item.place_id ? `osm-${item.place_id}` : `osm-${Math.random()}`,
+              placeName: item.display_name.split(',')[0] || query,
+              address: item.display_name || query,
+              latitude: lat,
+              longitude: lng,
+            };
+          });
+        }
+      }
+    } catch (err: any) {
+      this.logger.warn(`OSM Nominatim search fallback error: ${err.message}.`);
     }
 
     // Fallback search filtering on local landmarks dataset
@@ -166,6 +192,29 @@ export class MaptilerService {
       } catch (err: any) {
         this.logger.warn(`MapTiler reverse geocode error: ${err.message}.`);
       }
+    }
+
+    // Secondary Fallback: Try free public OpenStreetMap Nominatim reverse geocoding API
+    try {
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`;
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'UrbanReport-App/1.0 (contact: admin@urbanreports.gov.in)' }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.display_name) {
+          return {
+            address: data.display_name,
+            placeName: data.name || 'Selected Location',
+            latitude: lat,
+            longitude: lng,
+            city: data.address?.city || data.address?.town || data.address?.village || 'Bengaluru',
+            postcode: data.address?.postcode,
+          };
+        }
+      }
+    } catch (err: any) {
+      this.logger.warn(`OSM Nominatim reverse geocode fallback error: ${err.message}.`);
     }
 
     // Find closest sample place or construct fallback coordinate address

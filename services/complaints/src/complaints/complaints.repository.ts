@@ -539,6 +539,7 @@ export class ComplaintsRepository {
   async findDuplicateCandidates(input: DuplicateCheckInput): Promise<any[]> {
     const radiusMeters = input.radius || Number(process.env.DUPLICATE_SEARCH_RADIUS_METERS) || 250;
     const maxCandidates = Number(process.env.DUPLICATE_MAX_CANDIDATES) || 10;
+    const category = (input.category || '').replace(/\s+/g, '_').toUpperCase();
 
     try {
       const res = await this.db.query(
@@ -548,18 +549,20 @@ export class ComplaintsRepository {
                ST_Distance(location::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) as distance_meters
         FROM complaints
         WHERE status IN ('SUBMITTED', 'UNDER_REVIEW', 'VERIFIED', 'ASSIGNED', 'IN_PROGRESS')
+          AND category = $5
           AND ST_DWithin(location::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, $3)
         ORDER BY distance_meters ASC
         LIMIT $4;
         `,
-        [input.longitude, input.latitude, radiusMeters, maxCandidates],
+        [input.longitude, input.latitude, radiusMeters, maxCandidates, category],
       );
 
       const itemsWithMedia = await this.attachMediaToComplaints(res.rows);
       return this.duplicateDetection.rankCandidates(itemsWithMedia, input, radiusMeters);
     } catch {
       const allActive = Array.from(this.fallbackStore.values()).filter((c) =>
-        ['SUBMITTED', 'UNDER_REVIEW', 'VERIFIED', 'ASSIGNED', 'IN_PROGRESS'].includes(c.status),
+        ['SUBMITTED', 'UNDER_REVIEW', 'VERIFIED', 'ASSIGNED', 'IN_PROGRESS'].includes(c.status) &&
+        c.category === category,
       );
       return this.duplicateDetection.rankCandidates(allActive, input, radiusMeters);
     }

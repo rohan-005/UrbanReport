@@ -55,7 +55,7 @@ export default function ProfilePage() {
         const userReports = all.filter(
           (c) => c.reporter.id === user.id || c.reporter.name === user.name
         );
-        setComplaints(userReports.length > 0 ? userReports : all.slice(0, 5));
+        setComplaints(userReports);
       }
     };
     loadUserReports();

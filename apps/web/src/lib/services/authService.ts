@@ -1,6 +1,6 @@
 import { User } from '../types';
 
-const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:4001';
+const GATEWAY_URL = process.env.NEXT_PUBLIC_GATEWAY_URL || 'http://localhost:3005';
 const API_BASE = `${GATEWAY_URL}/api`;
 
 class AuthServiceAPI {
