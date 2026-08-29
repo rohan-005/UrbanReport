@@ -116,10 +116,22 @@ export default function LandingHomePage() {
                     fontWeight: 700,
                     fontSize: { xs: '1.125rem', sm: '1.35rem' },
                     lineHeight: 1.4,
-                    mb: 3,
+                    mb: 1,
                   }}
                 >
                   Report it. Track it. Improve your community.
+                </Typography>
+                <Typography
+                  className="font-accent"
+                  sx={{
+                    color: '#a8c38e',
+                    fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                    fontWeight: 400,
+                    mb: 3,
+                    display: 'block',
+                  }}
+                >
+                  Report an issue. Make your street better.
                 </Typography>
 
                 <Typography
@@ -134,6 +146,7 @@ export default function LandingHomePage() {
                 >
                   Map-first civic reporting platform empowering citizens to pinpoint potholes, garbage, streetlights, and water leaks directly to municipal dispatch teams.
                 </Typography>
+
 
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
                   <Link href="/report">
@@ -326,13 +339,14 @@ export default function LandingHomePage() {
 
           <Grid container spacing={3}>
             {complaints.slice(0, 3).map((item, idx) => (
-              <Grid item xs={12} md={4} key={item.id}>
-                <FadeIn delay={idx * 0.08}>
+              <Grid item xs={12} md={4} key={item.id} sx={{ display: 'flex' }}>
+                <FadeIn delay={idx * 0.08} className="w-full flex flex-col h-full">
                   <ComplaintCard complaint={item} />
                 </FadeIn>
               </Grid>
             ))}
           </Grid>
+
         </Container>
       </Box>
     </Box>

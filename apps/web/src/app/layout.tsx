@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Lora, Caveat } from 'next/font/google';
+import { Inter, Lora, Caveat_Brush } from 'next/font/google';
 import './globals.css';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { ThemeRegistry } from '@/components/providers/ThemeRegistry';
@@ -19,7 +19,8 @@ const displayFont = Lora({
   display: 'swap',
 });
 
-const accentFont = Caveat({
+const accentFont = Caveat_Brush({
+  weight: '400',
   subsets: ['latin'],
   variable: '--font-accent',
   display: 'swap',
@@ -37,7 +38,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${sansFont.variable} ${displayFont.variable} ${accentFont.variable}`}>
-      <body className="rural-houses-bg text-[#1f241d] antialiased min-h-screen flex flex-col font-sans overflow-x-hidden selection:bg-[#89a577]/30 selection:text-[#1f241d]">
+      <body className="rural-houses-bg text-[#3f4636] antialiased min-h-screen flex flex-col font-sans overflow-x-hidden selection:bg-[#89a577]/30 selection:text-[#1f241d]">
         <ThemeRegistry>
           <AuthProvider>
             <div className="flex-1 flex flex-col w-full relative pb-28">{children}</div>
@@ -47,7 +48,7 @@ export default function RootLayout({
         </ThemeRegistry>
       </body>
     </html>
-
   );
 }
+
 

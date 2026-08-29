@@ -11,9 +11,11 @@
   --color-dark-rural: #181a17;
   --color-dark-earth: #222620;
   --color-terracotta: #b85d38;
+  --color-deep-earth: #3f4636;
+  --color-muted-earth: #5f604f;
 
   --background: #f5f3ee;
-  --foreground: #1f241d;
+  --foreground: #3f4636;
   --paper: #ffffff;
   --border: #e2dfd7;
 
@@ -52,8 +54,9 @@ body {
 }
 
 .font-accent {
-  font-family: var(--font-accent), Caveat, cursive;
+  font-family: var(--font-accent), 'Caveat Brush', Caveat, cursive;
 }
+
 
 
 /* Custom Scrollbar */

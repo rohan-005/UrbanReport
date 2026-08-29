@@ -107,14 +107,16 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
       </Box>
 
       {/* Card Body */}
-      <Box sx={{ p: 2.5, flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 2 }}>
-        <Box>
+      <Box sx={{ p: 2.5, flex: 1, display: 'flex', flexDirection: 'column' }}>
+        {/* Title & Description Controlled Region */}
+        <Box sx={{ mb: 2 }}>
           <Typography
             variant="subtitle1"
             sx={{
               fontWeight: 700,
-              color: '#1f241d',
+              color: '#3f4636',
               lineHeight: 1.3,
+              minHeight: '1.35rem',
               display: '-webkit-box',
               WebkitLineClamp: 1,
               WebkitBoxOrient: 'vertical',
@@ -126,10 +128,11 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           <Typography
             variant="body2"
             sx={{
-              color: '#6b7280',
+              color: '#5f604f',
               mt: 0.75,
               fontSize: '0.8125rem',
-              lineHeight: 1.5,
+              lineHeight: 1.45,
+              minHeight: '2.35rem',
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
@@ -140,32 +143,36 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
           </Typography>
         </Box>
 
+        {/* Metadata Section - Anchored Above Action Row */}
         <Box sx={{ pt: 1.5, borderTop: '1px solid #e2dfd7', mt: 'auto' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#6b7280', fontSize: '0.75rem', mb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#5f604f', fontSize: '0.75rem', mb: 1, minHeight: '1.25rem' }}>
             <MapPin className="w-3.5 h-3.5 text-[#877b5f] shrink-0" />
             <span className="truncate font-medium">{complaint.address}</span>
           </Box>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#6b7280', fontSize: '0.75rem', pt: 0.5 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-              <User className="w-3.5 h-3.5 text-[#877b5f]" />
-              <span className="font-semibold text-[#1f241d]">{complaint.reporter.name}</span>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#5f604f', fontSize: '0.75rem', pt: 0.5, minHeight: '1.25rem' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, overflow: 'hidden' }}>
+              <User className="w-3.5 h-3.5 text-[#877b5f] shrink-0" />
+              <span className="font-semibold text-[#3f4636] truncate max-w-[110px]">{complaint.reporter.name}</span>
             </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, shrink: 0 }}>
               <Calendar className="w-3.5 h-3.5 text-[#877b5f]" />
-              <span className="font-mono text-[#6b7280]">{formattedDate}</span>
+              <span className="font-mono text-[#5f604f]">{formattedDate}</span>
             </Box>
           </Box>
         </Box>
 
-        {/* Action Row */}
+        {/* Action Row - Fixed Baseline Alignment */}
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             pt: 1.5,
+            mt: 1.5,
             borderTop: '1px solid #e2dfd7',
+            height: '40px',
+            shrink: 0,
           }}
         >
           <button
@@ -176,7 +183,7 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
             className={`flex items-center gap-1.5 px-3 h-8 rounded-md text-xs font-bold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
               isUpvoted
                 ? 'bg-[#89a577] text-white border border-[#89a577]'
-                : 'bg-[#f5f3ee] text-[#1f241d] border border-[#e2dfd7] hover:bg-[#e2dfd7]'
+                : 'bg-[#f5f3ee] text-[#3f4636] border border-[#e2dfd7] hover:bg-[#e2dfd7]'
             }`}
           >
             <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? 'fill-white text-white' : 'text-[#877b5f]'}`} />
@@ -185,13 +192,14 @@ export const ComplaintCard: React.FC<ComplaintCardProps> = ({
 
           <Link
             href={`/complaints/${complaint.id}`}
-            className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-[#1f241d] hover:text-[#89a577] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] rounded-xs px-1"
+            className="flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-[#3f4636] hover:text-[#89a577] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] rounded-xs px-1"
           >
             <span>DOSSIER</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </Box>
       </Box>
+
     </Paper>
   );
 };

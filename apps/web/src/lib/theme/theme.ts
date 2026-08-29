@@ -10,7 +10,7 @@ export const urbanTheme = createTheme({
       paper: '#ffffff',   // Crisp warm white card surface
     },
     primary: {
-      main: '#89a577',    // Muted Sage Green primary
+      main: '#89a577',    // Muddy Sage Green primary
       contrastText: '#ffffff',
     },
     secondary: {
@@ -18,20 +18,20 @@ export const urbanTheme = createTheme({
       contrastText: '#ffffff',
     },
     error: {
-      main: '#dc2626',    // Muted crimson
+      main: '#b85d38',    // Terracotta earth red
     },
     warning: {
       main: '#d97706',    // Warm amber
     },
     info: {
-      main: '#52525b',    // Slate dark metadata
+      main: '#3f4636',    // Deep earth slate
     },
     success: {
-      main: '#16a34a',    // Muted emerald
+      main: '#4e6d3c',    // Deep forest olive
     },
     text: {
-      primary: '#1f241d',   // Deep earthy dark typography
-      secondary: '#6b7280', // Neutral secondary
+      primary: '#3f4636',   // Deep earthy dark typography (#3F4636)
+      secondary: '#5f604f', // Muted earthy secondary (#5F604F)
       disabled: '#9ca3af',
     },
     divider: '#e2dfd7',
@@ -54,27 +54,27 @@ export const urbanTheme = createTheme({
       fontWeight: 700,
       letterSpacing: '-0.02em',
       lineHeight: 1.1,
-      color: '#1f241d',
+      color: '#3f4636',
     },
     h2: {
       fontFamily: ['var(--font-display)', 'Lora', 'Georgia', 'serif'].join(','),
       fontWeight: 700,
       letterSpacing: '-0.015em',
       lineHeight: 1.15,
-      color: '#1f241d',
+      color: '#3f4636',
     },
     h3: {
       fontFamily: ['var(--font-display)', 'Lora', 'Georgia', 'serif'].join(','),
       fontWeight: 700,
       letterSpacing: '-0.01em',
       lineHeight: 1.2,
-      color: '#1f241d',
+      color: '#3f4636',
     },
     h4: {
       fontFamily: ['var(--font-display)', 'Lora', 'Georgia', 'serif'].join(','),
       fontWeight: 700,
       letterSpacing: '-0.005em',
-      color: '#1f241d',
+      color: '#3f4636',
     },
     button: {
       textTransform: 'uppercase',
@@ -109,7 +109,7 @@ export const urbanTheme = createTheme({
         },
         outlined: {
           borderColor: '#e2dfd7',
-          color: '#1f241d',
+          color: '#3f4636',
           '&:hover': {
             borderColor: '#877b5f',
             backgroundColor: '#f5f3ee',
@@ -166,4 +166,5 @@ export const urbanTheme = createTheme({
     },
   },
 });
+
 

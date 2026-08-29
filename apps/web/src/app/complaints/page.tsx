@@ -127,7 +127,7 @@ export default function ComplaintsPage() {
         ) : (
           <Grid container spacing={3}>
             {complaints.map((item) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={item.id}>
+              <Grid item xs={12} sm={6} md={4} lg={3} key={item.id} sx={{ display: 'flex' }}>
                 <ComplaintCard
                   complaint={item}
                   onUpvote={handleUpvote}
@@ -136,6 +136,7 @@ export default function ComplaintsPage() {
               </Grid>
             ))}
           </Grid>
+
         )}
       </Container>
     </Box>
