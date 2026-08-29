@@ -60,8 +60,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     try {
       const uploaded: UploadedMediaResponse = await MediaService.uploadImage(file);
 
+      let nextAttachments: ImageAttachment[] = [];
       setAttachments((prev) => {
-        const updated = prev.map((a) =>
+        nextAttachments = prev.map((a) =>
           a.id === attachment.id
             ? {
                 ...a,
@@ -71,12 +72,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               }
             : a
         );
-        notifyParent(updated);
-        return updated;
+        return nextAttachments;
       });
+
+      notifyParent(nextAttachments);
     } catch (err: any) {
+      let nextAttachments: ImageAttachment[] = [];
       setAttachments((prev) => {
-        const updated = prev.map((a) =>
+        nextAttachments = prev.map((a) =>
           a.id === attachment.id
             ? {
                 ...a,
@@ -85,9 +88,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               }
             : a
         );
-        notifyParent(updated);
-        return updated;
+        return nextAttachments;
       });
+
+      notifyParent(nextAttachments);
     }
   };
 
@@ -155,11 +159,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       MediaService.deleteMedia(target.mediaId).catch(() => {});
     }
 
-    setAttachments((prev) => {
-      const updated = prev.filter((a) => a.id !== id);
-      notifyParent(updated);
-      return updated;
-    });
+    const updated = attachments.filter((a) => a.id !== id);
+    setAttachments(updated);
+    notifyParent(updated);
   };
 
   const handleRetry = (attachment: ImageAttachment) => {
@@ -184,8 +186,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
     try {
       const uploaded = await MediaService.uploadSampleUrl(sampleUrl, sampleLabel);
+      let nextAttachments: ImageAttachment[] = [];
       setAttachments((prev) => {
-        const updated = prev.map((a) =>
+        nextAttachments = prev.map((a) =>
           a.id === tempId
             ? {
                 ...a,
@@ -195,12 +198,14 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               }
             : a
         );
-        notifyParent(updated);
-        return updated;
+        return nextAttachments;
       });
+
+      notifyParent(nextAttachments);
     } catch (err: any) {
+      let nextAttachments: ImageAttachment[] = [];
       setAttachments((prev) => {
-        const updated = prev.map((a) =>
+        nextAttachments = prev.map((a) =>
           a.id === tempId
             ? {
                 ...a,
@@ -209,9 +214,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               }
             : a
         );
-        notifyParent(updated);
-        return updated;
+        return nextAttachments;
       });
+
+      notifyParent(nextAttachments);
     } finally {
       setIsUploadingGlobal(false);
     }
