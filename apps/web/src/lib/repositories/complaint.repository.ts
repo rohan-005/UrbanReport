@@ -6,6 +6,8 @@ import {
   Severity,
   TimelineEvent,
   Assignment,
+  DuplicateCandidate,
+  DuplicateCheckInput,
 } from '../types';
 import { MOCK_COMPLAINTS } from '../data/mock-complaints';
 import { MediaService } from '../services/mediaService';
@@ -49,6 +51,9 @@ export interface IComplaintRepository {
     filters?: ComplaintFilters
   ): Promise<Complaint[]>;
   getNearbyComplaints(lat: number, lng: number, radiusMeters?: number): Promise<Complaint[]>;
+  findDuplicateCandidates(input: DuplicateCheckInput): Promise<DuplicateCandidate[]>;
+  confirmComplaint(complaintId: string): Promise<{ complaintId: string; confirmationsCount: number; hasUserConfirmed: boolean }>;
+  getConfirmationCount(complaintId: string): Promise<number>;
   subscribe(listener: () => void): () => void;
 }
 
@@ -259,6 +264,62 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
       const dist = Math.hypot(c.latitude - lat, c.longitude - lng) * 111000;
       return dist <= radiusMeters;
     });
+  }
+
+  public async findDuplicateCandidates(input: DuplicateCheckInput): Promise<DuplicateCandidate[]> {
+    const radius = input.radius || 250;
+    const active = this.complaints.filter((c) =>
+      ['SUBMITTED', 'UNDER_REVIEW', 'VERIFIED', 'ASSIGNED', 'IN_PROGRESS'].includes(c.status)
+    );
+    const candidates: DuplicateCandidate[] = [];
+    for (const c of active) {
+      const dist = Math.round(Math.hypot(c.latitude - input.latitude, c.longitude - input.longitude) * 111000);
+      if (dist <= radius) {
+        const catScore = c.category.toLowerCase() === (input.category || '').toLowerCase() ? 1.0 : 0.3;
+        const distScore = Math.max(0, 1 - dist / radius);
+        const score = Number((0.6 * distScore + 0.4 * catScore).toFixed(2));
+        const conf = score >= 0.65 ? 'HIGH' : score >= 0.45 ? 'POSSIBLE' : 'LOW';
+        if (conf !== 'LOW') {
+          candidates.push({
+            complaintId: c.id,
+            title: c.title,
+            category: c.category,
+            status: c.status,
+            latitude: c.latitude,
+            longitude: c.longitude,
+            address: c.address,
+            distanceMeters: dist,
+            similarityScore: score,
+            similarityPercentage: Math.round(score * 100),
+            confidence: conf as any,
+            createdAt: c.createdAt,
+            media: c.media,
+          });
+        }
+      }
+    }
+    return candidates.sort((a, b) => b.similarityScore - a.similarityScore);
+  }
+
+  public async confirmComplaint(complaintId: string): Promise<{ complaintId: string; confirmationsCount: number; hasUserConfirmed: boolean }> {
+    const complaint = this.complaints.find((c) => c.id.toLowerCase() === complaintId.toLowerCase());
+    if (complaint) {
+      complaint.upvotesCount = (complaint.upvotesCount || 0) + 1;
+      complaint.confirmationsCount = (complaint.confirmationsCount || 0) + 1;
+      complaint.hasUserConfirmed = true;
+      this.persist();
+      return {
+        complaintId,
+        confirmationsCount: complaint.confirmationsCount,
+        hasUserConfirmed: true,
+      };
+    }
+    return { complaintId, confirmationsCount: 1, hasUserConfirmed: true };
+  }
+
+  public async getConfirmationCount(complaintId: string): Promise<number> {
+    const complaint = this.complaints.find((c) => c.id.toLowerCase() === complaintId.toLowerCase());
+    return complaint?.confirmationsCount || complaint?.upvotesCount || 0;
   }
 }
 
@@ -499,6 +560,50 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
     }
   }
 
+  public async findDuplicateCandidates(input: DuplicateCheckInput): Promise<DuplicateCandidate[]> {
+    try {
+      const res = await fetch(`${API_BASE}/complaints/duplicates`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(input),
+      });
+      if (!res.ok) return this.fallbackMock.findDuplicateCandidates(input);
+      const data = await res.json();
+      if (Array.isArray(data)) return data;
+      return this.fallbackMock.findDuplicateCandidates(input);
+    } catch {
+      return this.fallbackMock.findDuplicateCandidates(input);
+    }
+  }
+
+  public async confirmComplaint(complaintId: string): Promise<{ complaintId: string; confirmationsCount: number; hasUserConfirmed: boolean }> {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('urbanreports_access_token') : null;
+      const res = await fetch(`${API_BASE}/complaints/${complaintId}/confirm`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      if (!res.ok) return this.fallbackMock.confirmComplaint(complaintId);
+      return await res.json();
+    } catch {
+      return this.fallbackMock.confirmComplaint(complaintId);
+    }
+  }
+
+  public async getConfirmationCount(complaintId: string): Promise<number> {
+    try {
+      const res = await fetch(`${API_BASE}/complaints/${complaintId}/confirmations`);
+      if (res.ok) {
+        const data = await res.json();
+        return data.confirmationsCount || 0;
+      }
+    } catch {}
+    return this.fallbackMock.getConfirmationCount(complaintId);
+  }
+
   private mapToFrontendComplaint(item: any): Complaint {
     const categoryMap: Record<string, Category> = {
       POTHOLE: 'Pothole',
@@ -577,6 +682,8 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       assignment,
       auditEvents: item.auditEvents || [],
       upvotesCount: item.upvotes_count || item.upvotesCount || 0,
+      confirmationsCount: item.confirmationsCount || item.upvotes_count || item.upvotesCount || 0,
+      hasUserConfirmed: Boolean(item.hasUserConfirmed),
     };
   }
 }

@@ -63,6 +63,19 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
     }
   };
 
+  const handleConfirm = async () => {
+    if (!complaint) return;
+    try {
+      const res = await complaintRepository.confirmComplaint(complaint.id);
+      setComplaint({
+        ...complaint,
+        confirmationsCount: res.confirmationsCount,
+        hasUserConfirmed: true,
+        upvotesCount: Math.max(complaint.upvotesCount, res.confirmationsCount),
+      });
+    } catch {}
+  };
+
   if (loading) {
     return (
       <Container maxWidth="xl" sx={{ py: 10 }}>
@@ -83,7 +96,7 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
   }
 
   const formattedCreated = new Date(complaint.createdAt).toLocaleString(undefined, {
-    dateStyle: 'full',
+    dateStyle: 'medium',
     timeStyle: 'short',
   });
 
@@ -92,13 +105,28 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
       <Box sx={{ py: { xs: 4, md: 6 }, backgroundColor: '#f5f3ee', flex: 1, pb: { xs: 28, md: 36 } }}>
         <Container maxWidth={false} className="px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
           {/* Navigation */}
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8' }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8', gap: 2 }}>
             <Link href="/complaints" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-700 hover:text-black">
               <ArrowLeft className="w-4 h-4" />
               <span>Return to Catalog Feed</span>
             </Link>
 
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
+              <Button
+                variant={complaint.hasUserConfirmed ? 'contained' : 'outlined'}
+                size="small"
+                onClick={handleConfirm}
+                disabled={complaint.hasUserConfirmed}
+                startIcon={<ThumbsUp className="w-4 h-4" />}
+                sx={{
+                  backgroundColor: complaint.hasUserConfirmed ? '#166534' : undefined,
+                  color: complaint.hasUserConfirmed ? '#ffffff' : undefined,
+                  fontWeight: 800,
+                }}
+              >
+                {complaint.hasUserConfirmed ? '✓ Confirmed by You' : 'Confirm Issue'} ({complaint.confirmationsCount || complaint.upvotesCount})
+              </Button>
+
               <Button
                 variant="outlined"
                 size="small"

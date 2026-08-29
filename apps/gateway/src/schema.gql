@@ -25,6 +25,28 @@ type ComplaintType {
   media: [ComplaintMediaItemType!]!
 }
 
+type DuplicateCandidateType {
+  complaintId: ID!
+  title: String!
+  category: String!
+  status: String!
+  latitude: Float!
+  longitude: Float!
+  address: String!
+  distanceMeters: Float!
+  similarityScore: Float!
+  similarityPercentage: Int!
+  confidence: String!
+  createdAt: String!
+  media: [ComplaintMediaItemType!]!
+}
+
+type ConfirmComplaintPayloadType {
+  complaintId: ID!
+  confirmationsCount: Int!
+  hasUserConfirmed: Boolean!
+}
+
 type UserType {
   id: ID!
   name: String!
@@ -58,13 +80,24 @@ type ReverseGeocodeType {
 type Query {
   complaints(category: String, severity: String, status: String, search: String): [ComplaintType!]!
   complaint(id: String!): ComplaintType
+  findDuplicateComplaints(input: DuplicateCheckInput!): [DuplicateCandidateType!]!
   viewportComplaints(minLat: Float!, minLng: Float!, maxLat: Float!, maxLng: Float!, category: String, severity: String, status: String): [ComplaintType!]!
   nearbyComplaints(lat: Float!, lng: Float!, radius: Int): [ComplaintType!]!
   searchPlaces(q: String!): [PlaceResultType!]!
   reverseGeocode(lat: Float!, lng: Float!): ReverseGeocodeType!
 }
 
+input DuplicateCheckInput {
+  latitude: Float!
+  longitude: Float!
+  category: String!
+  title: String
+  description: String
+  radius: Float
+}
+
 type Mutation {
+  confirmComplaint(complaintId: String!): ConfirmComplaintPayloadType!
   login(email: String!, password: String): AuthPayloadType!
   register(input: RegisterInput!): AuthPayloadType!
   createComplaint(input: CreateComplaintInput!): ComplaintType!

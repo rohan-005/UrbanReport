@@ -6,6 +6,7 @@ import { ComplaintsController } from './complaints.controller';
 import { ComplaintsService } from './complaints.service';
 import { ComplaintsRepository } from './complaints.repository';
 import { ComplaintLifecycleService } from './complaint-lifecycle.service';
+import { DuplicateDetectionService } from './duplicate-detection.service';
 import { JwtStrategy } from '../auth/jwt.strategy';
 
 @Module({
@@ -27,8 +28,9 @@ import { JwtStrategy } from '../auth/jwt.strategy';
     ComplaintsService,
     ComplaintsRepository,
     ComplaintLifecycleService,
+    DuplicateDetectionService,
     JwtStrategy,
   ],
-  exports: [ComplaintsService],
+  exports: [ComplaintsService, DuplicateDetectionService],
 })
 export class ComplaintsModule {}

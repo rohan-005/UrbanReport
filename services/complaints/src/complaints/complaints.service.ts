@@ -67,6 +67,18 @@ export class ComplaintsService {
     return this.repo.getAuditEvents(complaintId);
   }
 
+  async findDuplicateCandidates(input: any) {
+    return this.repo.findDuplicateCandidates(input);
+  }
+
+  async confirmComplaint(complaintId: string, userId: string) {
+    return this.repo.confirmComplaint(complaintId, userId);
+  }
+
+  async getConfirmationCount(complaintId: string) {
+    return this.repo.getConfirmationCount(complaintId);
+  }
+
   async updateStatus(id: string, dto: UpdateStatusDto, actorUserId: string) {
     const current = await this.getComplaintById(id);
     this.lifecycle.validateTransition(current.status, dto.nextStatus);

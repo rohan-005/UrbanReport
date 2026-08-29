@@ -312,6 +312,13 @@ export default function AdminComplaintDetailPage({
                 {complaint.assignment?.department || 'Unassigned'}
               </Typography>
             </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="caption" sx={{ color: '#71717a', fontWeight: 700, display: 'block', textTransform: 'uppercase' }}>Community Confirmations</Typography>
+              <Typography variant="body2" sx={{ color: '#166534', fontWeight: 900 }}>
+                {complaint.confirmationsCount || complaint.upvotesCount || 0} Citizens Confirmed
+              </Typography>
+            </Grid>
           </Grid>
         </Paper>
 

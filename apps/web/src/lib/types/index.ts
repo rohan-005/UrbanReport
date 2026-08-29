@@ -92,9 +92,37 @@ export interface Complaint {
   upvotesCount: number;
   upvotedByUserIds?: string[];
   resolutionNotes?: string;
-  rejectionReason?: string;
   resolutionMedia?: MediaItem[];
   auditEvents?: any[];
+  confirmationsCount?: number;
+  hasUserConfirmed?: boolean;
+}
+
+export type DuplicateConfidence = 'HIGH' | 'POSSIBLE' | 'LOW';
+
+export interface DuplicateCandidate {
+  complaintId: string;
+  title: string;
+  category: Category;
+  status: ComplaintStatus;
+  latitude: number;
+  longitude: number;
+  address: string;
+  distanceMeters: number;
+  similarityScore: number;
+  similarityPercentage: number;
+  confidence: DuplicateConfidence;
+  createdAt: string;
+  media?: MediaItem[];
+}
+
+export interface DuplicateCheckInput {
+  latitude: number;
+  longitude: number;
+  category: Category | string;
+  title?: string;
+  description?: string;
+  radius?: number;
 }
 
 export interface ComplaintFilters {

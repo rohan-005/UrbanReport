@@ -1,5 +1,5 @@
-import { Resolver, Query, Mutation, Args, Float, Int } from '@nestjs/graphql';
-import { ComplaintType, CreateComplaintInput } from './types/complaint.type';
+import { Resolver, Query, Mutation, Args, Float, Int, Context } from '@nestjs/graphql';
+import { ComplaintType, CreateComplaintInput, DuplicateCandidateType, DuplicateCheckInput, ConfirmComplaintPayloadType } from './types/complaint.type';
 import { AuthPayloadType, RegisterInput, UserType } from './types/user.type';
 import { PlaceResultType, ReverseGeocodeType } from './types/maps.type';
 import { ProxyService } from '../proxy/proxy.service';
@@ -21,6 +21,17 @@ export class GatewayResolver {
   @Query(() => ComplaintType, { nullable: true })
   async complaint(@Args('id') id: string) {
     return this.proxyService.getComplaintById(id);
+  }
+
+  @Query(() => [DuplicateCandidateType])
+  async findDuplicateComplaints(@Args('input') input: DuplicateCheckInput) {
+    return this.proxyService.findDuplicateCandidates(input);
+  }
+
+  @Mutation(() => ConfirmComplaintPayloadType)
+  async confirmComplaint(@Args('complaintId') complaintId: string, @Context() context: any) {
+    const authHeader = context?.req?.headers?.authorization;
+    return this.proxyService.confirmComplaint(complaintId, authHeader ? { authorization: authHeader } : undefined);
   }
 
   @Query(() => [ComplaintType])

@@ -59,6 +59,24 @@ export class ComplaintsController {
     return this.complaintsService.getViewportComplaints(query);
   }
 
+  @Post('duplicates')
+  async findDuplicateCandidates(@Body() body: any) {
+    return this.complaintsService.findDuplicateCandidates(body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/confirm')
+  async confirmComplaint(@Request() req: any, @Param('id') id: string) {
+    const userId = req.user?.userId || req.user?._id || 'citizen-anon-001';
+    return this.complaintsService.confirmComplaint(id, userId);
+  }
+
+  @Get(':id/confirmations')
+  async getConfirmationCount(@Param('id') id: string) {
+    const count = await this.complaintsService.getConfirmationCount(id);
+    return { complaintId: id, confirmationsCount: count };
+  }
+
   @Get(':id')
   async getComplaintById(@Param('id') id: string) {
     return this.complaintsService.getComplaintById(id);

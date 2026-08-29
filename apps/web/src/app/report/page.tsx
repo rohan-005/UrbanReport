@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { complaintRepository } from '@/lib/repositories/complaint.repository';
-import { Category, Severity, Complaint } from '@/lib/types';
+import { Category, Severity, Complaint, DuplicateCandidate } from '@/lib/types';
 import { ImageUploader } from '@/components/ui/ImageUploader';
 import { LocationPicker } from '@/components/map/LocationPicker';
 import { SeverityBadge } from '@/components/ui/SeverityBadge';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Modal } from '@/components/ui/Modal';
 import { LoadingButton } from '@/components/ui/LoadingButton';
 import { PageTransition } from '@/components/motion/PageTransition';
@@ -17,6 +18,9 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import Alert from '@mui/material/Alert';
+import Chip from '@mui/material/Chip';
+import CircularProgress from '@mui/material/CircularProgress';
 import { 
   Send, 
   CheckCircle2, 
@@ -28,7 +32,13 @@ import {
   Droplet,
   Activity,
   HelpCircle,
-  AlertCircle
+  AlertCircle,
+  MapPin,
+  Eye,
+  ThumbsUp,
+  ShieldAlert,
+  Search,
+  Sparkles
 } from 'lucide-react';
 
 const categoryOptions: { name: Category; description: string; icon: React.ElementType }[] = [
@@ -62,10 +72,71 @@ export default function ReportPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [uploadedMediaIds, setUploadedMediaIds] = useState<string[]>([]);
 
+  // Phase 8: Duplicate Detection & Community Confirmation State
+  const [duplicates, setDuplicates] = useState<DuplicateCandidate[]>([]);
+  const [checkingDuplicates, setCheckingDuplicates] = useState(false);
+  const [duplicateCheckDismissed, setDuplicateCheckDismissed] = useState(false);
+  const [confirmedCandidateId, setConfirmedCandidateId] = useState<string | null>(null);
+  const [confirmedSuccessMessage, setConfirmedSuccessMessage] = useState<string | null>(null);
+  const [selectedCandidateDetail, setSelectedCandidateDetail] = useState<DuplicateCandidate | null>(null);
+  const [confirmingLoadingId, setConfirmingLoadingId] = useState<string | null>(null);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [createdComplaint, setCreatedComplaint] = useState<Complaint | null>(null);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Debounced Duplicate Detection Trigger
+  useEffect(() => {
+    if (!latitude || !longitude || !category) return;
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    setCheckingDuplicates(true);
+    setDuplicateCheckDismissed(false);
+
+    debounceTimerRef.current = setTimeout(async () => {
+      try {
+        const candidates = await complaintRepository.findDuplicateCandidates({
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+          category,
+          title: title.trim(),
+          description: description.trim(),
+          radius: 250,
+        });
+        setDuplicates(candidates);
+      } catch (err) {
+        // Non-blocking degradation
+        setDuplicates([]);
+      } finally {
+        setCheckingDuplicates(false);
+      }
+    }, 400);
+
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, [latitude, longitude, category, title]);
+
+  const handleConfirmExistingCandidate = async (candidate: DuplicateCandidate) => {
+    setConfirmingLoadingId(candidate.complaintId);
+    try {
+      const res = await complaintRepository.confirmComplaint(candidate.complaintId);
+      setConfirmedCandidateId(candidate.complaintId);
+      setConfirmedSuccessMessage(
+        `Community confirmation recorded! ${res.confirmationsCount} citizen(s) have verified this issue. Thank you for validating local infrastructure priorities.`
+      );
+    } catch (err: any) {
+      setConfirmedSuccessMessage('Your confirmation has been saved.');
+    } finally {
+      setConfirmingLoadingId(null);
+    }
+  };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -314,6 +385,142 @@ export default function ReportPage() {
                 </Box>
               </Paper>
 
+              {/* PHASE 8: DUPLICATE CANDIDATES DETECTION PANEL */}
+              {checkingDuplicates ? (
+                <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <CircularProgress size={20} sx={{ color: '#09090b' }} />
+                  <Typography variant="body2" sx={{ fontWeight: 700, color: '#09090b', fontFamily: 'monospace' }}>
+                    PostGIS Spatial Check: Searching active reports within 250m radius...
+                  </Typography>
+                </Paper>
+              ) : duplicates.length > 0 && !duplicateCheckDismissed ? (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 4,
+                    backgroundColor: '#fffbeb',
+                    borderColor: '#fcd34d',
+                    borderRadius: '2px',
+                    borderLeft: '6px solid #f59e0b',
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <ShieldAlert className="w-6 h-6 text-amber-600 shrink-0" />
+                      <Box>
+                        <Typography variant="h6" sx={{ fontWeight: 900, color: '#78350f', fontSize: '1.0625rem' }}>
+                          Possible Existing Reports Nearby ({duplicates.length} Candidate{duplicates.length > 1 ? 's' : ''})
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#92400e', fontWeight: 600 }}>
+                          Help authorities resolve issues faster by confirming an existing report, or continue to file your new report.
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    <Button
+                      variant="text"
+                      size="small"
+                      onClick={() => setDuplicateCheckDismissed(true)}
+                      sx={{ textTransform: 'none', color: '#78350f', fontWeight: 800 }}
+                    >
+                      Dismiss & Continue New Report →
+                    </Button>
+                  </Box>
+
+                  {confirmedSuccessMessage && (
+                    <Alert severity="success" sx={{ mb: 3, borderRadius: '2px', fontWeight: 700 }}>
+                      {confirmedSuccessMessage}
+                    </Alert>
+                  )}
+
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+                    {duplicates.map((cand) => {
+                      const isConfirmed = confirmedCandidateId === cand.complaintId;
+                      const isHighConf = cand.confidence === 'HIGH';
+
+                      return (
+                        <Paper
+                          key={cand.complaintId}
+                          elevation={0}
+                          sx={{
+                            p: 3,
+                            backgroundColor: '#ffffff',
+                            borderColor: isHighConf ? '#f59e0b' : '#e2e0d8',
+                            borderRadius: '2px',
+                            border: '1px solid',
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 1, mb: 1 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                              <Chip
+                                label={isHighConf ? 'HIGH CONFIDENCE DUPLICATE' : 'POSSIBLE DUPLICATE'}
+                                size="small"
+                                sx={{
+                                  backgroundColor: isHighConf ? '#fef3c7' : '#f4f4f5',
+                                  color: isHighConf ? '#92400e' : '#27272a',
+                                  fontWeight: 900,
+                                  fontSize: '0.6875rem',
+                                  borderRadius: '2px',
+                                }}
+                              />
+                              <Chip label={`${cand.similarityPercentage}% Match`} size="small" variant="outlined" sx={{ fontWeight: 800, fontSize: '0.6875rem' }} />
+                              <StatusBadge status={cand.status} size="small" />
+                            </Box>
+
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: '#78350f', fontFamily: 'monospace' }}>
+                              {cand.distanceMeters} meters away
+                            </Typography>
+                          </Box>
+
+                          <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 0.5 }}>
+                            {cand.title}
+                          </Typography>
+
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: '#52525b', fontSize: '0.75rem', mb: 2 }}>
+                            <MapPin className="w-3.5 h-3.5 text-zinc-500 shrink-0" />
+                            <span className="truncate">{cand.address}</span>
+                            <span className="mx-1">•</span>
+                            <span>Reported {new Date(cand.createdAt).toLocaleDateString()}</span>
+                          </Box>
+
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center', pt: 1, borderTop: '1px solid #f4f4f5' }}>
+                            <Button
+                              variant="contained"
+                              size="small"
+                              disabled={isConfirmed || confirmingLoadingId === cand.complaintId}
+                              onClick={() => handleConfirmExistingCandidate(cand)}
+                              startIcon={<ThumbsUp className="w-4 h-4" />}
+                              sx={{
+                                backgroundColor: isConfirmed ? '#166534' : '#09090b',
+                                color: '#ffffff',
+                                fontWeight: 800,
+                                fontSize: '0.75rem',
+                              }}
+                            >
+                              {confirmingLoadingId === cand.complaintId
+                                ? 'Recording...'
+                                : isConfirmed
+                                ? '✓ Issue Confirmed'
+                                : 'Confirm Existing Issue'}
+                            </Button>
+
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              onClick={() => setSelectedCandidateDetail(cand)}
+                              startIcon={<Eye className="w-4 h-4" />}
+                              sx={{ fontSize: '0.75rem', fontWeight: 700 }}
+                            >
+                              Inspect Details
+                            </Button>
+                          </Box>
+                        </Paper>
+                      );
+                    })}
+                  </Box>
+                </Paper>
+              ) : null}
+
               {/* Step 4: Media Upload */}
               <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 900, color: '#09090b', mb: 3 }}>
@@ -331,9 +538,16 @@ export default function ReportPage() {
 
               {/* Submit Action */}
               <Paper elevation={0} sx={{ p: 3, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyBetween: 'space-between', gap: 2 }}>
-                <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600 }}>
-                  Generates a tracking ID and notifies ward control.
-                </Typography>
+                <Box>
+                  <Typography variant="caption" sx={{ color: '#52525b', fontWeight: 600, display: 'block' }}>
+                    Generates a tracking ID and notifies ward dispatch control.
+                  </Typography>
+                  {duplicates.length > 0 && (
+                    <Typography variant="caption" sx={{ color: '#d97706', fontWeight: 700 }}>
+                      Note: You are choosing to submit a new report alongside {duplicates.length} nearby candidate(s). Your new report will be preserved cleanly.
+                    </Typography>
+                  )}
+                </Box>
 
                 <LoadingButton
                   type="submit"
@@ -350,21 +564,63 @@ export default function ReportPage() {
                     '&:hover': { backgroundColor: '#18181b' },
                   }}
                 >
-                  Submit Report
+                  Submit New Report
                 </LoadingButton>
               </Paper>
             </Box>
           </form>
 
-          {/* Confirmation Modal */}
+          {/* CANDIDATE DETAIL MODAL */}
+          <Modal
+            isOpen={Boolean(selectedCandidateDetail)}
+            onClose={() => setSelectedCandidateDetail(null)}
+            title="Inspect Nearby Candidate Complaint"
+          >
+            {selectedCandidateDetail && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <StatusBadge status={selectedCandidateDetail.status} size="small" />
+                  <Typography variant="caption" sx={{ fontFamily: 'monospace', fontWeight: 800 }}>
+                    {selectedCandidateDetail.complaintId}
+                  </Typography>
+                </Box>
+
+                <Typography variant="h5" sx={{ fontWeight: 900, color: '#09090b' }}>
+                  {selectedCandidateDetail.title}
+                </Typography>
+
+                <Typography variant="body2" sx={{ color: '#52525b' }}>
+                  Location: {selectedCandidateDetail.address} ({selectedCandidateDetail.distanceMeters} meters away)
+                </Typography>
+
+                <Box sx={{ pt: 2, display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
+                  <Button variant="outlined" onClick={() => setSelectedCandidateDetail(null)}>
+                    Close Inspect
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      setSelectedCandidateDetail(null);
+                      router.push(`/complaints/${selectedCandidateDetail.complaintId}`);
+                    }}
+                    sx={{ backgroundColor: '#09090b', color: '#ffffff' }}
+                  >
+                    Go To Full Dossier →
+                  </Button>
+                </Box>
+              </Box>
+            )}
+          </Modal>
+
+          {/* Success Confirmation Modal */}
           <Modal
             isOpen={isSuccessModalOpen}
             onClose={() => setIsSuccessModalOpen(false)}
             title="Report Successfully Dispatched"
           >
             {createdComplaint && (
-              <Box sx={{ textCenter: 'center', py: 2 }}>
-                <Box sx={{ display: 'flex', justifyCenter: 'center', mb: 2 }}>
+              <Box sx={{ textAlign: 'center', py: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
                   <CheckCircle2 className="w-12 h-12 text-zinc-950" />
                 </Box>
 

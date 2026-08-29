@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
+import { DuplicateDetectionService, DuplicateCheckInput } from './duplicate-detection.service';
 import { CreateComplaintDto } from './dto/create-complaint.dto';
 import { ComplaintQueryDto } from './dto/query-complaint.dto';
 import { NearbyQueryDto, ViewportQueryDto } from './dto/geo-query.dto';
@@ -9,7 +10,10 @@ import { ComplaintEntity, ComplaintStatus } from './types/complaint.types';
 export class ComplaintsRepository {
   private fallbackStore: Map<string, any> = new Map();
 
-  constructor(private readonly db: DatabaseService) {}
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly duplicateDetection: DuplicateDetectionService,
+  ) {}
 
   async create(dto: CreateComplaintDto, reporterUserId: string): Promise<any> {
     try {
@@ -522,6 +526,132 @@ export class ComplaintsRepository {
           created_at: new Date().toISOString(),
         },
       ];
+    }
+  }
+
+  async findDuplicateCandidates(input: DuplicateCheckInput): Promise<any[]> {
+    const radiusMeters = input.radius || Number(process.env.DUPLICATE_SEARCH_RADIUS_METERS) || 250;
+    const maxCandidates = Number(process.env.DUPLICATE_MAX_CANDIDATES) || 10;
+
+    try {
+      const res = await this.db.query(
+        `
+        SELECT id, reporter_user_id, category, title, description, severity, status, address, upvotes_count, created_at, updated_at,
+               ST_Y(location::geometry) as latitude, ST_X(location::geometry) as longitude,
+               ST_Distance(location::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography) as distance_meters
+        FROM complaints
+        WHERE status IN ('SUBMITTED', 'UNDER_REVIEW', 'VERIFIED', 'ASSIGNED', 'IN_PROGRESS')
+          AND ST_DWithin(location::geography, ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography, $3)
+        ORDER BY distance_meters ASC
+        LIMIT $4;
+        `,
+        [input.longitude, input.latitude, radiusMeters, maxCandidates],
+      );
+
+      const itemsWithMedia = await this.attachMediaToComplaints(res.rows);
+      return this.duplicateDetection.rankCandidates(itemsWithMedia, input, radiusMeters);
+    } catch {
+      const allActive = Array.from(this.fallbackStore.values()).filter((c) =>
+        ['SUBMITTED', 'UNDER_REVIEW', 'VERIFIED', 'ASSIGNED', 'IN_PROGRESS'].includes(c.status),
+      );
+      return this.duplicateDetection.rankCandidates(allActive, input, radiusMeters);
+    }
+  }
+
+  async confirmComplaint(complaintId: string, userId: string): Promise<any> {
+    try {
+      return await this.db.withTransaction(async (client) => {
+        // Insert confirmation (ON CONFLICT DO NOTHING due to PRIMARY KEY (complaint_id, user_id))
+        const confirmRes = await client.query(
+          `
+          INSERT INTO complaint_confirmations (complaint_id, user_id)
+          VALUES ($1, $2)
+          ON CONFLICT (complaint_id, user_id) DO NOTHING
+          RETURNING complaint_id;
+          `,
+          [complaintId, userId],
+        );
+
+        const isNewConfirmation = confirmRes.rows.length > 0;
+
+        if (isNewConfirmation) {
+          await client.query(
+            `
+            UPDATE complaints
+            SET upvotes_count = upvotes_count + 1, updated_at = NOW()
+            WHERE id = $1;
+            `,
+            [complaintId],
+          );
+
+          await client.query(
+            `
+            INSERT INTO audit_events (actor_id, action, resource, resource_id, metadata)
+            VALUES ($1, 'CONFIRM_COMPLAINT', 'complaint', $2, $3);
+            `,
+            [userId, complaintId, JSON.stringify({ action: 'COMMUNITY_CONFIRM' })],
+          );
+        }
+
+        const countRes = await client.query(
+          `SELECT COUNT(*)::int as total FROM complaint_confirmations WHERE complaint_id = $1;`,
+          [complaintId],
+        );
+
+        const totalConfirmations = parseInt(countRes.rows[0]?.total || '0', 10);
+        const complaint = await this.findById(complaintId);
+
+        return {
+          complaint,
+          complaintId,
+          confirmationsCount: totalConfirmations,
+          hasUserConfirmed: true,
+          isNewConfirmation,
+        };
+      });
+    } catch {
+      const existing = this.fallbackStore.get(complaintId);
+      if (existing) {
+        if (!existing.confirmations) existing.confirmations = new Set();
+        const isNew = !existing.confirmations.has(userId);
+        existing.confirmations.add(userId);
+        existing.upvotes_count = existing.confirmations.size;
+        this.fallbackStore.set(complaintId, existing);
+        return {
+          complaint: existing,
+          complaintId,
+          confirmationsCount: existing.confirmations.size,
+          hasUserConfirmed: true,
+          isNewConfirmation: isNew,
+        };
+      }
+      throw new NotFoundException(`Complaint ${complaintId} not found.`);
+    }
+  }
+
+  async getConfirmationCount(complaintId: string): Promise<number> {
+    try {
+      const res = await this.db.query(
+        `SELECT COUNT(*)::int as total FROM complaint_confirmations WHERE complaint_id = $1;`,
+        [complaintId],
+      );
+      return parseInt(res.rows[0]?.total || '0', 10);
+    } catch {
+      const existing = this.fallbackStore.get(complaintId);
+      return existing?.confirmations?.size || existing?.upvotes_count || 0;
+    }
+  }
+
+  async hasUserConfirmed(complaintId: string, userId: string): Promise<boolean> {
+    try {
+      const res = await this.db.query(
+        `SELECT COUNT(*)::int as count FROM complaint_confirmations WHERE complaint_id = $1 AND user_id = $2;`,
+        [complaintId, userId],
+      );
+      return parseInt(res.rows[0]?.count || '0', 10) > 0;
+    } catch {
+      const existing = this.fallbackStore.get(complaintId);
+      return Boolean(existing?.confirmations?.has(userId));
     }
   }
 

@@ -102,6 +102,16 @@ export class ProxyService {
     return this.forwardPost(url, input, headers);
   }
 
+  async findDuplicateCandidates(input: any, headers?: Record<string, string>): Promise<any> {
+    const url = `${this.getComplaintsServiceUrl()}/complaints/duplicates`;
+    return this.forwardPost(url, input, headers);
+  }
+
+  async confirmComplaint(complaintId: string, headers?: Record<string, string>): Promise<any> {
+    const url = `${this.getComplaintsServiceUrl()}/complaints/${complaintId}/confirm`;
+    return this.forwardPost(url, {}, headers);
+  }
+
   async searchPlaces(q: string): Promise<any> {
     const url = `${this.getMapsServiceUrl()}/maps/search?q=${encodeURIComponent(q)}`;
     return this.forwardGet(url);

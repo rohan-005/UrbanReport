@@ -92,6 +92,21 @@ export class ProxyController {
     return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints?${qp}`, this.getPassHeaders(req));
   }
 
+  @Post('complaints/duplicates')
+  async findDuplicateCandidates(@Body() body: any, @Req() req: Request) {
+    return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints/duplicates`, body, this.getPassHeaders(req));
+  }
+
+  @Post('complaints/:id/confirm')
+  async confirmComplaint(@Param('id') id: string, @Req() req: Request) {
+    return this.proxyService.forwardPost(`${this.getComplaintsUrl()}/complaints/${id}/confirm`, {}, this.getPassHeaders(req));
+  }
+
+  @Get('complaints/:id/confirmations')
+  async getConfirmationCount(@Param('id') id: string, @Req() req: Request) {
+    return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints/${id}/confirmations`, this.getPassHeaders(req));
+  }
+
   @Get('complaints/:id')
   async getComplaintById(@Param('id') id: string, @Req() req: Request) {
     return this.proxyService.forwardGet(`${this.getComplaintsUrl()}/complaints/${id}`, this.getPassHeaders(req));
