@@ -6,6 +6,7 @@ import { Pool, PoolClient } from 'pg';
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger('DatabaseService');
   private pool: Pool;
+  public isConnected: boolean = false;
 
   constructor(private configService: ConfigService) {
     const connectionString =
@@ -25,9 +26,16 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     try {
       this.logger.log('Initializing Neon PostgreSQL database connection & PostGIS schemas...');
       await this.runMigrations();
+      this.isConnected = true;
       this.logger.log('Neon PostgreSQL & PostGIS schemas successfully verified.');
     } catch (err: any) {
-      this.logger.warn(`PostgreSQL connection warning: ${err.message}. (Running in fallback mode if offline)`);
+      this.isConnected = false;
+      const msg =
+        err.message ||
+        (Array.isArray(err.errors) ? err.errors.map((e: any) => e.message || String(e)).join(', ') : String(err));
+      this.logger.warn(
+        `PostgreSQL connection warning: ${msg} (${err.code || err.name || 'OFFLINE'}). (Running in fallback mode if offline)`,
+      );
     }
   }
 
@@ -36,6 +44,9 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   }
 
   async query(text: string, params?: any[]): Promise<any> {
+    if (!this.isConnected) {
+      throw new Error('Database connection is offline');
+    }
     return this.pool.query(text, params);
   }
 
