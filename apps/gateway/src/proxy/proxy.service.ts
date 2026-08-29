@@ -187,4 +187,22 @@ export class ProxyService {
       throw new ServiceUnavailableException(`Downstream service at ${url} unavailable.`);
     }
   }
+
+  async forwardDelete(url: string, headers?: Record<string, string>): Promise<any> {
+    try {
+      const res = await fetch(url, {
+        method: 'DELETE',
+        headers: this.buildHeaders(headers),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: res.statusText }));
+        throw new HttpException(err, res.status);
+      }
+      return await res.json();
+    } catch (err: any) {
+      if (err instanceof HttpException) throw err;
+      this.logger.error(`Forward DELETE failed (${url}): ${err.message}`);
+      throw new ServiceUnavailableException(`Downstream service at ${url} unavailable.`);
+    }
+  }
 }

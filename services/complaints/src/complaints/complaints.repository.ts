@@ -74,9 +74,16 @@ export class ComplaintsRepository {
           [reporterUserId, complaint.id, JSON.stringify({ category: dto.category, severity: dto.severity, mediaCount: dto.mediaIds?.length || 0 })],
         );
 
-        const [withMedia] = await this.attachMediaToComplaints([complaint]);
-        this.fallbackStore.set(withMedia.id, withMedia);
-        return withMedia;
+        complaint.media = (dto.mediaIds || []).map((mId) => ({
+          id: mId,
+          mediaId: mId,
+          type: 'image',
+          caption: 'Evidence photo',
+          url: `/media/${mId}`,
+          createdAt: complaint.created_at || new Date().toISOString(),
+        }));
+        this.fallbackStore.set(complaint.id, complaint);
+        return complaint;
       });
     } catch (dbErr: any) {
       // Fallback in-memory persistence when PostgreSQL DB connection is offline
@@ -746,7 +753,7 @@ export class ComplaintsRepository {
         `
         SELECT complaint_id, media_id, type, caption, url, created_at
         FROM complaint_media
-        WHERE complaint_id = ANY($1::uuid[])
+        WHERE complaint_id::text = ANY($1::text[])
         ORDER BY created_at ASC;
         `,
         [complaintIds],

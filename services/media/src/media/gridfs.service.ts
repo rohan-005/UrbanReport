@@ -1,4 +1,10 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleInit,
+  ServiceUnavailableException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
@@ -8,7 +14,7 @@ import { Readable } from 'stream';
 @Injectable()
 export class GridFsService implements OnModuleInit {
   private readonly logger = new Logger('GridFsService');
-  private bucket: GridFSBucket;
+  private bucket: GridFSBucket | null = null;
 
   constructor(
     @InjectConnection() private readonly connection: Connection,
@@ -16,19 +22,56 @@ export class GridFsService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    const bucketName = this.configService.get<string>('GRIDFS_BUCKET') || 'complaint_media';
-    if (!this.connection.db) {
-      this.logger.error('MongoDB database connection is not ready for GridFS initialization.');
-      return;
+    this.initBucket();
+  }
+
+  private initBucket(): boolean {
+    if (this.bucket) {
+      return true;
     }
-    this.bucket = new GridFSBucket(this.connection.db, { bucketName });
-    this.logger.log(`MongoDB GridFS initialized with bucket: '${bucketName}'`);
+
+    const bucketName = this.configService.get<string>('GRIDFS_BUCKET') || 'complaint_media';
+
+    // 1. Connection is ready and active DB object exists
+    if (this.connection.readyState === 1 && this.connection.db) {
+      this.bucket = new GridFSBucket(this.connection.db, { bucketName });
+      this.logger.log(`MongoDB GridFS initialized successfully with bucket: '${bucketName}'`);
+      return true;
+    }
+
+    // 2. Connection is connecting; attach listener for when connection opens
+    if (!this.connection.listeners('open').includes(this.onConnectionOpen)) {
+      this.connection.once('open', this.onConnectionOpen);
+    }
+    if (!this.connection.listeners('connected').includes(this.onConnectionOpen)) {
+      this.connection.once('connected', this.onConnectionOpen);
+    }
+
+    return false;
+  }
+
+  private onConnectionOpen = () => {
+    const bucketName = this.configService.get<string>('GRIDFS_BUCKET') || 'complaint_media';
+    if (this.connection.db && !this.bucket) {
+      this.bucket = new GridFSBucket(this.connection.db, { bucketName });
+      this.logger.log(
+        `MongoDB connection established. GridFS initialized successfully with bucket: '${bucketName}'`,
+      );
+    }
+  };
+
+  public isReady(): boolean {
+    if (this.bucket && this.connection.readyState === 1 && this.connection.db) {
+      return true;
+    }
+    return this.initBucket();
   }
 
   private getBucket(): GridFSBucket {
-    if (!this.bucket) {
-      const bucketName = this.configService.get<string>('GRIDFS_BUCKET') || 'complaint_media';
-      this.bucket = new GridFSBucket(this.connection.db, { bucketName });
+    if (!this.isReady() || !this.bucket) {
+      throw new ServiceUnavailableException(
+        'MongoDB GridFS storage service is not ready or connected.',
+      );
     }
     return this.bucket;
   }
@@ -59,7 +102,7 @@ export class GridFsService implements OnModuleInit {
 
       uploadStream.on('error', (err) => {
         this.logger.error(`GridFS upload failed: ${err.message}`);
-        reject(err);
+        reject(new InternalServerErrorException(`GridFS file upload failed: ${err.message}`));
       });
 
       readable.pipe(uploadStream);

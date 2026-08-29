@@ -130,7 +130,7 @@ export const ComplaintFiltersBar: React.FC<ComplaintFiltersProps> = ({
           <button
             key={cat}
             onClick={() => onChange({ ...filters, category: cat })}
-            className={`text-xs px-3 py-1 rounded-full uppercase font-bold tracking-wider whitespace-nowrap transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
+            className={`text-xs px-3 py-1.5 rounded-md uppercase font-bold tracking-wider whitespace-nowrap transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
               filters.category === cat
                 ? 'bg-[#89a577] text-white border-[#89a577]'
                 : 'bg-[#f5f3ee] text-[#1f241d] border-[#e2dfd7] hover:bg-[#e2dfd7] hover:text-[#1f241d]'

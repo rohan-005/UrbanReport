@@ -34,6 +34,10 @@ export class RedisStreamService implements OnModuleInit, OnModuleDestroy {
     if (redisUrl) {
       try {
         this.redisClient = new Redis(redisUrl, { lazyConnect: true, maxRetriesPerRequest: 3 });
+        this.redisClient.on('error', (err) => {
+          this.isRedisConnected = false;
+          this.logger.warn(`Redis client warning: ${err.message}`);
+        });
         await this.redisClient.connect();
         this.isRedisConnected = true;
         this.logger.log(`Connected to Redis Stream at ${redisUrl.replace(/:[^:@]+@/, ':****@')}`);

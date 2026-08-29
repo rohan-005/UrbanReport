@@ -30,3 +30,6 @@ Thumbs.db
 !.vscode/settings.json
 
 .idea/
+.mongo_data/
+
+

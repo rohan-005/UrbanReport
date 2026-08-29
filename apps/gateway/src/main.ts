@@ -34,7 +34,7 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   const port = process.env.PORT || process.env.GATEWAY_PORT || 4001;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   logger.log(`UrbanReports API Gateway running on port ${port}`);
   logger.log(`GraphQL endpoint available at http://localhost:${port}/graphql`);
 }

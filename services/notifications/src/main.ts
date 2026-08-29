@@ -5,7 +5,7 @@ import { Logger } from '@nestjs/common';
 async function bootstrap() {
   const logger = new Logger('NotificationsWorkerMain');
   const app = await NestFactory.create(AppModule);
-  const port = process.env.PORT || 3006;
+  const port = process.env.PORT || 5005;
   app.enableCors();
   app.use((req: any, res: any, next: () => void) => {
     const start = Date.now();

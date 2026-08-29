@@ -11,6 +11,7 @@ import { ComplaintTimeline } from '@/components/complaints/ComplaintTimeline';
 import { MapView } from '@/components/map/MapView';
 import { LoadingState } from '@/components/ui/LoadingState';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { ComplaintImage } from '@/components/ui/ComplaintImage';
 import { PageTransition } from '@/components/motion/PageTransition';
 import { MediaService } from '@/lib/services/mediaService';
 import Container from '@mui/material/Container';
@@ -252,7 +253,11 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
 
                   {complaint.media.map((item) => (
                     <Box key={item.id} sx={{ borderRadius: '8px', overflow: 'hidden', border: '1px solid #e2dfd7', mb: 2 }}>
-                      <img src={MediaService.getMediaUrl(item.url)} alt="" className="w-full h-48 object-cover" />
+                      <ComplaintImage
+                        src={MediaService.getMediaUrl(item.url)}
+                        alt={item.caption || 'Photo evidence'}
+                        height={220}
+                      />
                       {item.caption && (
                         <Typography variant="caption" sx={{ p: 1, backgroundColor: '#f5f3ee', color: '#6b7280', display: 'block', fontFamily: 'monospace', fontWeight: 600 }}>
                           {item.caption}

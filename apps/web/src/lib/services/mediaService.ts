@@ -18,8 +18,16 @@ export interface UploadedMediaResponse {
 export class MediaService {
   public static getMediaUrl(mediaIdOrPath: string): string {
     if (!mediaIdOrPath) return '';
-    if (mediaIdOrPath.startsWith('http://') || mediaIdOrPath.startsWith('https://') || mediaIdOrPath.startsWith('data:')) {
+    if (
+      mediaIdOrPath.startsWith('http://') ||
+      mediaIdOrPath.startsWith('https://') ||
+      mediaIdOrPath.startsWith('data:') ||
+      mediaIdOrPath.startsWith('blob:')
+    ) {
       return mediaIdOrPath;
+    }
+    if (mediaIdOrPath.startsWith('/api/media/')) {
+      return `${GATEWAY_URL}${mediaIdOrPath}`;
     }
     if (mediaIdOrPath.startsWith('/media/')) {
       return `${MEDIA_API_BASE}${mediaIdOrPath}`;

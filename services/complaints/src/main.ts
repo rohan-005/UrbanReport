@@ -30,8 +30,8 @@ async function bootstrap() {
     }),
   );
 
-  const port = process.env.PORT || 3002;
-  await app.listen(port);
+  const port = process.env.PORT || 5002;
+  await app.listen(port, '0.0.0.0');
   logger.log(`UrbanReports Complaints Service running on port ${port}`);
 }
 bootstrap();

@@ -208,6 +208,10 @@ export class ProxyController {
   @Post('media')
   async uploadMedia(@Req() req: Request, @Res() res: Response) {
     try {
+      const origin = (req.headers.origin as string) || '*';
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+
       const targetUrl = `${this.getMediaUrl()}/media`;
       const passHeaders = { ...this.getPassHeaders(req) };
       delete passHeaders['host'];
@@ -215,11 +219,16 @@ export class ProxyController {
         passHeaders['content-type'] = req.headers['content-type'] as string;
       }
 
+      const chunks: Buffer[] = [];
+      for await (const chunk of req) {
+        chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+      }
+      const rawBuffer = Buffer.concat(chunks);
+
       const response = await fetch(targetUrl, {
         method: 'POST',
         headers: passHeaders,
-        body: req as any,
-        duplex: 'half',
+        body: rawBuffer,
       } as any);
 
       const data = await response.json();
@@ -232,6 +241,10 @@ export class ProxyController {
   @Get('media/:id')
   async streamMedia(@Param('id') id: string, @Req() req: Request, @Res() res: Response) {
     try {
+      const origin = (req.headers.origin as string) || '*';
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+
       const targetUrl = `${this.getMediaUrl()}/media/${id}`;
       const response = await fetch(targetUrl, {
         method: 'GET',
@@ -264,18 +277,25 @@ export class ProxyController {
 
   @Delete('media/:id')
   async deleteMedia(@Param('id') id: string, @Req() req: Request) {
-    return this.proxyService.forwardGet(`${this.getMediaUrl()}/media/${id}`, this.getPassHeaders(req));
+    return this.proxyService.forwardDelete(`${this.getMediaUrl()}/media/${id}`, this.getPassHeaders(req));
   }
 
   private getPassHeaders(req: Request): Record<string, string> {
     const headers: Record<string, string> = {};
     if (req.headers.authorization) headers['authorization'] = req.headers.authorization as string;
     if (req.headers['x-request-id']) headers['x-request-id'] = req.headers['x-request-id'] as string;
+    if (req.headers['x-user-id']) headers['x-user-id'] = req.headers['x-user-id'] as string;
+    if (req.headers['x-user-role']) headers['x-user-role'] = req.headers['x-user-role'] as string;
 
     const user = (req as any).user;
     if (user) {
       headers['x-user-id'] = user.userId;
       headers['x-user-role'] = user.role;
+    }
+
+    if (!headers['x-user-id']) {
+      headers['x-user-id'] = 'citizen-anon-001';
+      headers['x-user-role'] = 'CITIZEN';
     }
 
     return headers;

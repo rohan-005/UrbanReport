@@ -8,7 +8,7 @@ import {
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { Media, MediaDocument, ProcessingStatus } from './schemas/media.schema';
 import { GridFsService } from './gridfs.service';
@@ -118,7 +118,7 @@ export class MediaService {
 
     this.logger.log(`Processing media upload: ${mediaId} (owner: ${ownerUserId}, size: ${file.size} bytes)`);
 
-    let gridFsFileId;
+    let gridFsFileId: Types.ObjectId;
     try {
       gridFsFileId = await this.gridFsService.uploadFile(
         `${mediaId}_${file.originalname}`,
@@ -132,7 +132,7 @@ export class MediaService {
       );
     } catch (err: any) {
       this.logger.error(`GridFS upload failed for ${mediaId}: ${err.message}`);
-      throw new BadRequestException('Storage service error during image upload.');
+      throw new BadRequestException(`Storage service error during image upload: ${err.message}`);
     }
 
     try {
@@ -195,7 +195,6 @@ export class MediaService {
     const isPublicComplaintMedia = Boolean(record.complaintId);
 
     if (!isOwner && !isOfficerOrAdmin && !isPublicComplaintMedia) {
-      // Allow general read for ready media in development context if requester is citizen
       if (record.processingStatus !== ProcessingStatus.READY) {
         throw new ForbiddenException('Access denied to restricted media resource.');
       }
@@ -209,6 +208,9 @@ export class MediaService {
    */
   async getMediaStream(mediaId: string) {
     const record = await this.getMediaMetadata(mediaId);
+    if (!record.gridFsFileId) {
+      throw new NotFoundException(`GridFS binary reference missing for media record '${mediaId}'.`);
+    }
     const stream = this.gridFsService.downloadStream(record.gridFsFileId.toString());
     return {
       stream,
@@ -230,7 +232,9 @@ export class MediaService {
     }
 
     try {
-      await this.gridFsService.deleteFile(record.gridFsFileId.toString());
+      if (record.gridFsFileId) {
+        await this.gridFsService.deleteFile(record.gridFsFileId.toString());
+      }
     } catch (err: any) {
       this.logger.warn(`GridFS file deletion warning for ${mediaId}: ${err.message}`);
     }
