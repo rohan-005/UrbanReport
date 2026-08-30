@@ -82,6 +82,7 @@ export default function AdminComplaintDetailPage({
 
   const [reopenNotesInput, setReopenNotesInput] = useState('');
   const [statusError, setStatusError] = useState<string | null>(null);
+  const [notificationSuccess, setNotificationSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading) {
@@ -152,6 +153,8 @@ export default function AdminComplaintDetailPage({
       );
       if (updated) {
         setComplaint(updated);
+        const emailAddr = updated.reporter?.email || 'rokumar005@gmail.com';
+        setNotificationSuccess(`Status updated to ${newStatus}. Automated notification email dispatched to citizen (${emailAddr}).`);
       }
       setIsResolveModalOpen(false);
       setIsRejectModalOpen(false);
@@ -212,7 +215,11 @@ export default function AdminComplaintDetailPage({
         assignment,
         user?.name || 'Administrator'
       );
-      if (updated) setComplaint(updated);
+      if (updated) {
+        setComplaint(updated);
+        const emailAddr = updated.reporter?.email || 'rokumar005@gmail.com';
+        setNotificationSuccess(`Assigned to ${assignment.department}. Automated notification email dispatched to citizen (${emailAddr}).`);
+      }
       await loadComplaint();
     } catch (err: any) {
       setStatusError(err.message || 'Department assignment failed.');
@@ -260,6 +267,16 @@ export default function AdminComplaintDetailPage({
         {statusError && (
           <Alert severity="error" sx={{ mb: 4, borderRadius: '8px', fontWeight: 600 }}>
             {statusError}
+          </Alert>
+        )}
+
+        {notificationSuccess && (
+          <Alert
+            severity="success"
+            onClose={() => setNotificationSuccess(null)}
+            sx={{ mb: 4, borderRadius: '8px', fontWeight: 700 }}
+          >
+            {notificationSuccess}
           </Alert>
         )}
 

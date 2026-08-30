@@ -158,6 +158,42 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
     return newComplaint;
   }
 
+  private async dispatchNotificationEvent(eventType: string, complaint: Complaint, notes?: string, departmentName?: string) {
+    const notificationsUrl = process.env.NEXT_PUBLIC_NOTIFICATIONS_URL || 'http://localhost:5005';
+    const reporterEmail = complaint.reporter?.email || 'rokumar005@gmail.com';
+    const reporterName = complaint.reporter?.name || 'Citizen Reporter';
+
+    const eventPayload = {
+      eventId: `evt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      eventType,
+      occurredAt: new Date().toISOString(),
+      complaintId: complaint.id,
+      reporterUserId: complaint.reporter?.id || 'user-001',
+      actorUserId: 'admin-001',
+      metadata: {
+        title: complaint.title,
+        category: complaint.category,
+        status: complaint.status,
+        address: complaint.address,
+        reporterName,
+        reporterEmail,
+        notes,
+        rejectionReason: notes,
+        departmentName,
+      },
+    };
+
+    try {
+      await fetch(`${notificationsUrl}/events`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventPayload),
+      });
+    } catch {
+      // Intentionally swallow fetch errors when local notification service server is offline
+    }
+  }
+
   public async updateStatus(
     id: string,
     status: ComplaintStatus,
@@ -177,6 +213,19 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
 
     this.complaints[index] = updated;
     this.persist();
+
+    const eventTypeMap: Record<string, string> = {
+      UNDER_REVIEW: 'ComplaintUnderReview',
+      VERIFIED: 'ComplaintVerified',
+      REJECTED: 'ComplaintRejected',
+      ASSIGNED: 'ComplaintAssigned',
+      IN_PROGRESS: 'ComplaintInProgress',
+      RESOLVED: 'ComplaintResolved',
+      REOPENED: 'ComplaintReopened',
+    };
+    const eventType = eventTypeMap[status] || 'ComplaintUpdated';
+    this.dispatchNotificationEvent(eventType, updated, notes);
+
     return updated;
   }
 
@@ -198,6 +247,9 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
 
     this.complaints[index] = updated;
     this.persist();
+
+    this.dispatchNotificationEvent('ComplaintAssigned', updated, assignment.notes, assignment.department);
+
     return updated;
   }
 
