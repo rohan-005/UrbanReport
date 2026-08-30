@@ -249,7 +249,7 @@ export default function AdminComplaintDetailPage({
   const afterMedia = complaint.resolutionMedia || [];
 
   return (
-    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 36 }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 10 }}>
       <Container maxWidth="lg">
         {/* Top Bar Navigation */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', pb: 3, mb: 4, borderBottom: '1px solid #e2dfd7', gap: 2 }}>

@@ -6,7 +6,7 @@ import Skeleton from '@mui/material/Skeleton';
 
 export default function ReportLoading() {
   return (
-    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 6 }}>
       <Container maxWidth="lg">
         <Paper elevation={0} sx={{ p: 4, backgroundColor: '#ffffff', borderColor: '#e2e0d8', borderRadius: '2px' }}>
           <Skeleton variant="text" width={280} height={40} sx={{ mb: 1, backgroundColor: '#e2e0d8' }} />

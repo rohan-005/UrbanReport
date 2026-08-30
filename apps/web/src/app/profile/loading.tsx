@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 
 export default function ProfileLoading() {
   return (
-    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 6 }}>
       <ProfileSkeleton />
     </Box>
   );

@@ -41,7 +41,7 @@ export default function RootLayout({
       <body className="rural-houses-bg text-[#3f4636] antialiased min-h-screen flex flex-col font-sans overflow-x-hidden selection:bg-[#89a577]/30 selection:text-[#1f241d]">
         <ThemeRegistry>
           <AuthProvider>
-            <div className="flex-1 flex flex-col w-full relative pb-28">{children}</div>
+            <div className="flex-1 flex flex-col w-full relative">{children}</div>
             <Footer />
             <FloatingBottomNav />
           </AuthProvider>

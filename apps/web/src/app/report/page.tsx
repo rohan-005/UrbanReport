@@ -364,7 +364,7 @@ export default function ReportPage() {
           py: { xs: 4, md: 6 },
           backgroundColor: '#f5f3ee',
           flex: 1,
-          pb: { xs: 28, md: 36 },
+          pb: { xs: 6, md: 10 },
         }}
       >
         <Container maxWidth="lg" className="px-4 sm:px-6 md:px-8">

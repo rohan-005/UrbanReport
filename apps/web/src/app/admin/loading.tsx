@@ -6,7 +6,7 @@ import { TableSkeleton } from '@/components/ui/Skeletons/TableSkeleton';
 
 export default function AdminLoading() {
   return (
-    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 16 }}>
+    <Box sx={{ py: 6, backgroundColor: '#f5f3ee', flex: 1, pb: 6 }}>
       <Container maxWidth="xl">
         <Box sx={{ pb: 3, mb: 4, borderBottom: '1px solid #e2e0d8' }}>
           <Skeleton variant="text" width={280} height={44} sx={{ backgroundColor: '#e2e0d8' }} />
