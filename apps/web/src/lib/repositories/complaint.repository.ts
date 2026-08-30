@@ -623,11 +623,17 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
 
   public async findDuplicateCandidates(input: DuplicateCheckInput): Promise<DuplicateCandidate[]> {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1200);
+
       const res = await fetch(`${API_BASE}/complaints/duplicates`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(input),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
+
       if (!res.ok) return this.fallbackMock.findDuplicateCandidates(input);
       const data = await res.json();
       if (Array.isArray(data)) return data;

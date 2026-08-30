@@ -5,16 +5,16 @@ export const Footer: React.FC = () => {
   return (
     <footer className="border-t border-[#e2dfd7] bg-[#ebe7df] text-[#1f241d] mt-auto">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 mb-8">
           {/* Brand Col */}
-          <div className="md:col-span-1 space-y-3">
+          <div className="sm:col-span-2 md:col-span-1 space-y-3">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 bg-[#89a577] rounded-xs inline-block" />
               <span className="text-base font-bold tracking-wider uppercase text-[#1f241d] font-display">
                 UrbanReports
               </span>
             </div>
-            <p className="text-xs text-[#6b7280] leading-relaxed font-sans">
+            <p className="text-xs text-[#6b7280] leading-relaxed font-sans max-w-sm">
               Geospatial civic intelligence and transparent infrastructure issue tracking for modern municipalities.
             </p>
           </div>
@@ -83,7 +83,7 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-[#d8d5cb] flex flex-col sm:flex-row items-center justify-between text-xs text-[#6b7280] gap-4 font-mono font-medium">
+        <div className="pt-6 sm:pt-8 border-t border-[#d8d5cb] flex flex-col sm:flex-row items-start sm:items-center justify-between text-[11px] sm:text-xs text-[#6b7280] gap-2 sm:gap-4 font-mono font-medium">
           <p>© 2026 URBANREPORTS CIVIC PLATFORM. ALL RIGHTS RESERVED.</p>
           <span>COMMUNITY-FOCUSED EDITORIAL CIVIC FOUNDATION</span>
         </div>

@@ -153,6 +153,10 @@ export default function ReportPage() {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const descriptionRef = useRef(description);
+  useEffect(() => {
+    descriptionRef.current = description;
+  }, [description]);
 
   // Debounced Duplicate Detection Trigger
   useEffect(() => {
@@ -176,21 +180,26 @@ export default function ReportPage() {
           longitude: Number(longitude),
           category,
           title: title.trim(),
-          description: description.trim(),
+          description: descriptionRef.current.trim(),
           radius: 250,
         });
-        setDuplicates(candidates || []);
+        const newCandidates = candidates || [];
+        setDuplicates((prev) => {
+          const prevKey = prev.map((c) => `${c.complaintId}:${c.confidence}`).join('|');
+          const newKey = newCandidates.map((c) => `${c.complaintId}:${c.confidence}`).join('|');
+          return prevKey === newKey ? prev : newCandidates;
+        });
       } catch (err) {
         setDuplicates((prev) => (prev.length > 0 ? [] : prev));
       } finally {
         setCheckingDuplicates(false);
       }
-    }, 400);
+    }, 500);
 
     return () => {
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     };
-  }, [latitude, longitude, category, title, description]);
+  }, [latitude, longitude, category, title]);
 
   const handleConfirmExistingCandidate = async (
     candidate: DuplicateCandidate
@@ -974,6 +983,7 @@ export default function ReportPage() {
                     fontWeight: 700,
                     borderRadius: '8px',
                     px: 4,
+                    width: { xs: '100%', sm: 'auto' },
                     '&:hover': { backgroundColor: '#6e895d' },
                   }}
                 >

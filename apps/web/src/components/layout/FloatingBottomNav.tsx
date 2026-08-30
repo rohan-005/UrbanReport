@@ -64,10 +64,10 @@ export const FloatingBottomNav: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-auto max-w-[calc(100vw-1rem)] sm:max-w-max pointer-events-auto pb-[env(safe-area-inset-bottom)] transition-all duration-200">
+    <div className="fixed bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 z-[9999] w-auto max-w-[calc(100vw-0.75rem)] sm:max-w-max pointer-events-auto pb-[env(safe-area-inset-bottom)] transition-all duration-200">
       <nav
         ref={navContainerRef}
-        className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-md bg-[#1f241d]/95 border border-[#877b5f]/40 shadow-xl backdrop-blur-xl ring-1 ring-white/10"
+        className="flex items-center gap-0.5 xs:gap-1 sm:gap-2 p-1 xs:p-1.5 sm:p-2 rounded-md bg-[#1f241d]/95 border border-[#877b5f]/40 shadow-xl backdrop-blur-xl ring-1 ring-white/10"
         aria-label="Floating Bottom Navigation Control Dock"
       >
         {/* Brand Mark Emblem (Desktop / Tablet) */}
@@ -80,7 +80,7 @@ export const FloatingBottomNav: React.FC = () => {
         </Link>
 
         {/* Nav Links */}
-        <div className="flex items-center gap-1 sm:gap-1.5">
+        <div className="flex items-center gap-0.5 xs:gap-1 sm:gap-1.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
@@ -91,13 +91,13 @@ export const FloatingBottomNav: React.FC = () => {
                   key={item.href}
                   href={item.href}
                   aria-current={active ? 'page' : undefined}
-                  className={`flex items-center justify-center gap-1.5 min-h-[40px] px-3.5 sm:px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
+                  className={`flex items-center justify-center gap-1 sm:gap-1.5 min-h-[36px] sm:min-h-[40px] px-2.5 xs:px-3.5 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
                     active
                       ? 'bg-[#89a577] text-white border border-[#89a577] shadow-md'
                       : 'bg-[#89a577] text-white hover:bg-[#6e895d] border border-[#89a577] shadow-xs active:scale-[0.98]'
                   }`}
                 >
-                  <Icon className="w-4 h-4 stroke-[2.5]" />
+                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                   <span>{item.label}</span>
                 </Link>
               );
@@ -108,13 +108,13 @@ export const FloatingBottomNav: React.FC = () => {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`relative flex items-center justify-center gap-1.5 sm:gap-2 min-h-[40px] px-2.5 sm:px-3.5 py-2 text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
+                className={`relative flex items-center justify-center gap-1 sm:gap-2 min-h-[36px] sm:min-h-[40px] px-2 xs:px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89a577] ${
                   active
                     ? 'bg-[#877b5f]/30 text-white border border-[#877b5f]/50 shadow-xs'
                     : 'text-zinc-300 hover:text-white hover:bg-white/10 border border-transparent active:scale-[0.97]'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${active ? 'text-[#a8c38e]' : 'text-zinc-400'}`} />
+                <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${active ? 'text-[#a8c38e]' : 'text-zinc-400'}`} />
                 <span className="hidden sm:inline">{item.label}</span>
                 {active && (
                   <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-0.5 bg-[#89a577] rounded-full shadow-xs" />
@@ -126,10 +126,10 @@ export const FloatingBottomNav: React.FC = () => {
           {isAuthenticated && (
             <button
               onClick={logout}
-              className="flex items-center justify-center gap-1.5 min-h-[40px] px-2.5 sm:px-3 py-2 text-xs font-bold text-zinc-400 hover:text-rose-300 hover:bg-white/10 rounded-md transition-colors ml-0.5 border-l border-[#877b5f]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
+              className="flex items-center justify-center gap-1 sm:gap-1.5 min-h-[36px] sm:min-h-[40px] px-1.5 xs:px-2.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold text-zinc-400 hover:text-rose-300 hover:bg-white/10 rounded-md transition-colors ml-0.5 border-l border-[#877b5f]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400"
               title="Sign Out"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
           )}
         </div>

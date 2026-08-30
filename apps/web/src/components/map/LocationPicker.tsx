@@ -13,7 +13,7 @@ interface LocationPickerProps {
   onLocationChange: (lat: number, lng: number, address?: string) => void;
 }
 
-export const LocationPicker: React.FC<LocationPickerProps> = ({
+const LocationPickerComponent: React.FC<LocationPickerProps> = ({
   latitude,
   longitude,
   onLocationChange,
@@ -335,3 +335,6 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     </div>
   );
 };
+
+LocationPickerComponent.displayName = 'LocationPicker';
+export const LocationPicker = React.memo(LocationPickerComponent);

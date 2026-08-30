@@ -148,13 +148,14 @@ export default function LandingHomePage() {
                 </Typography>
 
 
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                  <Link href="/report">
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, w: '100%' }}>
+                  <Link href="/report" className="w-full sm:w-auto">
                     <Button
                       variant="contained"
                       size="large"
                       startIcon={<Plus className="w-4 h-4 stroke-[3]" />}
                       sx={{
+                        width: '100%',
                         backgroundColor: '#89a577',
                         color: '#ffffff',
                         fontWeight: 700,
@@ -168,12 +169,13 @@ export default function LandingHomePage() {
                     </Button>
                   </Link>
 
-                  <Link href="/map">
+                  <Link href="/map" className="w-full sm:w-auto">
                     <Button
                       variant="outlined"
                       size="large"
                       startIcon={<Compass className="w-4 h-4 text-[#b8a184]" />}
                       sx={{
+                        width: '100%',
                         borderColor: '#3a4235',
                         color: '#f5f3ee',
                         fontWeight: 700,

@@ -21,7 +21,7 @@ interface ImageUploaderProps {
   maxImages?: number;
 }
 
-export const ImageUploader: React.FC<ImageUploaderProps> = ({
+const ImageUploaderComponent: React.FC<ImageUploaderProps> = ({
   onMediaChanged,
   onImageSelected,
   maxImages = 4,
@@ -262,3 +262,6 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     </div>
   );
 };
+
+ImageUploaderComponent.displayName = 'ImageUploader';
+export const ImageUploader = React.memo(ImageUploaderComponent);
