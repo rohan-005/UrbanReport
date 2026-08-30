@@ -37,7 +37,7 @@ export default function AdminDashboardPage() {
 
   const loadData = async () => {
     setLoading(true);
-    const data = await complaintRepository.getAllComplaints();
+    const data = await complaintRepository.getAllComplaints({ includeRejected: true });
     const statsData = await complaintRepository.getStats();
     const analyticsData = await complaintRepository.getAnalyticsOverview();
     setComplaints(data);

@@ -42,9 +42,13 @@ export default function ComplaintDetailPage({ params }: { params: Promise<{ id: 
   const loadComplaint = async () => {
     setLoading(true);
     const data = await complaintRepository.getComplaintById(complaintId);
-    setComplaint(data);
-    if (data) {
-      setIsUpvoted(data.upvotedByUserIds?.includes('user-001') || false);
+    if (data && data.status === 'REJECTED') {
+      setComplaint(null);
+    } else {
+      setComplaint(data);
+      if (data) {
+        setIsUpvoted(data.upvotedByUserIds?.includes('user-001') || false);
+      }
     }
     setLoading(false);
   };

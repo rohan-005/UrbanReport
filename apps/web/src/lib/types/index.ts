@@ -131,6 +131,7 @@ export interface ComplaintFilters {
   status?: ComplaintStatus | 'ALL';
   searchQuery?: string;
   sortBy?: 'newest' | 'oldest' | 'upvotes' | 'severity';
+  includeRejected?: boolean;
 }
 
 export interface CategoryStat {

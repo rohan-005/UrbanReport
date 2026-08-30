@@ -67,6 +67,7 @@ export class ProxyService {
     if (filters?.severity && filters.severity !== 'ALL') queryParams.append('severity', filters.severity);
     if (filters?.status && filters.status !== 'ALL') queryParams.append('status', filters.status);
     if (filters?.search) queryParams.append('search', filters.search);
+    if (filters?.includeRejected) queryParams.append('includeRejected', String(filters.includeRejected));
 
     const url = `${this.getComplaintsServiceUrl()}/complaints?${queryParams.toString()}`;
     return this.forwardGet(url);

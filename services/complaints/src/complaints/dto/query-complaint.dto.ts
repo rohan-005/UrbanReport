@@ -44,6 +44,10 @@ export class ComplaintQueryDto {
   sortBy?: 'newest' | 'oldest' | 'upvotes' | 'severity';
 
   @IsOptional()
+  @IsString()
+  includeRejected?: string;
+
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)

@@ -107,6 +107,11 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
 
   public async getAllComplaints(filters?: ComplaintFilters): Promise<Complaint[]> {
     let result = [...this.complaints];
+
+    if (!filters?.includeRejected && filters?.status !== 'REJECTED') {
+      result = result.filter((c) => c.status !== 'REJECTED');
+    }
+
     if (!filters) return result;
 
     if (filters.category && filters.category !== 'ALL') {
@@ -258,6 +263,9 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
         c.longitude >= bounds.minLng &&
         c.longitude <= bounds.maxLng
     );
+    if (!filters?.includeRejected && filters?.status !== 'REJECTED') {
+      result = result.filter((c) => c.status !== 'REJECTED');
+    }
     if (!filters) return result;
     if (filters.category && filters.category !== 'ALL') {
       result = result.filter((c) => c.category === filters.category);
@@ -273,6 +281,7 @@ class MockComplaintRepositoryImpl implements IComplaintRepository {
 
   public async getNearbyComplaints(lat: number, lng: number, radiusMeters = 5000): Promise<Complaint[]> {
     return this.complaints.filter((c) => {
+      if (c.status === 'REJECTED') return false;
       const dist = Math.hypot(c.latitude - lat, c.longitude - lng) * 111000;
       return dist <= radiusMeters;
     });
@@ -410,13 +419,18 @@ class ApiComplaintRepositoryImpl implements IComplaintRepository {
       if (filters?.status && filters.status !== 'ALL') queryParams.append('status', filters.status);
       if (filters?.searchQuery) queryParams.append('search', filters.searchQuery);
       if (filters?.sortBy) queryParams.append('sortBy', filters.sortBy);
+      if (filters?.includeRejected) queryParams.append('includeRejected', 'true');
 
       const res = await fetch(`${API_BASE}/complaints?${queryParams.toString()}`);
       if (!res.ok) return this.fallbackMock.getAllComplaints(filters);
       const data = await res.json();
 
       if (data.items && Array.isArray(data.items)) {
-        return data.items.map((item: any) => this.mapToFrontendComplaint(item));
+        let items = data.items.map((item: any) => this.mapToFrontendComplaint(item));
+        if (!filters?.includeRejected && filters?.status !== 'REJECTED') {
+          items = items.filter((c: Complaint) => c.status !== 'REJECTED');
+        }
+        return items;
       }
       return this.fallbackMock.getAllComplaints(filters);
     } catch {

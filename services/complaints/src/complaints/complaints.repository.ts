@@ -221,6 +221,8 @@ export class ComplaintsRepository {
       if (status && status !== 'ALL') {
         conditions.push(`status = $${paramIndex++}`);
         params.push(status);
+      } else if (query.includeRejected !== 'true') {
+        conditions.push(`status != 'REJECTED'`);
       }
 
       if (search) {
@@ -261,7 +263,10 @@ export class ComplaintsRepository {
         limit,
       };
     } catch {
-      const all = Array.from(this.fallbackStore.values());
+      let all = Array.from(this.fallbackStore.values());
+      if (query.includeRejected !== 'true' && query.status !== 'REJECTED') {
+        all = all.filter((c) => c.status !== 'REJECTED');
+      }
       return {
         items: all,
         total: all.length,

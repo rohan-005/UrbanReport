@@ -44,7 +44,7 @@ export default function AdminComplaintsPage() {
 
   const loadData = async () => {
     setLoading(true);
-    const data = await complaintRepository.getAllComplaints(filters);
+    const data = await complaintRepository.getAllComplaints({ ...filters, includeRejected: true });
     setComplaints(data);
     setLoading(false);
   };
