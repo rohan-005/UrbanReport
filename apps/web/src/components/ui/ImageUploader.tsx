@@ -30,12 +30,26 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
   const [isUploadingGlobal, setIsUploadingGlobal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const prevMediaIdsKeyRef = useRef<string>('');
+  const prevMainPreviewRef = useRef<string | null>(null);
+
   useEffect(() => {
     const successfulMediaIds = attachments
       .filter((a) => a.status === 'success' && Boolean(a.mediaId))
       .map((a) => a.mediaId!);
 
     const mainPreview = attachments.length > 0 ? attachments[0].previewUrl : null;
+    const mediaIdsKey = successfulMediaIds.join(',');
+
+    if (
+      prevMediaIdsKeyRef.current === mediaIdsKey &&
+      prevMainPreviewRef.current === mainPreview
+    ) {
+      return;
+    }
+
+    prevMediaIdsKeyRef.current = mediaIdsKey;
+    prevMainPreviewRef.current = mainPreview;
 
     if (onMediaChanged) {
       onMediaChanged(successfulMediaIds, mainPreview);

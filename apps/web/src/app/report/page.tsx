@@ -230,7 +230,7 @@ export default function ReportPage() {
     []
   );
 
-  const handleImageSelected = useCallback((url: string) => {
+  const handleImageSelected = useCallback((url: string | null) => {
     setImageUrl(url);
   }, []);
 
@@ -922,11 +922,8 @@ export default function ReportPage() {
                 </Typography>
 
                 <ImageUploader
-                  onMediaChanged={(mediaIds, preview) => {
-                    setUploadedMediaIds(mediaIds);
-                    setImageUrl(preview);
-                  }}
-                  onImageSelected={(url) => setImageUrl(url)}
+                  onMediaChanged={handleMediaChanged}
+                  onImageSelected={handleImageSelected}
                 />
               </Paper>
 
